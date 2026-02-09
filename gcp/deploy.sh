@@ -4,7 +4,7 @@
 # Deploys the Next.js application to Google Cloud Run
 set -e
 
-PROJECT_ID=${1:-"gen-lang-client-0928975904"}
+PROJECT_ID=${1:-"YOUR_GCP_PROJECT_ID"}
 REGION="us-central1"
 SERVICE_NAME="ihep-web"
 

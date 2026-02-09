@@ -43,6 +43,7 @@
     "terraform",
     "k8s",
     "scripts",
-    "tests"
+    "tests",
+    "procedural-registry"
   ]
 }

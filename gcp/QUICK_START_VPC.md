@@ -4,7 +4,7 @@
 
 ### Prerequisites
 - GCP account with billing enabled
-- Project ID: `gen-lang-client-0928975904`
+- Project ID: `YOUR_GCP_PROJECT_ID`
 - gcloud CLI installed and authenticated
 - Terraform 1.5+ installed
 
@@ -12,7 +12,7 @@
 
 ```bash
 cd /Users/nexus1/Documents/ihep-app/ihep/gcp
-export PROJECT_ID="gen-lang-client-0928975904"
+export PROJECT_ID="YOUR_GCP_PROJECT_ID"
 export REGION="us-central1"
 export ENVIRONMENT="prod"
 chmod +x deploy-vpc-infrastructure.sh

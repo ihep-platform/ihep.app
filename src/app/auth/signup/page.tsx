@@ -22,7 +22,24 @@ export default function SignupPage() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
+  const [passwordChecks, setPasswordChecks] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false,
+  })
   const router = useRouter()
+
+  const validatePassword = (password: string) => {
+    setPasswordChecks({
+      length: password.length >= 12,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[@$!%*?&#^_\-.+=\/~]/.test(password),
+    })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -121,13 +138,37 @@ export default function SignupPage() {
                 id="password"
                 type="password"
                 value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
+                onChange={(e) => {
+                  handleInputChange('password', e.target.value)
+                  validatePassword(e.target.value)
+                }}
                 required
                 minLength={12}
               />
-              <p className="text-xs text-gray-500">
-                Min 12 characters. Must include uppercase, lowercase, number, and special character (@$!%*?&)
-              </p>
+              {formData.password.length > 0 && (
+                <ul className="text-xs space-y-1 mt-1">
+                  <li className={passwordChecks.length ? 'text-green-600' : 'text-gray-500'}>
+                    {passwordChecks.length ? '[met]' : '[--]'} 12+ characters
+                  </li>
+                  <li className={passwordChecks.uppercase ? 'text-green-600' : 'text-gray-500'}>
+                    {passwordChecks.uppercase ? '[met]' : '[--]'} Uppercase letter
+                  </li>
+                  <li className={passwordChecks.lowercase ? 'text-green-600' : 'text-gray-500'}>
+                    {passwordChecks.lowercase ? '[met]' : '[--]'} Lowercase letter
+                  </li>
+                  <li className={passwordChecks.number ? 'text-green-600' : 'text-gray-500'}>
+                    {passwordChecks.number ? '[met]' : '[--]'} Number
+                  </li>
+                  <li className={passwordChecks.special ? 'text-green-600' : 'text-gray-500'}>
+                    {passwordChecks.special ? '[met]' : '[--]'} Special character (@$!%*?&#^_-.+=~/`)
+                  </li>
+                </ul>
+              )}
+              {formData.password.length === 0 && (
+                <p className="text-xs text-gray-500">
+                  Min 12 characters. Must include uppercase, lowercase, number, and special character.
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">

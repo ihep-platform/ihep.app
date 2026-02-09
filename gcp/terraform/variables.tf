@@ -7,7 +7,7 @@
 variable "project_id" {
   description = "GCP Project ID"
   type        = string
-  default     = "gen-lang-client-0928975904"
+  default     = "YOUR_GCP_PROJECT_ID"
 }
 
 variable "region" {

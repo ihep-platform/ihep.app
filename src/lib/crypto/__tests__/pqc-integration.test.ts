@@ -57,15 +57,15 @@ describe('End-to-End PQC Integration', () => {
       const kyber = new KyberKEM(KyberSecurityLevel.LEVEL_5)
       const keyPair = await kyber.generateKeyPair()
 
-      // Patient health record with sensitive fields
+      // Synthetic test patient record (no real PHI)
       const patientRecord = {
-        patientId: 'PT-12345',
-        name: 'John Doe',
-        ssn: '123-45-6789',
-        diagnosis: 'Type 2 Diabetes',
-        medications: ['Metformin 500mg', 'Lisinopril 10mg'],
-        lastVisit: '2026-01-05',
-        nextAppointment: '2026-02-15',
+        patientId: 'TEST-PT-00001',
+        name: 'Test Patient',
+        ssn: '000-00-0000',
+        diagnosis: 'Test Condition Alpha',
+        medications: ['Test Medication A 100mg', 'Test Medication B 50mg'],
+        lastVisit: '2025-01-01',
+        nextAppointment: '2025-03-01',
       }
 
       // Encrypt sensitive fields

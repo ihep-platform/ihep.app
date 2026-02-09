@@ -8,8 +8,8 @@ const insertUserSchema = z.object({
   password: z.string()
     .min(12, 'Password must be at least 12 characters')
     .regex(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/,
-      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)'
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^_\-.+=\/~])[A-Za-z\d@$!%*?&#^_\-.,()+=\/~[\]{}|\\`]+$/,
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
     ),
   email: z.string().email('Please enter a valid email address'),
   firstName: z.string().min(1, 'First name is required'),
@@ -24,6 +24,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const validatedData = insertUserSchema.parse(body)
+
+    // Restrict admin role to institutional approval process
+    if (validatedData.role === 'admin') {
+      return NextResponse.json(
+        { message: 'Administrator accounts require institutional approval. Please contact your organization administrator.' },
+        { status: 403 }
+      )
+    }
 
     // Check for existing username
     const existingUserByUsername = await mockStore.getUserByUsername(validatedData.username)

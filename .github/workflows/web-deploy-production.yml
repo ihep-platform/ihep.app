@@ -14,12 +14,12 @@ jobs:
       contents: read
     env:
       REGION: us-central1
-      PROJECT_ID: gen-lang-client-0928975904
+      PROJECT_ID: YOUR_GCP_PROJECT_ID
       PROJECT_NUMBER: "934473355501"
       SERVICE_NAME: ihep-web-production
-      IMAGE: us-docker.pkg.dev/gen-lang-client-0928975904/ihep/web:${{ github.sha }}
+      IMAGE: us-docker.pkg.dev/YOUR_GCP_PROJECT_ID/ihep/web:${{ github.sha }}
       WIF_PROVIDER: projects/934473355501/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
-      GCP_SA_EMAIL: github-actions-sa@gen-lang-client-0928975904.iam.gserviceaccount.com
+      GCP_SA_EMAIL: github-actions-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com
     
     steps:
       - name: Checkout

@@ -650,6 +650,49 @@
   background: #94a3b8;
 }
 
+/* Digital Twin Canvas Styles */
+.dt-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.dt-canvas-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsl(var(--background) / 0.8);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+/* Health Score Gradients */
+.health-gradient-excellent {
+  background: linear-gradient(135deg, hsl(142, 71%, 45%) 0%, hsl(160, 84%, 39%) 100%);
+}
+
+.health-gradient-good {
+  background: linear-gradient(135deg, hsl(160, 84%, 39%) 0%, hsl(48, 96%, 53%) 100%);
+}
+
+.health-gradient-fair {
+  background: linear-gradient(135deg, hsl(48, 96%, 53%) 0%, hsl(25, 95%, 53%) 100%);
+}
+
+.health-gradient-poor {
+  background: linear-gradient(135deg, hsl(25, 95%, 53%) 0%, hsl(0, 84%, 60%) 100%);
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
 /* Base layer styles */
 @layer base {
   * {

@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- Google Cloud Project: `gen-lang-client-0928975904`
+- Google Cloud Project: `YOUR_GCP_PROJECT_ID`
 - Workload Identity Pool configured
-- Service Account: `github-actions-sa@gen-lang-client-0928975904.iam.gserviceaccount.com`
-- Artifact Registry repository: `us-docker.pkg.dev/gen-lang-client-0928975904/ihep`
+- Service Account: `github-actions-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com`
+- Artifact Registry repository: `us-docker.pkg.dev/YOUR_GCP_PROJECT_ID/ihep`
 
 ## Deployment Configuration
 
@@ -23,7 +23,7 @@ The deployment uses Workload Identity Federation instead of service account keys
 
 **Provider**: `projects/934473355501/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider`
 
-**Service Account**: `github-actions-sa@gen-lang-client-0928975904.iam.gserviceaccount.com`
+**Service Account**: `github-actions-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com`
 
 ## Quick Start
 
@@ -83,7 +83,7 @@ git push origin production
 ### Required for Deployment
 
 These are configured in the workflow files:
-- `PROJECT_ID`: gen-lang-client-0928975904
+- `PROJECT_ID`: YOUR_GCP_PROJECT_ID
 - `REGION`: us-central1
 - `SERVICE_NAME`: ihep-web-{env}
 
@@ -94,7 +94,7 @@ Set these in Cloud Run service environment variables:
 ```bash
 # Example: Set NEXTAUTH_SECRET for production
 gcloud run services update ihep-web-production \
-  --project gen-lang-client-0928975904 \
+  --project YOUR_GCP_PROJECT_ID \
   --region us-central1 \
   --set-env-vars "NEXTAUTH_SECRET=your-secret-here"
 ```
@@ -121,14 +121,14 @@ Check the GitHub Actions logs for detailed error messages.
 1. Verify Cloud Run service exists:
    ```bash
    gcloud run services describe ihep-web-dev \
-     --project gen-lang-client-0928975904 \
+     --project YOUR_GCP_PROJECT_ID \
      --region us-central1
    ```
 
 2. Check service logs:
    ```bash
    gcloud logging read "resource.type=cloud_run_revision AND resource.labels.service_name=ihep-web-dev" \
-     --project gen-lang-client-0928975904 \
+     --project YOUR_GCP_PROJECT_ID \
      --limit 50
    ```
 

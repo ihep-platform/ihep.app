@@ -5,7 +5,7 @@
 # PROJECT CONFIGURATION
 # ============================================================================
 
-project_id  = "gen-lang-client-0928975904"  # Your GCP project ID
+project_id  = "YOUR_GCP_PROJECT_ID"  # Your GCP project ID
 region      = "us-central1"                  # Primary region
 zone        = "us-central1-a"                # Primary zone
 environment = "prod"                         # Environment: dev, staging, or prod

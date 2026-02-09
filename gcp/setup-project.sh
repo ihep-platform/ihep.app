@@ -5,7 +5,7 @@
 
 set -e
 
-PROJECT_ID="gen-lang-client-0928975904"
+PROJECT_ID="${GCP_PROJECT_ID:?Set GCP_PROJECT_ID environment variable}"
 REGION="us-central1"
 
 echo " Setting up GCP project: $PROJECT_ID"

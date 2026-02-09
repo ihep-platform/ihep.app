@@ -327,7 +327,7 @@ This document describes the complete VPC network architecture for the IHEP (Inte
 
 ```bash
 # 1. Set environment variables
-export PROJECT_ID="gen-lang-client-0928975904"
+export PROJECT_ID="YOUR_GCP_PROJECT_ID"
 export REGION="us-central1"
 export ZONE="us-central1-a"
 export ENVIRONMENT="prod"

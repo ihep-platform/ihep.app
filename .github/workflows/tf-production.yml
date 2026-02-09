@@ -13,7 +13,7 @@ jobs:
     env:
       TF_IN_AUTOMATION: "true"
       WIF_PROVIDER: projects/934473355501/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
-      GCP_SA_EMAIL: github-actions-sa@gen-lang-client-0928975904.iam.gserviceaccount.com
+      GCP_SA_EMAIL: github-actions-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -57,7 +57,7 @@ jobs:
     env:
       TF_IN_AUTOMATION: "true"
       WIF_PROVIDER: projects/934473355501/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
-      GCP_SA_EMAIL: github-actions-sa@gen-lang-client-0928975904.iam.gserviceaccount.com
+      GCP_SA_EMAIL: github-actions-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -91,7 +91,7 @@ jobs:
           terraform plan -out=tfplan \
             -var enable_network=true \
             -var enable_service_account=true \
-            -var "project_id=gen-lang-client-0928975904" \
+            -var "project_id=YOUR_GCP_PROJECT_ID" \
             -var "db_password=placeholder" \
             -var "ops_email=admin@ihep.app" \
             -var "folders={}" \

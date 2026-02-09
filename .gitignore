@@ -41,9 +41,10 @@ __pycache__/
 /backup_debug/
 /terraform.zip
 
-# Local Config
-.env.local
-/.env
+# Local Config & Environment Files
+.env
+.env.*
+!.env.example
 /.config/
 /.local/
 .replit
@@ -120,3 +121,14 @@ RAEDME.md
 RESTRUCTURING_REPORT.md
 CLAUDE.md
 AGENTS.md
+
+# Credentials and keys (catch-all)
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+credentials.json
+service-account*.json
+*secret*.json
+*.keystore
