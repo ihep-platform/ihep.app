@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IHEP Terms of Service - Legal terms and conditions for using IHEP services.">
+    <title>Terms of Service - IHEP</title>
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            
+            --font-family-base: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-size-base: 16px;
+            --font-size-sm: 14px;
+            --font-size-lg: 18px;
+            --font-size-2xl: 24px;
+            --font-size-3xl: 30px;
+            
+            --spacing-16: 16px;
+            --spacing-24: 24px;
+            --spacing-32: 32px;
+            --spacing-48: 48px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--color-slate-900);
+            background-color: var(--color-cream-50);
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-200);
+            z-index: 1000;
+            padding: var(--spacing-16);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-teal-600);
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--color-teal-600);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: var(--color-teal-700);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--spacing-48) var(--spacing-16);
+        }
+
+        h1 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-24);
+            color: var(--color-slate-900);
+        }
+
+        h2 {
+            font-size: var(--font-size-2xl);
+            margin-top: var(--spacing-32);
+            margin-bottom: var(--spacing-16);
+            color: var(--color-teal-600);
+        }
+
+        h3 {
+            font-size: var(--font-size-lg);
+            margin-top: var(--spacing-24);
+            margin-bottom: var(--spacing-12);
+            color: var(--color-slate-900);
+        }
+
+        p {
+            margin-bottom: var(--spacing-16);
+            color: var(--color-slate-900);
+        }
+
+        ul, ol {
+            margin-left: var(--spacing-32);
+            margin-bottom: var(--spacing-16);
+        }
+
+        li {
+            margin-bottom: var(--spacing-12);
+        }
+
+        .last-updated {
+            color: var(--color-slate-500);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-32);
+            padding-bottom: var(--spacing-24);
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+
+        .highlight {
+            background-color: rgba(33, 128, 141, 0.1);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+
+        footer {
+            background: var(--color-slate-900);
+            color: var(--color-white);
+            padding: var(--spacing-32) var(--spacing-16);
+            text-align: center;
+            font-size: var(--font-size-sm);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin: 0 var(--spacing-16);
+        }
+
+        .footer-link:hover {
+            color: var(--color-white);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .container {
+                padding: var(--spacing-24) var(--spacing-16);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">IHEP</a>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Terms of Service</h1>
+        <p class="last-updated"><strong>Last Updated:</strong> January 1, 2026 | <strong>Effective Date:</strong> January 1, 2026</p>
+
+        <h2>1. Agreement to Terms</h2>
+        <p>By accessing and using the IHEP website and services ("Services"), you accept and agree to be bound by and comply with these Terms of Service and our Privacy Policy. If you do not agree to abide by the above, please do not use this service.</p>
+
+        <h2>2. Use License</h2>
+        <p>Permission is granted to temporarily download one copy of the materials (information or software) on IHEP's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:</p>
+        <ul>
+            <li>Modify or copy the materials</li>
+            <li>Use the materials for any commercial purpose or for any public display</li>
+            <li>Attempt to decompile or reverse engineer any software contained on the website</li>
+            <li>Remove any copyright or other proprietary notations from the materials</li>
+            <li>Transfer the materials to another person or "mirror" the materials on any other server</li>
+            <li>Violate any applicable laws or regulations</li>
+            <li>Engage in any conduct that restricts or inhibits anyone's use or enjoyment of the website</li>
+            <li>Obtain or attempt to obtain any materials or information through any means not intentionally provided by us</li>
+        </ul>
+
+        <h2>3. Disclaimer</h2>
+        <p>The materials on IHEP's website are provided on an 'as is' basis. IHEP makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights.</p>
+
+        <h2>4. Limitations of Liability</h2>
+        <p>In no event shall IHEP or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on IHEP's website, even if IHEP or an authorized representative has been notified orally or in writing of the possibility of such damage.</p>
+
+        <h2>5. Accuracy of Materials</h2>
+        <p>The materials appearing on IHEP's website could include technical, typographical, or photographic errors. IHEP does not warrant that any of the materials on the website are accurate, complete, or current. IHEP may make changes to the materials contained on the website at any time without notice. However, IHEP does not make any commitment to update the materials.</p>
+
+        <h2>6. Links</h2>
+        <p>IHEP has not reviewed all of the sites linked to its website and is not responsible for the contents of any such linked site. The inclusion of any link does not imply endorsement by IHEP of the site. Use of any such linked website is at the user's own risk.</p>
+
+        <h2>7. Modifications</h2>
+        <p>IHEP may revise these terms of service for the website at any time without notice. By using this website, you are agreeing to be bound by the then current version of these terms of service.</p>
+
+        <h2>8. Governing Law</h2>
+        <p>These terms and conditions are governed by and construed in accordance with the laws of the State of New Jersey, and you irrevocably submit to the exclusive jurisdiction of the courts in that location.</p>
+
+        <h2>9. Intellectual Property Rights</h2>
+        <h3>9.1 Ownership</h3>
+        <p>All materials on the IHEP website, including but not limited to text, graphics, logos, images, audio clips, digital downloads, and data compilations, are the property of IHEP or its content suppliers and are protected by international copyright laws.</p>
+
+        <h3>9.2 Limited Use</h3>
+        <p>You are granted a limited, non-exclusive, non-transferable license to view and download materials from the website solely for your personal, non-commercial use, provided you do not remove any copyright or proprietary notices.</p>
+
+        <h3>9.3 Unauthorized Use</h3>
+        <p>Any unauthorized use of the materials may violate copyright, trademark, and other applicable laws and could result in criminal or civil penalties.</p>
+
+        <h2>10. User Conduct</h2>
+        <p>You agree not to:</p>
+        <ul>
+            <li>Engage in any conduct that violates applicable laws or regulations</li>
+            <li>Harass, abuse, or threaten any person</li>
+            <li>Transmit obscene or offensive content</li>
+            <li>Attempt to gain unauthorized access to our systems</li>
+            <li>Interfere with the normal operation of the website</li>
+            <li>Use the website for illegal or fraudulent purposes</li>
+            <li>Spam or send unsolicited communications</li>
+        </ul>
+
+        <h2>11. User-Generated Content</h2>
+        <p>If you submit content to IHEP (such as comments, feedback, or inquiries), you grant IHEP a non-exclusive, royalty-free, perpetual license to use, reproduce, modify, and distribute such content. You represent that you own or have the right to submit the content.</p>
+
+        <h2>12. Limitation on Clinical Application</h2>
+        <p>The information on this website is provided for informational and research purposes only and should not be construed as medical advice. IHEP's platform is designed to complement, not replace, professional medical advice, diagnosis, or treatment. Always consult with qualified healthcare providers for medical decisions.</p>
+
+        <h2>13. Research Participant Terms</h2>
+        <p>For individuals participating in IHEP research protocols:</p>
+        <ul>
+            <li>You will provide separate, explicit informed consent for research participation</li>
+            <li>You retain the right to withdraw from research at any time without penalty</li>
+            <li>Your health data will be used solely for approved research purposes with strict confidentiality protections</li>
+            <li>Results will be disseminated through peer-reviewed publications and clinical applications</li>
+            <li>You acknowledge potential risks and benefits as outlined in the study protocol</li>
+        </ul>
+
+        <h2>14. Indemnification</h2>
+        <p>You agree to indemnify and hold harmless IHEP, its officers, agents, and employees from any and all claims, damages, losses, liabilities, and expenses (including attorney's fees) arising out of or related to your use of the website, violation of these terms, or infringement of any third-party rights.</p>
+
+        <h2>15. Termination</h2>
+        <p>IHEP reserves the right to terminate or suspend your access to the website at any time, with or without cause, and without liability. Reasons for termination may include, but are not limited to, violation of these terms, harmful conduct, or as otherwise determined by IHEP in its sole discretion.</p>
+
+        <h2>16. Contact for Disputes</h2>
+        <p>If you have any disputes regarding these Terms of Service, please contact us at:</p>
+        <ul>
+            <li><strong>Email:</strong> legal@ihephealth.com</li>
+            <li><strong>Mail:</strong> Integrated Health Empowerment Program, Newark, New Jersey, USA</li>
+        </ul>
+
+        <h2>17. Entire Agreement</h2>
+        <p>These Terms of Service, together with the Privacy Policy, constitute the entire agreement between you and IHEP regarding your use of the website and supersede all prior negotiations, representations, and agreements, whether written or oral.</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Integrated Health Empowerment Program. All rights reserved.</p>
+        <div style="margin-top: var(--spacing-16);">
+            <a href="privacy.html" class="footer-link">Privacy</a>
+            <a href="tos.html" class="footer-link">Terms of Service</a>
+            <a href="hipaa.html" class="footer-link">HIPAA Notice</a>
+            <a href="security.html" class="footer-link">Security</a>
+        </div>
+    </footer>
+</body>
+</html>

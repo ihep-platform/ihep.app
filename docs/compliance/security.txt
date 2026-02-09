@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IHEP Security Framework - Comprehensive security and compliance information.">
+    <title>Security Framework - IHEP</title>
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            
+            --font-family-base: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-size-base: 16px;
+            --font-size-sm: 14px;
+            --font-size-lg: 18px;
+            --font-size-2xl: 24px;
+            --font-size-3xl: 30px;
+            
+            --spacing-16: 16px;
+            --spacing-24: 24px;
+            --spacing-32: 32px;
+            --spacing-48: 48px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--color-slate-900);
+            background-color: var(--color-cream-50);
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-200);
+            z-index: 1000;
+            padding: var(--spacing-16);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-teal-600);
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--color-teal-600);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: var(--color-teal-700);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--spacing-48) var(--spacing-16);
+        }
+
+        h1 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-24);
+            color: var(--color-slate-900);
+        }
+
+        h2 {
+            font-size: var(--font-size-2xl);
+            margin-top: var(--spacing-32);
+            margin-bottom: var(--spacing-16);
+            color: var(--color-teal-600);
+        }
+
+        h3 {
+            font-size: var(--font-size-lg);
+            margin-top: var(--spacing-24);
+            margin-bottom: var(--spacing-12);
+            color: var(--color-slate-900);
+        }
+
+        p {
+            margin-bottom: var(--spacing-16);
+            color: var(--color-slate-900);
+        }
+
+        ul, ol {
+            margin-left: var(--spacing-32);
+            margin-bottom: var(--spacing-16);
+        }
+
+        li {
+            margin-bottom: var(--spacing-12);
+        }
+
+        .last-updated {
+            color: var(--color-slate-500);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-32);
+            padding-bottom: var(--spacing-24);
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+
+        .highlight {
+            background-color: rgba(33, 128, 141, 0.1);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+
+        .feature-box {
+            background-color: var(--color-white);
+            border: 1px solid var(--color-gray-200);
+            border-left: 4px solid var(--color-teal-600);
+            padding: var(--spacing-16);
+            margin: var(--spacing-24) 0;
+            border-radius: 4px;
+        }
+
+        .security-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--spacing-24) 0;
+        }
+
+        .security-matrix th,
+        .security-matrix td {
+            border: 1px solid var(--color-gray-200);
+            padding: var(--spacing-12);
+            text-align: left;
+        }
+
+        .security-matrix th {
+            background-color: var(--color-gray-200);
+            font-weight: 600;
+        }
+
+        footer {
+            background: var(--color-slate-900);
+            color: var(--color-white);
+            padding: var(--spacing-32) var(--spacing-16);
+            text-align: center;
+            font-size: var(--font-size-sm);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin: 0 var(--spacing-16);
+        }
+
+        .footer-link:hover {
+            color: var(--color-white);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .container {
+                padding: var(--spacing-24) var(--spacing-16);
+            }
+
+            .security-matrix {
+                font-size: var(--font-size-sm);
+            }
+
+            .security-matrix th,
+            .security-matrix td {
+                padding: var(--spacing-8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">IHEP</a>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Security Framework</h1>
+        <p class="last-updated"><strong>Last Updated:</strong> January 1, 2026 | <strong>Framework Version:</strong> 1.0</p>
+
+        <h2>1. Security Overview</h2>
+        <p>IHEP operates a <span class="highlight">compliance-first, zero-trust security architecture</span> designed to meet the most stringent healthcare data protection requirements. Our security framework is built on three foundational pillars: prevention, detection, and recovery.</p>
+
+        <div class="feature-box">
+            <h3 style="margin-top: 0;">Security Philosophy</h3>
+            <p><strong>Trust Nothing. Verify Everything.</strong> IHEP implements zero-trust principles where all users, devices, and network traffic are continuously authenticated, authorized, and encrypted—regardless of location or previous trust status.</p>
+        </div>
+
+        <h2>2. Compliance Standards</h2>
+        <p>IHEP adheres to the following regulatory and industry standards:</p>
+
+        <table class="security-matrix">
+            <tr>
+                <th>Standard</th>
+                <th>Scope</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>HIPAA (Health Insurance Portability and Accountability Act)</td>
+                <td>Protected Health Information (PHI) privacy and security</td>
+                <td>Fully Compliant</td>
+            </tr>
+            <tr>
+                <td>NIST SP 800-53r5</td>
+                <td>Security and Privacy Controls for Information Systems</td>
+                <td>Fully Implemented</td>
+            </tr>
+            <tr>
+                <td>NIST AI Risk Management Framework (AI RMF)</td>
+                <td>Artificial Intelligence system risk management</td>
+                <td>Fully Implemented</td>
+            </tr>
+            <tr>
+                <td>HITRUST CSF</td>
+                <td>Healthcare Information and Management Systems Society security framework</td>
+                <td>Roadmap for Phase II</td>
+            </tr>
+            <tr>
+                <td>GDPR (General Data Protection Regulation)</td>
+                <td>European data subject protection</td>
+                <td>Fully Compliant for EU Residents</td>
+            </tr>
+            <tr>
+                <td>CCPA (California Consumer Privacy Act)</td>
+                <td>California resident data privacy rights</td>
+                <td>Fully Compliant for CA Residents</td>
+            </tr>
+            <tr>
+                <td>SOC 2 Type II</td>
+                <td>Service organization controls and audit</td>
+                <td>Targeted for Q2 2026</td>
+            </tr>
+        </table>
+
+        <h2>3. Encryption and Data Protection</h2>
+
+        <h3>3.1 Data at Rest</h3>
+        <p>All Protected Health Information stored in IHEP systems is encrypted using:</p>
+        <ul>
+            <li><span class="highlight">AES-256 encryption</span> (Advanced Encryption Standard, 256-bit key)</li>
+            <li>Industry-standard encryption algorithms validated by NIST</li>
+            <li>Key management through Google Cloud KMS (Key Management Service)</li>
+            <li>Automatic key rotation every 90 days</li>
+            <li>Secure key storage with HSM (Hardware Security Module) backing</li>
+        </ul>
+
+        <h3>3.2 Data in Transit</h3>
+        <p>All data transmitted to and from IHEP systems is encrypted using:</p>
+        <ul>
+            <li><span class="highlight">TLS 1.3</span> (Transport Layer Security 1.3) for all network communications</li>
+            <li>Perfect Forward Secrecy (PFS) for ephemeral session keys</li>
+            <li>Certificate pinning to prevent man-in-the-middle attacks</li>
+            <li>OCSP stapling for certificate status validation</li>
+            <li>Minimum 2048-bit RSA keys for certificate signing</li>
+        </ul>
+
+        <h2>4. Authentication and Access Control</h2>
+
+        <h3>4.1 Multi-Factor Authentication (MFA)</h3>
+        <p>All user access to IHEP systems requires:</p>
+        <ul>
+            <li>Primary factor: Username and strong password (minimum 12 characters, complexity requirements)</li>
+            <li>Secondary factor: Time-based one-time password (TOTP) or hardware security key</li>
+            <li>Biometric authentication available on supported devices</li>
+            <li>Risk-based authentication for unusual access patterns</li>
+        </ul>
+
+        <h3>4.2 Role-Based Access Control (RBAC)</h3>
+        <p>Access to PHI and sensitive systems is strictly controlled using:</p>
+        <ul>
+            <li>Principle of least privilege—users granted minimum necessary permissions</li>
+            <li>Role definitions aligned with job functions and security levels</li>
+            <li>Regular access reviews and justification of elevated permissions</li>
+            <li>Automated access removal upon employment termination</li>
+            <li>Segregation of duties to prevent unauthorized transactions</li>
+        </ul>
+
+        <h3>4.3 Session Management</h3>
+        <ul>
+            <li>Automatic session timeout after 30 minutes of inactivity</li>
+            <li>Session encryption and secure cookie handling</li>
+            <li>Concurrent session limits to prevent account sharing</li>
+            <li>Immediate revocation capability for compromised sessions</li>
+        </ul>
+
+        <h2>5. Network Security</h2>
+
+        <h3>5.1 Architecture</h3>
+        <p>IHEP network is protected through:</p>
+        <ul>
+            <li>VPC (Virtual Private Cloud) isolation with public/private subnets</li>
+            <li>Web Application Firewall (WAF) blocking malicious traffic patterns</li>
+            <li>DDoS protection and mitigation</li>
+            <li>VPN requirements for administrative access</li>
+            <li>Network segmentation isolating PHI from non-critical systems</li>
+        </ul>
+
+        <h3>5.2 Intrusion Detection and Prevention</h3>
+        <ul>
+            <li>Real-time network monitoring with automated threat detection</li>
+            <li>Intrusion Prevention System (IPS) to block known attack patterns</li>
+            <li>Behavioral analysis detecting anomalous network activity</li>
+            <li>Automated incident response triggering alerts and containment</li>
+        </ul>
+
+        <h2>6. Data Audit and Logging</h2>
+
+        <h3>6.1 Comprehensive Audit Trails</h3>
+        <p>IHEP maintains immutable audit logs for all PHI access and system events:</p>
+        <ul>
+            <li>User authentication attempts (successful and failed)</li>
+            <li>All PHI access with timestamp, user ID, data accessed</li>
+            <li>Modifications to patient data with before/after values</li>
+            <li>Administrative actions and configuration changes</li>
+            <li>Data exports and disclosures with recipient information</li>
+            <li>Security events and policy violations</li>
+        </ul>
+
+        <h3>6.2 Log Management</h3>
+        <ul>
+            <li><span class="highlight">Blockchain-style cryptographic chaining</span> to ensure log integrity</li>
+            <li>Centralized log aggregation with immutable storage</li>
+            <li>Automated log analysis detecting suspicious patterns</li>
+            <li>Retention: 7 years minimum per HIPAA requirements</li>
+            <li>Export capabilities for incident investigation and audits</li>
+        </ul>
+
+        <h2>7. Vulnerability Management</h2>
+
+        <h3>7.1 Scanning and Assessment</h3>
+        <ul>
+            <li>Automated vulnerability scanning: daily for infrastructure, weekly for applications</li>
+            <li>Penetration testing: quarterly internal, annual external</li>
+            <li>Software composition analysis identifying vulnerable dependencies</li>
+            <li>Security code review of all source code changes before deployment</li>
+        </ul>
+
+        <h3>7.2 Patch Management</h3>
+        <ul>
+            <li>Critical patches: deployed within 48 hours</li>
+            <li>High-priority patches: deployed within 1 week</li>
+            <li>Standard patches: deployed within monthly maintenance windows</li>
+            <li>Automatic rollback capability for failed patches</li>
+        </ul>
+
+        <h2>8. Incident Response</h2>
+
+        <h3>8.1 Incident Detection and Response</h3>
+        <ul>
+            <li>24/7 Security Operations Center (SOC) monitoring</li>
+            <li>Automated alerts for security events exceeding thresholds</li>
+            <li>Incident classification and severity assessment within 15 minutes</li>
+            <li>Containment actions initiated immediately for critical incidents</li>
+            <li>Communication to affected parties within 24 hours for breaches</li>
+        </ul>
+
+        <h3>8.2 Investigation and Recovery</h3>
+        <ul>
+            <li>Forensic analysis of all security incidents</li>
+            <li>Root cause analysis with corrective actions</li>
+            <li>Evidence preservation for potential legal proceedings</li>
+            <li>System recovery and data restoration procedures</li>
+            <li>Post-incident review and lessons learned documentation</li>
+        </ul>
+
+        <h2>9. Business Continuity and Disaster Recovery</h2>
+
+        <h3>9.1 Backup Strategy</h3>
+        <ul>
+            <li>Continuous incremental backups with hourly snapshots</li>
+            <li>Daily full backups with 30-day retention</li>
+            <li>Geographic redundancy with backups in multiple regions</li>
+            <li>Automated backup integrity verification</li>
+            <li>Recovery Time Objective (RTO): 1 hour</li>
+            <li>Recovery Point Objective (RPO): 15 minutes</li>
+        </ul>
+
+        <h3>9.2 Disaster Recovery</h3>
+        <ul>
+            <li>Failover to secondary data center: automatic within 5 minutes</li>
+            <li>Business Continuity Plan tested quarterly</li>
+            <li>Redundant infrastructure across availability zones</li>
+            <li>Service availability guarantee: 99.9% uptime SLA</li>
+        </ul>
+
+        <h2>10. Vendor and Third-Party Management</h2>
+
+        <h3>10.1 Business Associate Agreements</h3>
+        <p>All vendors handling PHI must execute Business Associate Agreements (BAAs) requiring:</p>
+        <ul>
+            <li>Compliance with HIPAA security and privacy rules</li>
+            <li>Subcontractor agreements cascading security requirements</li>
+            <li>Right to audit and security assessments</li>
+            <li>Incident notification obligations</li>
+            <li>Data destruction procedures upon contract termination</li>
+        </ul>
+
+        <h3>10.2 Vendor Assessment</h3>
+        <ul>
+            <li>Security assessment before vendor engagement</li>
+            <li>Annual compliance verification</li>
+            <li>Incident reporting requirements</li>
+            <li>Right to audit vendor security practices</li>
+        </ul>
+
+        <h2>11. Staff Training and Security Awareness</h2>
+
+        <h3>11.1 Onboarding</h3>
+        <ul>
+            <li>HIPAA compliance training (2 hours)</li>
+            <li>Security awareness training (4 hours)</li>
+            <li>Role-specific security training before system access</li>
+            <li>Annual recertification of compliance understanding</li>
+        </ul>
+
+        <h3>11.2 Ongoing Education</h3>
+        <ul>
+            <li>Monthly security awareness communications</li>
+            <li>Phishing simulation campaigns with education</li>
+            <li>Breach response training and tabletop exercises</li>
+            <li>Updates on emerging threats and vulnerabilities</li>
+        </ul>
+
+        <h2>12. Contact for Security Concerns</h2>
+        <p>If you discover a security vulnerability or have security concerns, please contact:</p>
+        <ul>
+            <li><strong>Security Team:</strong> security@ihephealth.com</li>
+            <li><strong>Chief Security Officer:</strong> cso@ihephealth.com</li>
+            <li><strong>Responsible Disclosure:</strong> Please allow 90 days for remediation before public disclosure</li>
+        </ul>
+
+        <h2>13. Policy Review and Updates</h2>
+        <p>This Security Framework is reviewed and updated annually or whenever significant security changes occur. All updates are communicated to stakeholders.</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Integrated Health Empowerment Program. All rights reserved.</p>
+        <div style="margin-top: var(--spacing-16);">
+            <a href="privacy.html" class="footer-link">Privacy</a>
+            <a href="tos.html" class="footer-link">Terms of Service</a>
+            <a href="hipaa.html" class="footer-link">HIPAA Notice</a>
+            <a href="security.html" class="footer-link">Security</a>
+        </div>
+    </footer>
+</body>
+</html>

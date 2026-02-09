@@ -1,0 +1,60 @@
+name: terraform-staging
+
+on:
+  push:
+    branches: [ "CI" ]
+
+jobs:
+  apply-staging:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      TF_IN_AUTOMATION: "true"
+      WIF_PROVIDER: projects/934473355501/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
+      GCP_SA_EMAIL: github-actions-sa@gen-lang-client-0928975904.iam.gserviceaccount.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Auth to Google Cloud (OIDC)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GCP_SA_EMAIL }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform init (uses backend if present)
+        working-directory: terraform
+        run: terraform init -input=false
+
+      - name: Terraform workspace (staging)
+        working-directory: terraform
+        run: |
+          terraform workspace select staging || terraform workspace new staging
+
+      - name: Terraform plan (staging)
+        working-directory: terraform
+        run: |
+          terraform plan -out=tfplan \
+            -var enable_network=true \
+            -var enable_service_account=true \
+            -var "project_id=gen-lang-client-0928975904" \
+            -var "db_password=placeholder" \
+            -var "ops_email=admin@ihep.app" \
+            -var "folders={}" \
+            -var "application_enabled_folder_paths=[]" \
+            -var "cmek_autokey_folders=[]"
+
+      - name: Terraform apply (staging)
+        working-directory: terraform
+        run: terraform apply tfplan
+

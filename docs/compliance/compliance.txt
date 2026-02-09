@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IHEP HIPAA Notice of Privacy Practices - Protected Health Information safeguards.">
+    <title>HIPAA Notice of Privacy Practices - IHEP</title>
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            
+            --font-family-base: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-size-base: 16px;
+            --font-size-sm: 14px;
+            --font-size-lg: 18px;
+            --font-size-2xl: 24px;
+            --font-size-3xl: 30px;
+            
+            --spacing-16: 16px;
+            --spacing-24: 24px;
+            --spacing-32: 32px;
+            --spacing-48: 48px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            line-height: 1.8;
+            color: var(--color-slate-900);
+            background-color: var(--color-cream-50);
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-200);
+            z-index: 1000;
+            padding: var(--spacing-16);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-teal-600);
+            text-decoration: none;
+        }
+
+        .back-link {
+            color: var(--color-teal-600);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: var(--color-teal-700);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: var(--spacing-48) var(--spacing-16);
+        }
+
+        h1 {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-24);
+            color: var(--color-slate-900);
+        }
+
+        h2 {
+            font-size: var(--font-size-2xl);
+            margin-top: var(--spacing-32);
+            margin-bottom: var(--spacing-16);
+            color: var(--color-teal-600);
+        }
+
+        h3 {
+            font-size: var(--font-size-lg);
+            margin-top: var(--spacing-24);
+            margin-bottom: var(--spacing-12);
+            color: var(--color-slate-900);
+        }
+
+        p {
+            margin-bottom: var(--spacing-16);
+            color: var(--color-slate-900);
+        }
+
+        ul, ol {
+            margin-left: var(--spacing-32);
+            margin-bottom: var(--spacing-16);
+        }
+
+        li {
+            margin-bottom: var(--spacing-12);
+        }
+
+        .last-updated {
+            color: var(--color-slate-500);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-32);
+            padding-bottom: var(--spacing-24);
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+
+        .highlight {
+            background-color: rgba(33, 128, 141, 0.1);
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+
+        .warning-box {
+            background-color: rgba(33, 128, 141, 0.1);
+            border-left: 4px solid var(--color-teal-600);
+            padding: var(--spacing-16);
+            margin: var(--spacing-24) 0;
+            border-radius: 4px;
+        }
+
+        footer {
+            background: var(--color-slate-900);
+            color: var(--color-white);
+            padding: var(--spacing-32) var(--spacing-16);
+            text-align: center;
+            font-size: var(--font-size-sm);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            margin: 0 var(--spacing-16);
+        }
+
+        .footer-link:hover {
+            color: var(--color-white);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .container {
+                padding: var(--spacing-24) var(--spacing-16);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">IHEP</a>
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>HIPAA Notice of Privacy Practices</h1>
+        <p class="last-updated"><strong>Last Updated:</strong> January 1, 2026 | <strong>Effective Date:</strong> January 1, 2026</p>
+
+        <div class="warning-box">
+            <p><strong>This Notice of Privacy Practices describes how your health information may be used and disclosed and how you can get access to this information.</strong> Please review it carefully.</p>
+        </div>
+
+        <h2>1. Introduction</h2>
+        <p>The Integrated Health Empowerment Program (IHEP) recognizes the importance of your health information privacy. This Notice of Privacy Practices ("Notice") is required by the Health Insurance Portability and Accountability Act (HIPAA) and applies to all participants in IHEP research programs and services.</p>
+
+        <h2>2. Our Responsibility</h2>
+        <p>IHEP is committed to maintaining the privacy of your Protected Health Information (PHI). We are required by law to:</p>
+        <ul>
+            <li>Maintain the privacy of your health information</li>
+            <li>Provide you with notice of our privacy practices</li>
+            <li>Notify you if there is a breach of your unsecured health information</li>
+            <li>Apply and enforce the privacy practices described in this Notice</li>
+        </ul>
+
+        <h2>3. Definitions</h2>
+        <h3>Protected Health Information (PHI)</h3>
+        <p>PHI includes any information in a medical record or health plan that can be used to identify an individual. This includes:</p>
+        <ul>
+            <li>Clinical data (diagnosis, treatment, medications, lab results)</li>
+            <li>Demographic information (name, address, date of birth)</li>
+            <li>Psychosocial indicators (mental health assessments, adherence patterns)</li>
+            <li>Behavioral data (wearable information, appointment attendance)</li>
+            <li>Social determinants of health information</li>
+            <li>Any other information that could identify you or relate to your health</li>
+        </ul>
+
+        <h3>De-identified Information</h3>
+        <p>Information that has been stripped of all identifiers and cannot reasonably be used to identify an individual. De-identified information may be used for research, quality improvement, and AI model development without restrictions.</p>
+
+        <h2>4. How We Use and Disclose Your PHI</h2>
+
+        <h3>4.1 With Your Written Authorization</h3>
+        <p>We will use and disclose your PHI only for the specific purposes identified in your written authorization. You may revoke this authorization at any time in writing.</p>
+
+        <h3>4.2 For Approved Research</h3>
+        <p>Your PHI may be used for IHEP research protocols that have been reviewed and approved by an Institutional Review Board (IRB). Research uses may include:</p>
+        <ul>
+            <li>Clinical outcome measurement and analysis</li>
+            <li>AI model training and development (digital twins)</li>
+            <li>Federated learning networks across multiple sites</li>
+            <li>Publication and dissemination of findings</li>
+            <li>Identification of cure acceleration pathways</li>
+        </ul>
+
+        <h3>4.3 For Treatment, Payment, and Healthcare Operations</h3>
+        <p>We may use and disclose your PHI for:</p>
+        <ul>
+            <li>Providing clinical services and coordination of care</li>
+            <li>Processing payments and billing</li>
+            <li>Conducting business operations necessary to support treatment and payment</li>
+        </ul>
+
+        <h3>4.4 Legal and Required Disclosures</h3>
+        <p>We may disclose your PHI when required by law:</p>
+        <ul>
+            <li>To comply with court orders or legal process</li>
+            <li>To public health authorities for disease reporting or surveillance</li>
+            <li>To law enforcement when legally required</li>
+            <li>To prevent imminent harm</li>
+            <li>To workers' compensation agencies</li>
+        </ul>
+
+        <h3>4.5 Business Associates</h3>
+        <p>We may share your PHI with Business Associates (vendors and contractors) who assist us in operating the IHEP platform. All Business Associates have signed Business Associate Agreements requiring them to maintain privacy and security of your information.</p>
+
+        <h2>5. How We Protect Your Information</h2>
+        <p>IHEP implements comprehensive safeguards to protect your PHI:</p>
+
+        <h3>5.1 Administrative Safeguards</h3>
+        <ul>
+            <li>Designated Privacy Officer and Security Officer</li>
+            <li>Workforce training and security awareness programs</li>
+            <li>Background checks for all staff with access to PHI</li>
+            <li>Policies and procedures for PHI handling</li>
+            <li>Incident response and breach notification procedures</li>
+        </ul>
+
+        <h3>5.2 Physical Safeguards</h3>
+        <ul>
+            <li>Secure facilities and access controls on Google Cloud Platform</li>
+            <li>Surveillance and monitoring systems</li>
+            <li>Physical access restrictions to systems containing PHI</li>
+        </ul>
+
+        <h3>5.3 Technical Safeguards</h3>
+        <ul>
+            <li><span class="highlight">AES-256 encryption</span> of PHI at rest</li>
+            <li><span class="highlight">TLS 1.3 encryption</span> for data in transit</li>
+            <li>Multi-factor authentication for all system access</li>
+            <li>Audit controls and immutable audit trails</li>
+            <li>Access controls limiting information to necessary personnel</li>
+            <li>Regular security scanning and penetration testing</li>
+            <li>Automatic violation detection and remediation</li>
+        </ul>
+
+        <h2>6. Your Rights Regarding Your PHI</h2>
+
+        <h3>6.1 Right to Access</h3>
+        <p>You have the right to request access to your PHI held by IHEP. Request must be submitted in writing. We will provide access within 30 days or explain why access is denied.</p>
+
+        <h3>6.2 Right to Amendment</h3>
+        <p>You may request correction of inaccurate or incomplete PHI. We have 60 days to respond. If we deny your request, you have the right to submit a written statement of disagreement.</p>
+
+        <h3>6.3 Right to Accounting of Disclosures</h3>
+        <p>You may request a list of disclosures of your PHI made by IHEP for purposes other than treatment, payment, or operations. Accounting is provided free once per year. Additional requests may incur reasonable fees.</p>
+
+        <h3>6.4 Right to Request Restrictions</h3>
+        <p>You may request restrictions on the use and disclosure of your PHI. While we will consider all requests, we are not required to agree to restrictions. If we agree, we will abide by the restriction unless you otherwise specify.</p>
+
+        <h3>6.5 Right to Confidential Communication</h3>
+        <p>You may request that we communicate with you about your health information by alternative means or at alternative locations. We will accommodate reasonable requests.</p>
+
+        <h3>6.6 Right to Notice of Breach</h3>
+        <p>You will be notified without unreasonable delay if there is a breach of your unsecured PHI. Notice will include information about the breach, steps you can take to protect yourself, and our response procedures.</p>
+
+        <h3>6.7 Right to Withdraw Research Authorization</h3>
+        <p>You may withdraw your authorization for IHEP research at any time by submitting written notice. Withdrawal does not affect information already used or disclosed.</p>
+
+        <h2>7. Breach Notification Procedures</h2>
+        <p>In the unlikely event of a breach of your unsecured PHI:</p>
+        <ul>
+            <li>We will conduct a thorough investigation</li>
+            <li>We will notify you within 60 days of discovery of the breach</li>
+            <li>We will notify appropriate authorities and media if more than 500 residents are affected</li>
+            <li>We will provide information about the breach, its scope, and remediation steps</li>
+            <li>We will offer credit monitoring services if warranted</li>
+        </ul>
+
+        <h2>8. International Data Transfers</h2>
+        <p>IHEP primarily operates within the United States. If your PHI is transferred internationally, we will implement appropriate safeguards including Standard Contractual Clauses and adequacy determinations.</p>
+
+        <h2>9. How to Exercise Your Rights</h2>
+        <p>To exercise any of your rights under this Notice, submit a written request to:</p>
+        <ul>
+            <li><strong>Privacy Officer:</strong> privacy@ihephealth.com</li>
+            <li><strong>Mail:</strong> Integrated Health Empowerment Program, Privacy Officer, Newark, New Jersey, USA</li>
+        </ul>
+
+        <h2>10. How to File a Complaint</h2>
+        <p>If you believe your privacy rights have been violated, you may file a complaint with:</p>
+        <ul>
+            <li><strong>IHEP Privacy Officer:</strong> privacy@ihephealth.com</li>
+            <li><strong>U.S. Department of Health and Human Services Office for Civil Rights:</strong><br>
+            200 Independence Avenue, S.W.<br>
+            Washington, D.C. 20201<br>
+            Phone: 1-877-696-6775<br>
+            www.hhs.gov/ocr/privacy</li>
+        </ul>
+
+        <p>You will not be subject to retaliation or punishment for filing a complaint.</p>
+
+        <h2>11. Changes to This Notice</h2>
+        <p>IHEP reserves the right to change this Notice. Revised notices will be effective immediately. You will be notified of material changes via mail or email.</p>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Integrated Health Empowerment Program. All rights reserved.</p>
+        <div style="margin-top: var(--spacing-16);">
+            <a href="privacy.html" class="footer-link">Privacy</a>
+            <a href="tos.html" class="footer-link">Terms of Service</a>
+            <a href="hipaa.html" class="footer-link">HIPAA Notice</a>
+            <a href="security.html" class="footer-link">Security</a>
+        </div>
+    </footer>
+</body>
+</html>

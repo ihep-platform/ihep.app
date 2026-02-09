@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "username": "demo",
+    "password": "$2b$12$XhnefleWClrQ5e8dCkFwIOPrEeWr1P5fHm2ALdjHNka8nIgARu9g6",
+    "email": "demo@example.com",
+    "firstName": "Demo",
+    "lastName": "User",
+    "role": "patient",
+    "profilePicture": null,
+    "phone": null,
+    "preferredContactMethod": null,
+    "createdAt": "2025-01-11T00:00:00.000Z"
+  }
+]

@@ -1,0 +1,122 @@
+/training_datasets/
+.DS_Store
+**/.DS_Store
+terraform.tfstate
+terraform.tfstate.backup
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+# Dependencies
+/node_modules/
+
+# Python virtual environments
+venv/
+.venv/
+**/venv/
+**/.venv/
+.venv-*/
+*.py[cod]
+__pycache__/
+*.so
+
+# Build artifacts
+/dist/
+/.next/
+/out/
+/build/
+*.tsbuildinfo
+.cache/
+
+# Testing
+/coverage/
+/.nyc_output/
+
+# Logs
+/logs/
+*.log
+*.tar.gz
+
+# Backups
+/backups/
+/backup_debug/
+/terraform.zip
+
+# Local Config
+.env.local
+/.env
+/.config/
+/.local/
+.replit
+cookies.txt
+
+# Training libraries (cloned repos)
+/training/DeepSpeed/
+/training/bitsandbytes/
+/training/datasets/
+/training/accelerate/
+/training/evaluate/
+/training/peft/
+/training/transformers/
+/training/trl/
+openusd/
+/SESSION_POLICIES.md
+# Archived legacy/evaluation assets (ignored to reduce security noise)
+/applications/
+/workspaces/
+/app_backup/
+/training_datasets/
+/hub/gateway/
+
+# Vendor code - never commit these large directories
+three.js-master/
+/models/medgemma-4b-it/
+
+# Large binary/model files (keep USD files for OpenUSD partnership)
+*.glb
+*.gltf
+*.safetensors
+*.gguf
+*.bin
+*.ckpt
+*.pth
+*.pt
+
+# Signing keys (should be in secrets manager)
+id_github_signing
+id_github_signing.pub
+
+# W&B and ML artifacts
+wandb/
+**/wandb/
+mlruns/
+
+# IDE and editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+Thumbs.db
+ehthumbs.db
+
+# Legacy directories (explicitly excluded to prevent re-addition)
+app_backup/
+workspaces/
+Strategic_Intelligence/
+curriculum-backend/
+proposal-mailer/
+fragmented_database/
+
+# Secrets and proprietary files
+secrets.sh
+SECURITY_QUICK_FIX.sh
+TODO.md
+TODO_CURRICULUM_QUICK_START.md
+SESSION_HANDOFF.md
+QUICK_START.md
+RAEDME.md
+RESTRUCTURING_REPORT.md
+CLAUDE.md
+AGENTS.md

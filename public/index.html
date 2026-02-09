@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<!-- saved from url=(1583)https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&Expires=1768140003&utm_source=perplexity -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="IHEP - Transforming healthcare aftercare through AI-powered digital twins. Addressing the $290B crisis in treatment adherence.">
+    <meta name="keywords" content="digital health, AI, HIV care, digital twins, health equity, healthcare technology">
+    <meta name="author" content="Integrated Health Empowerment Program">
+    <meta property="og:title" content="IHEP - AI-Powered Digital Health Aftercare Platform">
+    <meta property="og:description" content="Transforming aftercare management for life-altering conditions through digital twins and federated AI.">
+    <meta property="og:type" content="website">
+    
+    <title>IHEP - Integrated Health Empowerment Program</title>
+    
+    <style>
+        :root {
+            --color-white: rgba(255, 255, 255, 1);
+            --color-black: rgba(0, 0, 0, 1);
+            --color-cream-50: rgba(252, 252, 249, 1);
+            --color-gray-200: rgba(245, 245, 245, 1);
+            --color-gray-400: rgba(119, 124, 124, 1);
+            --color-slate-500: rgba(98, 108, 113, 1);
+            --color-slate-900: rgba(19, 52, 59, 1);
+            --color-teal-500: rgba(33, 128, 141, 1);
+            --color-teal-600: rgba(29, 116, 128, 1);
+            --color-teal-700: rgba(26, 104, 115, 1);
+            
+            --font-family-base: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-size-base: 16px;
+            --font-size-sm: 14px;
+            --font-size-lg: 18px;
+            --font-size-xl: 20px;
+            --font-size-2xl: 24px;
+            --font-size-3xl: 30px;
+            --font-size-4xl: 36px;
+            
+            --spacing-4: 4px;
+            --spacing-8: 8px;
+            --spacing-12: 12px;
+            --spacing-16: 16px;
+            --spacing-20: 20px;
+            --spacing-24: 24px;
+            --spacing-32: 32px;
+            --spacing-48: 48px;
+            
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family-base);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--color-slate-900);
+            background-color: var(--color-cream-50);
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-200);
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-16);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: var(--font-size-2xl);
+            font-weight: 700;
+            color: var(--color-teal-600);
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--spacing-24);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-slate-900);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-teal-600);
+        }
+
+        .cta-button {
+            background: var(--color-teal-600);
+            color: var(--color-white);
+            padding: var(--spacing-8) var(--spacing-16);
+            border-radius: var(--radius-base);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+        }
+
+        .cta-button:hover {
+            background: var(--color-teal-700);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--color-teal-600) 0%, var(--color-teal-500) 100%);
+            color: var(--color-white);
+            padding: var(--spacing-48) var(--spacing-16);
+            text-align: center;
+        }
+
+        .hero-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-16);
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: var(--font-size-lg);
+            margin-bottom: var(--spacing-24);
+            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        .hero .cta-button {
+            background: var(--color-white);
+            color: var(--color-teal-600);
+            font-weight: 700;
+            padding: var(--spacing-12) var(--spacing-24);
+            font-size: var(--font-size-base);
+            margin-right: var(--spacing-12);
+        }
+
+        .hero .cta-button:hover {
+            background: var(--color-gray-200);
+        }
+
+        .secondary-button {
+            background: transparent;
+            color: var(--color-white);
+            border: 2px solid var(--color-white);
+            padding: var(--spacing-12) var(--spacing-24);
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: var(--radius-base);
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .secondary-button:hover {
+            background: var(--color-white);
+            color: var(--color-teal-600);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-16);
+        }
+
+        /* Sections */
+        section {
+            padding: var(--spacing-48) var(--spacing-16);
+        }
+
+        section.light {
+            background: var(--color-white);
+        }
+
+        section.gray {
+            background: var(--color-gray-200);
+        }
+
+        h2 {
+            font-size: var(--font-size-3xl);
+            font-weight: 700;
+            margin-bottom: var(--spacing-32);
+            color: var(--color-slate-900);
+        }
+
+        h3 {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-12);
+            color: var(--color-slate-900);
+        }
+
+        /* 90 Second Overview */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-24);
+            margin-bottom: var(--spacing-32);
+        }
+
+        .overview-card {
+            background: var(--color-white);
+            padding: var(--spacing-24);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--color-teal-600);
+        }
+
+        .overview-card h3 {
+            color: var(--color-teal-600);
+        }
+
+        /* Metrics */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-24);
+            margin: var(--spacing-32) 0;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-number {
+            font-size: var(--font-size-4xl);
+            font-weight: 700;
+            color: var(--color-teal-600);
+            margin-bottom: var(--spacing-8);
+        }
+
+        .metric-label {
+            font-size: var(--font-size-sm);
+            color: var(--color-slate-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Document Library */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-24);
+        }
+
+        .doc-card {
+            background: var(--color-white);
+            padding: var(--spacing-24);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            text-decoration: none;
+            color: var(--color-slate-900);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .doc-icon {
+            font-size: var(--font-size-3xl);
+            margin-bottom: var(--spacing-12);
+        }
+
+        .doc-title {
+            font-weight: 600;
+            margin-bottom: var(--spacing-8);
+        }
+
+        .doc-desc {
+            font-size: var(--font-size-sm);
+            color: var(--color-slate-500);
+            margin-bottom: var(--spacing-12);
+            flex-grow: 1;
+        }
+
+        .doc-size {
+            font-size: var(--font-size-xs);
+            color: var(--color-gray-400);
+        }
+
+        /* Newsletter Signup */
+        .newsletter-form {
+            background: linear-gradient(135deg, var(--color-teal-600) 0%, var(--color-teal-500) 100%);
+            color: var(--color-white);
+            padding: var(--spacing-48) var(--spacing-16);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            margin-top: var(--spacing-32);
+        }
+
+        .newsletter-form h3 {
+            color: var(--color-white);
+        }
+
+        .newsletter-form p {
+            margin-bottom: var(--spacing-24);
+            font-size: var(--font-size-lg);
+        }
+
+        .form-group {
+            display: flex;
+            gap: var(--spacing-8);
+            max-width: 500px;
+            margin: var(--spacing-16) auto;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .form-group input {
+            flex: 1;
+            min-width: 200px;
+            padding: var(--spacing-12);
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-base);
+        }
+
+        .form-group button {
+            padding: var(--spacing-12) var(--spacing-24);
+            background: var(--color-white);
+            color: var(--color-teal-600);
+            border: none;
+            border-radius: var(--radius-base);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .form-group button:hover {
+            background: var(--color-gray-200);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--color-slate-900);
+            color: var(--color-white);
+            padding: var(--spacing-48) var(--spacing-16);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-32);
+            margin-bottom: var(--spacing-32);
+        }
+
+        .footer-section h4 {
+            margin-bottom: var(--spacing-16);
+            font-size: var(--font-size-base);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-8);
+            display: block;
+            transition: color 0.2s;
+        }
+
+        .footer-section a:hover {
+            color: var(--color-white);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: var(--spacing-24);
+            text-align: center;
+            font-size: var(--font-size-sm);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .social-links {
+            display: flex;
+            gap: var(--spacing-16);
+            margin-top: var(--spacing-12);
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-bottom: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .hero p {
+                font-size: var(--font-size-base);
+            }
+
+            h2 {
+                font-size: var(--font-size-2xl);
+            }
+
+            .form-group {
+                flex-direction: column;
+            }
+
+            .form-group input,
+            .form-group button {
+                width: 100%;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-32 {
+            margin-bottom: var(--spacing-32);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .highlight {
+            color: var(--color-teal-600);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="#overview" class="logo">IHEP</a>
+            <ul class="nav-links">
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#documents">Documents</a></li>
+                <li><a href="#press">Press Kit</a></li>
+                <li><a href="#team">Team</a></li>
+                <li><a href="#partner">Partner With Us</a></li>
+            </ul>
+            <a href="#newsletter" class="cta-button">Subscribe</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <h1>Transforming Healthcare Aftercare Through AI-Powered Digital Twins</h1>
+            <p>The Integrated Health Empowerment Program (IHEP) solves the $290 billion problem of treatment non-adherence by combining patient digital twins, organizational ecosystem mapping, and federated AI learning—built on Google Cloud with compliance-first architecture.</p>
+            <div>
+                <a href="#overview" class="cta-button">Learn More</a>
+                <a href="/docs/ihep-pitch-deck.pdf" class="secondary-button" target="_blank" rel="noopener noreferrer">Download Our Deck</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Overview Section -->
+    <section id="overview" class="light">
+        <div class="container">
+            <h2 class="text-center">IHEP in 90 Seconds</h2>
+            
+            <div class="metrics text-center">
+                <div class="metric">
+                    <div class="metric-number">$290B</div>
+                    <div class="metric-label">Annual Cost of Non-Adherence</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-number">40%</div>
+                    <div class="metric-label">HIV Patients Lost in 6 Months</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-number">66%</div>
+                    <div class="metric-label">Current Viral Suppression Rate</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-number">1.2M</div>
+                    <div class="metric-label">Americans Living with HIV</div>
+                </div>
+            </div>
+
+            <div class="overview-grid">
+                <div class="overview-card">
+                    <h3>The Problem</h3>
+                    <p>When patients receive life-altering diagnoses like HIV, cancer, or rare blood diseases, the healthcare system provides excellent acute care but abandons them in the critical months that follow. The result: 40% dropout rates, $290 billion in wasted healthcare costs, and preventable deaths.</p>
+                </div>
+
+                <div class="overview-card">
+                    <h3>The Solution</h3>
+                    <p><span class="highlight">Patient Digital Twins</span> fuse clinical, psychosocial, environmental, and behavioral data to anticipate challenges before they manifest. <span class="highlight">Organizational Twins</span> map entire care ecosystems. <span class="highlight">Federated AI</span> learns across sites without moving private health information.</p>
+                </div>
+
+                <div class="overview-card">
+                    <h3>The Impact</h3>
+                    <p>Phase I pilot targeting 15% improvement in appointment adherence, 25% reduction in emergency department visits, and 85% viral suppression rate (vs. 66% national average). Built on Google Cloud with NIST SP 800-53r5 compliance-first architecture.</p>
+                </div>
+            </div>
+
+            <div style="background: var(--color-gray-200); padding: var(--spacing-24); border-radius: var(--radius-lg); margin-top: var(--spacing-32);">
+                <h3 style="margin-top: 0;">Raising $3.5M Series Seed</h3>
+                <p>To fund Phase I pilot deployment in Miami/Orlando, executive team assembly, compliance validation, and outcome demonstration.</p>
+                <p><strong>Investment Terms:</strong> Convertible note, 20% Series A discount, $15M cap, 6% interest, 24-month maturity. Minimum investment $100K.</p>
+                <p><strong>Timeline:</strong> Operations commence March 2026. SBIR Phase I application April 5, 2026 ($300K non-dilutive if successful).</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Document Library -->
+    <section id="documents" class="gray">
+        <div class="container">
+            <h2 class="text-center">Document Library</h2>
+            <p class="text-center" style="margin-bottom: var(--spacing-32); color: var(--color-slate-500);">All materials available for download. Password-protected materials upon request.</p>
+
+            <div class="doc-grid">
+                <a class="doc-card" href="/docs/A%20Recursive%20Blueprint%20for%20a%20Global%20Problem.pdf" target="_blank" rel="noopener noreferrer">
+                    <div class="doc-icon">Doc</div>
+                    <div class="doc-title">One-Page Overview</div>
+                    <div class="doc-desc">Quick introduction to IHEP's problem, solution, market opportunity, and funding ask. Perfect for first impressions.</div>
+                    <div class="doc-size">PDF</div>
+                </a>
+
+                <a class="doc-card" href="/docs/ihep-pitch-deck.pdf" target="_blank" rel="noopener noreferrer">
+                    <div class="doc-icon">Deck</div>
+                    <div class="doc-title">Investor Deck</div>
+                    <div class="doc-desc">Comprehensive 10-12 slide presentation covering market opportunity, technology differentiation, financial projections, team, and investment terms.</div>
+                    <div class="doc-size">PDF</div>
+                </a>
+
+                <a class="doc-card" href="/docs/IHEP%20System%20Architecture%20Document.pdf" target="_blank" rel="noopener noreferrer">
+                    <div class="doc-icon">Build</div>
+                    <div class="doc-title">Technical Architecture</div>
+                    <div class="doc-desc">Detailed whitepaper covering digital twin technology, federated learning, morphogenetic framework, and NIST compliance architecture.</div>
+                    <div class="doc-size">PDF</div>
+                </a>
+
+                <a class="doc-card" href="/docs/IHEP%20Comprehensive%20Financial%20Model.pdf" target="_blank" rel="noopener noreferrer">
+                    <div class="doc-icon">Finance</div>
+                    <div class="doc-title">Financial Model</div>
+                    <div class="doc-desc">Phase I budget breakdown, 10-year financial projections, unit economics, and path to profitability. Conservative assumptions detailed.</div>
+                    <div class="doc-size">PDF</div>
+                </a>
+
+                <a class="doc-card" href="/docs/IHEP%20Phase%20I%20Detailed%20Project%20Plan.pdf" target="_blank" rel="noopener noreferrer">
+                    <div class="doc-icon">Plan</div>
+                    <div class="doc-title">Pilot Plan &amp; Timeline</div>
+                    <div class="doc-desc">Detailed Phase I implementation roadmap with milestones, success metrics, outcome measurement methodology, and measurable endpoints.</div>
+                    <div class="doc-size">PDF</div>
+                </a>
+
+                <a class="doc-card" href="/docs/IHEP%20Complete%20Due%20Diligence%20Package.pdf" target="_blank" rel="noopener noreferrer">
+                    <div class="doc-icon">Checklist</div>
+                    <div class="doc-title">Due Diligence Package</div>
+                    <div class="doc-desc">Complete due diligence documentation for investor review including all key materials and supporting documents.</div>
+                    <div class="doc-size">PDF</div>
+                </a>
+
+                <a class="doc-card" href="/investor-dashboard.html" target="_blank" rel="noopener noreferrer">
+                    <div class="doc-icon">Dashboard</div>
+                    <div class="doc-title">Investor Dashboard</div>
+                    <div class="doc-desc">Interactive 10 year Income Streams, Financial Impact, Income Streams, Op Costs, Funding Model & ROI Analysis.</div>
+                    <div class="doc-size">HTML</div>
+                </a>
+
+            </div>
+
+            <p class="text-center" style="margin-top: var(--spacing-48); color: var(--color-slate-500); font-size: var(--font-size-sm);">
+                Additional materials available upon request: Technical specifications • Security &amp; Compliance Framework • Clinical Study Protocol • Partnership Agreements • Regulatory Strategy
+            </p>
+        </div>
+    </section>
+
+    <!-- Press Kit Section -->
+    <section id="press" class="light">
+        <div class="container">
+            <h2 class="text-center">Press &amp; Media Kit</h2>
+            
+            <div style="background: var(--color-gray-200); padding: var(--spacing-32); border-radius: var(--radius-lg); margin-top: var(--spacing-32);">
+                <h3>Company Boilerplate</h3>
+                <p style="margin-bottom: var(--spacing-16);"><strong>50-word version:</strong></p>
+                <p style="margin-bottom: var(--spacing-24); font-style: italic; color: var(--color-slate-600);">"The Integrated Health Empowerment Program (IHEP) is an AI-driven digital health platform transforming aftercare for life-altering conditions. Using patient digital twins, organizational ecosystem mapping, and federated learning, IHEP addresses the $290 billion problem of treatment non-adherence while building the data infrastructure for breakthrough treatments. Founded by Jason Jarmacz."</p>
+
+                <p style="margin-bottom: var(--spacing-16);"><strong>100-word version:</strong></p>
+                <p style="margin-bottom: var(--spacing-24); font-style: italic; color: var(--color-slate-600);">"The Integrated Health Empowerment Program (IHEP) is a morphogenetic digital health ecosystem solving the $290 billion annual crisis of treatment non-adherence in life-altering conditions like HIV, cancer, and rare blood diseases. IHEP combines three layers of innovation: patient digital twins that anticipate challenges before they manifest, organizational twins that optimize entire care ecosystems, and federated AI networks that learn across sites without moving private health information. Built on Google Cloud with compliance-first NIST SP 800-53r5 architecture, IHEP demonstrates measurable outcomes while building the data infrastructure for functional cures. Founded by Jason Jarmacz, Chief Evolution Strategist, IHEP is raising a $3.5M Series Seed to fund Phase I pilot operations."</p>
+
+                <h3 style="margin-top: var(--spacing-32);">Media Assets</h3>
+                <ul style="margin-top: var(--spacing-16);">
+                    <li style="margin-bottom: var(--spacing-8);"><strong>Logo Files:</strong> SVG, PNG (white, dark, full color versions) available upon request</li>
+                    <li style="margin-bottom: var(--spacing-8);"><strong>Founder Photo:</strong> High-resolution headshot (JPG, 4000x5000px) available upon request</li>
+                    <li style="margin-bottom: var(--spacing-8);"><strong>Key Statistics:</strong> $290B annual cost, 40% dropout rate, 1.2M Americans with HIV, 25.9% digital health CAGR</li>
+                    <li style="margin-bottom: var(--spacing-8);"><strong>Media Contact:</strong> press@ihep.app</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team" class="gray">
+        <div class="container">
+            <h2 class="text-center">Founding Team &amp; Advisory</h2>
+
+            <div style="max-width: 800px; margin: var(--spacing-32) auto;">
+                <h3>Jason Jarmacz, Founder &amp; Principal Investigator</h3>
+                <p style="margin-bottom: var(--spacing-16);">15+ years in business development and research analytics; 5+ years in healthcare insights. Jason has persevered through multiple hardships pursuing his life goal of developing an application that changes humanity and provides uplift to community. His evolution strategy framework informed IHEP's three-layer architecture. Based in Newark, New Jersey.</p>
+                
+                <h3 style="margin-top: var(--spacing-32);">Positions Now Hiring (Phase I)</h3>
+                <div style="margin-top: var(--spacing-16);">
+                    <p><strong>Chief Technology Officer</strong><br>
+                    Requirements: 10+ years software architecture, healthcare tech background, AIML expertise, HIPAA-compliant systems at scale<br>
+                    Compensation: $200K base + 3% equity + performance bonuses</p>
+
+                    <p style="margin-top: var(--spacing-16);"><strong>Chief Security &amp; Compliance Officer</strong><br>
+                    Requirements: CISSP/equivalent, healthcare compliance expertise (HIPAA, NIST), FDA digital health regulations<br>
+                    Compensation: $180K base + 2% equity</p>
+
+                    <p style="margin-top: var(--spacing-16);"><strong>Clinical Director</strong><br>
+                    Requirements: MD/equivalent, HIV/AIDS clinical expertise, clinical informatics background<br>
+                    Compensation: $220K base + 2% equity</p>
+
+                    <p style="margin-top: var(--spacing-16);"><strong>Community Engagement Director</strong><br>
+                    Requirements: 7+ years community health work, HIVAIDS service org leadership, lived experience preferred<br>
+                    Compensation: $140K base + 1.5% equity</p>
+
+                    <p style="margin-top: var(--spacing-16);"><strong>AIML Lead Engineer</strong><br>
+                    Requirements: PhD in CS/ML or equivalent, healthcare AI experience, federated learning expertise<br>
+                    Compensation: $180K base + 2% equity</p>
+                </div>
+
+                <p style="margin-top: var(--spacing-24);"><strong>Advisory Board Status:</strong> Building advisory board of healthcare researchers, health equity experts, AI ethicists, and experienced founders. Advisor compensation: 0.25% equity, 2-year vest, quarterly engagement requirements.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Partnership Section -->
+    <section id="partner" class="light">
+        <div class="container">
+            <h2 class="text-center">Partner With IHEP</h2>
+            
+            <div style="max-width: 900px; margin: var(--spacing-32) auto;">
+                <p style="font-size: var(--font-size-lg); text-align: center; margin-bottom: var(--spacing-32);">We're seeking partnerships across three dimensions: investment, clinical collaboration, and technology integration.</p>
+
+                <div class="overview-grid">
+                    <div class="overview-card">
+                        <h3>Funding Partnership</h3>
+                        <p><strong>Investment Opportunity:</strong> $3.5M Series Seed round at $12M pre-money valuation. Convertible note terms: 20% Series A discount, $15M cap, 6% interest, 24-month maturity.</p>
+                        <p style="margin-top: var(--spacing-12);"><strong>Investor Types:</strong> VCs, impact investors, angels, strategic investors, foundations.</p>
+                    </div>
+
+                    <div class="overview-card">
+                        <h3>Healthcare System Partnership</h3>
+                        <p><strong>Phase I Pilot Sites:</strong> Seeking 2-4 healthcare systems in Miami/Orlando for 150-300 participant pilot. Pilot partners receive early access to platform, co-publication opportunities, revenue sharing on successful outcomes.</p>
+                    </div>
+
+                    <div class="overview-card">
+                        <h3>Research Collaboration</h3>
+                        <p><strong>Academic Partners:</strong> Co-PI arrangements, data access agreements, joint publications. Platform offers unprecedented longitudinal dataset for HIV treatment research.</p>
+                        <p style="margin-top: var(--spacing-12);"><strong>Also Seeking:</strong> Regulatory consultants, clinical advisors, AI ethics experts.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="newsletter" class="newsletter-form">
+                <h3>Stay Connected</h3>
+                <p>Subscribe to IHEP Progress Brief—weekly updates on digital health innovation, clinical outcomes, and fundraising milestones.</p>
+                <form class="form-group" onsubmit="handleNewsletter(event)">
+                    <input type="email" placeholder="your.email@example.com" required="" aria-label="Email address">
+                    <button type="submit">Subscribe</button>
+                </form>
+                <p style="font-size: var(--font-size-sm); margin-top: var(--spacing-16); opacity: 0.9;">We'll never share your email. Unsubscribe anytime.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>About IHEP</h4>
+                <ul>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#overview">Our Mission</a></li>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#team">Leadership</a></li>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#partner">Careers</a></li>
+                    <li><a href="mailto:press@ihep.app">Press Inquiries</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#documents">Document Library</a></li>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#documents">Investor Deck</a></li>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#documents">Technical Architecture</a></li>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#documents">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Architecture</h4>
+                <ul>
+                    <li><a href="docs/architecture/HUB_AND_SPOKE_ARCHITECTURE.md">Hub-and-Spoke Design</a></li>
+                    <li><a href="RESTRUCTURING_REPORT.md">System Structure</a></li>
+                    <li><a href="docs/IHEP%20System%20Architecture%20Document.pdf">Technical Whitepaper</a></li>
+                    <li><a href="docs/Phase_4_Deployment_Architecture_on_Google_Cloud_Platform.md">GCP Deployment</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="https://linkedin.com/" target="_blank">LinkedIn</a></li>
+                    <li><a href="https://substack.com/" target="_blank">Newsletter</a></li>
+                    <li><a href="mailto:jason@ihep.app">Contact Us</a></li>
+                    <li><a href="https://zenodo.org/" target="_blank">Publications (DOI)</a></li>
+                </ul>
+
+                <div class="social-links" style="margin-top: var(--spacing-16);">
+                    <a href="https://linkedin.com/" target="_blank" title="LinkedIn">in</a>
+                    <a href="https://twitter.com/" target="_blank" title="Twitter/X">𝕏</a>
+                    <a href="https://github.com/" target="_blank" title="GitHub">⚙️</a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Compliance</h4>
+                <ul>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#">Privacy Policy</a></li>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#">Terms of Service</a></li>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#">Security Framework</a></li>
+                    <li><a href="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/053a2a53e30d19cf92fa4fa5b15ad97d/856d5b06-784e-44eb-9ba0-cec4bb608913/canvas-app/index.html?AWSAccessKeyId=ASIA2F3EMEYEVSVVUQP6&amp;Signature=nD8Y1nvfENBENVD8te1W4sESx4k%3D&amp;x-amz-security-token=IQoJb3JpZ2luX2VjEA4aCXVzLWVhc3QtMSJHMEUCIQCJGRCmut%2FFUT7ZPL3jI8dF38V32C8qP5fgQzfsMW5MHQIgGPnOMhElpKHqFD4Y83rl31F9GbMi8fGSYlMI9mcpZakq%2FAQI1v%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARABGgw2OTk3NTMzMDk3MDUiDOIvydCmfqF5t5FM8yrQBE7QVNrVMubBIIV9DD7z1%2BKt9qNak1jDq4tm7LeOavrFHlhnAHb6qQG%2FYfYLEyNnG1yiNxfaOIZ52ikttusnlBz%2B2jI8NBbq28YM5je%2FSX30RiiX8o%2FK%2FnO3MINlA%2FG6U2ig17TqTJylTG5oy3hxRRH3PzonalqOnXRXxUrlNxjLNK5XfmvJUaI98U0xfXqjkoDxdCjGTwPUl5zlwCKv0KgevQiC3ZUBO3y2se%2B9k4ZYLFF5%2BjPYJqC7slHQkSffbBdowr4cjEX4OUM6mtQznDw3y%2FILJ5hr%2BgVicW%2FbrrSVFArer7CrQvkgtyDR3%2B4VwOX6jEn4SzA%2FzuOHsBmi6E83Q2972x1XfVMJq24VliWEzMBQFAeHcMHRRDvEs0UvEVZYUQdbGRL2i9SJmx7g1qQsx8LbwJwkzj0Xab1bg1NEHXx%2BahidZOQDeDgi8zHOKKnoES81AxT2c7mMpBlePVExa03tRAFjHHvcbzIIWhJnBeUkiT40c16VUph5UHrakg7l4vzelq3AodDXNZPEKgxlVnDt%2FkwZHOMgGRA1pCJEN9zxCj0n9EQwTuTw5qnPDQv7h3URaRcPjEDhzg8P9Adj7Rb1uDgcBjX0xe38e%2FpiUAKbXdwPLhw6L%2BEI73xQKeYBlrp5hngL7bqC3PK9dr%2Bq173ZwAvkhqRUaxPwDBnfIEgNOlXgPOvMCgTC%2BPfBKjpt4EFR2BLcL4rOsYWfwS4CKkEJEVdqEJULVABGydqDnxdovnTEjCJ0Jfz2ChyKnRwahOWpjV63TiK1Ulz%2BY%2BcwgcCOywY6mAGqjl%2BvvKOR8KuWLKCXHkCRUbfVaI4aUH6HEsuPrcfkGe3F9nbAV%2FNpl9Dv0%2BlOLpFPjLE2r6kNzhi1TrdNJkse0l0IC2KENBzq%2BdHjs746bOfkk834iKKux7yphwmYzgBw8kaqHmbAJIcc39Im28UJ6Zcn2hFbELr1msjRSeWfXW7NrCf6bFDuo4l8oJUdCDLlfPR7o8ESdw%3D%3D&amp;Expires=1768140003&amp;utm_source=perplexity#">HIPAA Notice</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Integrated Health Empowerment Program (IHEP). All rights reserved.</p>
+            <p style="margin-top: var(--spacing-8);">Building the future of healthcare aftercare through AI-powered digital twins and community partnership.</p>
+        </div>
+    </footer>
+
+    <script>
+        function handleNewsletter(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+            
+            // In production, this would send to Substack or email service
+            console.log('Newsletter signup:', email);
+            
+            // Show confirmation message
+            alert('Thank you for subscribing! Check your email for a welcome message.');
+            event.target.reset();
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Log page load for analytics
+        console.log('IHEP Website loaded - January 1, 2026');
+    </script>
+
+
+</body></html>
