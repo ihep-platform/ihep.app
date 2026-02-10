@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth/options';
 import type { FocusGroup } from '@/types/financial';
 
 const focusGroups: FocusGroup[] = [
@@ -21,6 +23,11 @@ const focusGroups: FocusGroup[] = [
 ];
 
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   return NextResponse.json({ focusGroups });
 }
 

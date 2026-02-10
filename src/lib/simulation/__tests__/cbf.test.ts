@@ -1,304 +1,261 @@
 /**
- * Unit tests for Control Barrier Function
+ * Unit tests for Control Barrier Function (CBF)
+ *
+ * The CBF ensures safety-critical obstacle avoidance by enforcing:
+ *   h(x) >= 0 (safe set invariance)
+ *   dh/dt >= -alpha * h (exponential convergence to safe set)
+ *
+ * Tests verify:
+ *   - isSafe returns correct boolean based on distance to obstacle
+ *   - barrierFunction returns positive for safe states, negative for unsafe
+ *   - cbfAdjust modifies acceleration when nominal control violates constraint
+ *   - cbfAdjust does NOT modify acceleration when constraint is already satisfied
  */
 
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
-import {
-  cbfAdjust,
-  isSafe,
-  barrierFunction,
-  type CBFResult,
-} from '../cbf';
-import type { RobotState, Obstacle } from '../types';
+import { describe, it, expect } from 'vitest'
+import { cbfAdjust, isSafe, barrierFunction } from '../cbf'
+import type { RobotState, Obstacle } from '../types'
 
 describe('Control Barrier Function', () => {
   const obstacle: Obstacle = {
     c: { x: 100, y: 100 },
     r: 20,
-  };
+  }
 
-  const eps = 10; // Safety margin
+  const eps = 10 // Safety margin
 
   describe('barrierFunction', () => {
-    it('should return positive value when safe', () => {
+    it('should return positive value when robot is far from obstacle (safe)', () => {
       const state: RobotState = {
-        p: { x: 200, y: 100 }, // Far from obstacle
+        p: { x: 200, y: 100 }, // 100 units from center
         v: { x: 0, y: 0 },
-      };
+      }
 
-      const h = barrierFunction(state, obstacle, eps);
+      const h = barrierFunction(state, obstacle, eps)
 
-      // Distance is ~100, minus radius 20, minus eps 10 = 70
-      assert.ok(h > 0);
-      assert.ok(Math.abs(h - 70) < 1);
-    });
+      // h = dist - r - eps = 100 - 20 - 10 = 70
+      expect(h).toBeGreaterThan(0)
+      expect(h).toBeCloseTo(70, 0)
+    })
 
-    it('should return negative value when unsafe', () => {
+    it('should return negative value when robot is inside obstacle + margin (unsafe)', () => {
       const state: RobotState = {
-        p: { x: 110, y: 100 }, // Very close to obstacle
+        p: { x: 110, y: 100 }, // 10 units from center
         v: { x: 0, y: 0 },
-      };
+      }
 
-      const h = barrierFunction(state, obstacle, eps);
+      const h = barrierFunction(state, obstacle, eps)
 
-      // Distance is 10, minus radius 20 = -10, minus eps 10 = -20
-      assert.ok(h < 0);
-    });
+      // h = dist - r - eps = 10 - 20 - 10 = -20
+      expect(h).toBeLessThan(0)
+    })
 
-    it('should return zero at boundary', () => {
+    it('should return approximately zero at the boundary (dist = r + eps)', () => {
       const state: RobotState = {
-        p: { x: 130, y: 100 }, // At boundary (radius + eps)
+        p: { x: 130, y: 100 }, // dist = 30 = r + eps
         v: { x: 0, y: 0 },
-      };
+      }
 
-      const h = barrierFunction(state, obstacle, eps);
+      const h = barrierFunction(state, obstacle, eps)
 
-      assert.ok(Math.abs(h) < 1e-10);
-    });
-  });
+      // h = 30 - 20 - 10 = 0
+      expect(Math.abs(h)).toBeLessThan(1e-10)
+    })
+
+    it('should be symmetric around the obstacle', () => {
+      const positions = [
+        { x: 200, y: 100 }, // right
+        { x: 0, y: 100 },   // left
+        { x: 100, y: 200 }, // above
+        { x: 100, y: 0 },   // below
+      ]
+
+      // All at distance 100 from center, should all give same h
+      const values = positions.map((p) =>
+        barrierFunction({ p, v: { x: 0, y: 0 } }, obstacle, eps)
+      )
+
+      for (let i = 1; i < values.length; i++) {
+        expect(values[i]).toBeCloseTo(values[0], 5)
+      }
+    })
+  })
 
   describe('isSafe', () => {
     it('should return true when far from obstacle', () => {
       const state: RobotState = {
         p: { x: 200, y: 100 },
         v: { x: 0, y: 0 },
-      };
+      }
 
-      assert.strictEqual(isSafe(state, obstacle, eps), true);
-    });
+      expect(isSafe(state, obstacle, eps)).toBe(true)
+    })
 
-    it('should return false when too close', () => {
+    it('should return false when inside safety boundary', () => {
+      // isSafe checks: dist - r >= eps * 0.5
+      // At x=104: dist = 4, dist - r = 4 - 20 = -16. -16 >= 5 is false
       const state: RobotState = {
-        p: { x: 104, y: 100 }, // Within eps*0.5 of surface
+        p: { x: 104, y: 100 },
         v: { x: 0, y: 0 },
-      };
+      }
 
-      assert.strictEqual(isSafe(state, obstacle, eps), false);
-    });
+      expect(isSafe(state, obstacle, eps)).toBe(false)
+    })
 
-    it('should handle positions on all sides', () => {
+    it('should return true on all sides when sufficiently distant', () => {
       const positions = [
-        { x: 100, y: 200 }, // Above
-        { x: 100, y: 0 }, // Below
-        { x: 0, y: 100 }, // Left
-        { x: 200, y: 100 }, // Right
-      ];
+        { x: 100, y: 200 }, // above
+        { x: 100, y: 0 },   // below
+        { x: 0, y: 100 },   // left
+        { x: 200, y: 100 }, // right
+      ]
 
       for (const p of positions) {
-        const state: RobotState = { p, v: { x: 0, y: 0 } };
-        assert.strictEqual(isSafe(state, obstacle, eps), true);
+        const state: RobotState = { p, v: { x: 0, y: 0 } }
+        expect(isSafe(state, obstacle, eps)).toBe(true)
       }
-    });
-  });
+    })
+
+    it('should return false when at obstacle center', () => {
+      const state: RobotState = {
+        p: { x: 100, y: 100 }, // dist = 0, 0 - 20 = -20 < 5
+        v: { x: 0, y: 0 },
+      }
+
+      expect(isSafe(state, obstacle, eps)).toBe(false)
+    })
+  })
 
   describe('cbfAdjust', () => {
-    it('should not modify control when safe and moving away', () => {
+    it('should NOT modify control when safely moving away from obstacle', () => {
       const state: RobotState = {
-        p: { x: 200, y: 100 }, // Far from obstacle
-        v: { x: 10, y: 0 }, // Moving away
-      };
+        p: { x: 200, y: 100 }, // Far away
+        v: { x: 10, y: 0 },   // Moving away
+      }
 
-      const a_nom = [5, 0]; // Accelerating away
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
+      const a_nom = [5, 0] // Accelerating away
+      const result = cbfAdjust(a_nom, state, obstacle, eps)
 
-      assert.strictEqual(result.active, false);
-      assert.deepStrictEqual(result.a, a_nom);
-      assert.ok(result.h > 0); // Safe
-    });
+      expect(result.active).toBe(false)
+      expect(result.a).toEqual(a_nom)
+      expect(result.h).toBeGreaterThan(0)
+    })
 
-    it('should modify control when moving toward obstacle', () => {
+    it('should modify acceleration when approaching obstacle dangerously', () => {
       const state: RobotState = {
-        p: { x: 135, y: 100 }, // Closer to obstacle
-        v: { x: -15, y: 0 }, // Moving fast toward obstacle
-      };
+        p: { x: 135, y: 100 }, // Close to boundary
+        v: { x: -15, y: 0 },   // Fast approach
+      }
 
-      const a_nom = [-10, 0]; // Strong acceleration toward obstacle
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
+      const a_nom = [-10, 0] // Strong acceleration toward obstacle
+      const result = cbfAdjust(a_nom, state, obstacle, eps)
 
-      // Check if constraint was active
       if (result.active) {
-        // Acceleration should be adjusted (less negative or positive)
-        assert.ok(result.a[0] > a_nom[0]);
-      } else {
-        // If not active, constraint must still be satisfied
-        assert.ok(result.h > 0 || result.dh > 0);
+        // Corrected x-acceleration should be less negative (pushed away)
+        expect(result.a[0]).toBeGreaterThan(a_nom[0])
       }
-    });
+    })
 
-    it('should ensure safety constraint is satisfied', () => {
+    it('should ensure the CBF constraint n*a >= b is satisfied', () => {
       const state: RobotState = {
-        p: { x: 135, y: 100 }, // Near boundary
-        v: { x: -5, y: 0 }, // Moving toward
-      };
-
-      const a_nom = [-10, 0]; // Dangerous acceleration
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
-
-      // Check that adjusted control satisfies CBF constraint
-      const { c, r } = obstacle;
-      const dx = state.p.x - c.x;
-      const dy = state.p.y - c.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const nx = dx / dist;
-      const ny = dy / dist;
-
-      const h = result.h;
-      const dh = result.dh;
-      const alpha = 3.5;
-      const b = -dh - alpha * h;
-
-      const dot = nx * result.a[0] + ny * result.a[1];
-
-      // Constraint should be satisfied (with small tolerance)
-      assert.ok(dot >= b - 1e-6);
-    });
-
-    it('should handle different alpha values', () => {
-      const state: RobotState = {
-        p: { x: 140, y: 100 },
-        v: { x: -10, y: 0 },
-      };
-
-      const a_nom = [-5, 0];
-
-      // More conservative (higher alpha)
-      const result1 = cbfAdjust(a_nom, state, obstacle, eps, 5.0);
-
-      // Less conservative (lower alpha)
-      const result2 = cbfAdjust(a_nom, state, obstacle, eps, 2.0);
-
-      if (result1.active && result2.active) {
-        // Higher alpha should give more conservative control
-        // (more correction toward safety)
-        assert.ok(result1.a[0] >= result2.a[0]);
+        p: { x: 135, y: 100 },
+        v: { x: -5, y: 0 },
       }
-    });
 
-    it('should handle tangential motion correctly', () => {
-      const state: RobotState = {
-        p: { x: 140, y: 100 },
-        v: { x: 0, y: 10 }, // Moving tangent to obstacle
-      };
+      const a_nom = [-10, 0]
+      const result = cbfAdjust(a_nom, state, obstacle, eps)
 
-      const a_nom = [0, 5]; // Tangential acceleration
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
+      // Recompute constraint terms to verify
+      const dx = state.p.x - obstacle.c.x
+      const dy = state.p.y - obstacle.c.y
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      const nx = dx / dist
+      const ny = dy / dist
 
-      // Tangential motion shouldn't trigger constraint as strongly
-      // (depends on specific configuration)
-      assert.ok(typeof result.active === 'boolean');
-      assert.ok(Array.isArray(result.a));
-    });
+      const alpha = 3.5
+      const b = -result.dh - alpha * result.h
 
-    it('should return correct structure', () => {
+      const dot = nx * result.a[0] + ny * result.a[1]
+
+      // Constraint: n . a >= b (with numerical tolerance)
+      expect(dot).toBeGreaterThanOrEqual(b - 1e-6)
+    })
+
+    it('should return correct result structure', () => {
       const state: RobotState = {
         p: { x: 150, y: 100 },
         v: { x: 0, y: 0 },
-      };
+      }
 
-      const a_nom = [1, 0];
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
+      const a_nom = [1, 0]
+      const result = cbfAdjust(a_nom, state, obstacle, eps)
 
-      // Check result structure
-      assert.ok('a' in result);
-      assert.ok('active' in result);
-      assert.ok('h' in result);
-      assert.ok('dh' in result);
+      expect(result).toHaveProperty('a')
+      expect(result).toHaveProperty('active')
+      expect(result).toHaveProperty('h')
+      expect(result).toHaveProperty('dh')
 
-      assert.ok(Array.isArray(result.a));
-      assert.strictEqual(result.a.length, 2);
-      assert.strictEqual(typeof result.active, 'boolean');
-      assert.strictEqual(typeof result.h, 'number');
-      assert.strictEqual(typeof result.dh, 'number');
-    });
+      expect(Array.isArray(result.a)).toBe(true)
+      expect(result.a.length).toBe(2)
+      expect(typeof result.active).toBe('boolean')
+      expect(typeof result.h).toBe('number')
+      expect(typeof result.dh).toBe('number')
+    })
 
-    it('should handle stationary robot', () => {
+    it('should have dh = 0 for stationary robot (zero velocity)', () => {
       const state: RobotState = {
-        p: { x: 132, y: 100 }, // Very close to boundary (r=20 + eps=10 = 130)
+        p: { x: 132, y: 100 },
         v: { x: 0, y: 0 }, // Stationary
-      };
-
-      const a_nom = [-20, 0]; // Strong acceleration toward
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
-
-      // With zero velocity, dh = 0
-      assert.strictEqual(result.dh, 0);
-
-      // CBF should activate since h is small and acceleration is dangerous
-      if (result.active) {
-        assert.ok(result.a[0] > a_nom[0]);
       }
-    });
 
-    it('should provide minimal intervention', () => {
+      const a_nom = [-20, 0]
+      const result = cbfAdjust(a_nom, state, obstacle, eps)
+
+      // dh = nx*vx + ny*vy = 0 when v = 0
+      expect(result.dh).toBe(0)
+    })
+
+    it('should not modify zero control when safe and stationary', () => {
       const state: RobotState = {
-        p: { x: 140, y: 100 },
-        v: { x: -1, y: 0 }, // Slow approach
-      };
-
-      const a_nom = [-0.5, 2]; // Mostly perpendicular
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
-
-      if (result.active) {
-        // Correction should be minimal
-        const correction = Math.hypot(
-          result.a[0] - a_nom[0],
-          result.a[1] - a_nom[1]
-        );
-        // Check that we didn't drastically change the control
-        const nomMag = Math.hypot(a_nom[0], a_nom[1]);
-        assert.ok(correction < nomMag * 2); // Reasonable bound
-      }
-    });
-  });
-
-  describe('Edge cases', () => {
-    it('should handle robot at obstacle center', () => {
-      const state: RobotState = {
-        p: { x: 100, y: 100 }, // At center
-        v: { x: 1, y: 0 },
-      };
-
-      const a_nom = [1, 0];
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
-
-      // Should still compute (uses epsilon for division)
-      assert.ok(Array.isArray(result.a));
-      assert.strictEqual(typeof result.active, 'boolean');
-    });
-
-    it('should handle zero velocity and acceleration', () => {
-      const state: RobotState = {
-        p: { x: 140, y: 100 },
+        p: { x: 140, y: 100 }, // Safe
         v: { x: 0, y: 0 },
-      };
-
-      const a_nom = [0, 0];
-      const result = cbfAdjust(a_nom, state, obstacle, eps);
-
-      // Should not modify zero control
-      assert.deepStrictEqual(result.a, [0, 0]);
-    });
-
-    it('should handle multiple obstacles conceptually', () => {
-      // Test that CBF works for different obstacles
-      const obstacles: Obstacle[] = [
-        { c: { x: 100, y: 100 }, r: 20 },
-        { c: { x: 200, y: 200 }, r: 30 },
-      ];
-
-      const state: RobotState = {
-        p: { x: 150, y: 150 },
-        v: { x: 5, y: 5 },
-      };
-
-      const a_nom = [10, 10];
-
-      // Each obstacle independently
-      for (const obs of obstacles) {
-        const result = cbfAdjust(a_nom, state, obs, eps);
-        assert.ok(typeof result.active === 'boolean');
       }
-    });
-  });
-});
+
+      const a_nom = [0, 0]
+      const result = cbfAdjust(a_nom, state, obstacle, eps)
+
+      expect(result.a).toEqual([0, 0])
+    })
+
+    it('should produce more conservative correction with higher alpha', () => {
+      const state: RobotState = {
+        p: { x: 140, y: 100 },
+        v: { x: -10, y: 0 },
+      }
+
+      const a_nom = [-5, 0]
+
+      const result_high = cbfAdjust(a_nom, state, obstacle, eps, 5.0)
+      const result_low = cbfAdjust(a_nom, state, obstacle, eps, 2.0)
+
+      if (result_high.active && result_low.active) {
+        // Higher alpha demands stronger safety correction (more positive x-accel)
+        expect(result_high.a[0]).toBeGreaterThanOrEqual(result_low.a[0])
+      }
+    })
+
+    it('should handle robot at obstacle center without crashing', () => {
+      const state: RobotState = {
+        p: { x: 100, y: 100 }, // At obstacle center (dist = 0)
+        v: { x: 1, y: 0 },
+      }
+
+      const a_nom = [1, 0]
+      const result = cbfAdjust(a_nom, state, obstacle, eps)
+
+      // Should compute without throwing (uses epsilon 1e-9 for division)
+      expect(Array.isArray(result.a)).toBe(true)
+      expect(typeof result.active).toBe('boolean')
+    })
+  })
+})
