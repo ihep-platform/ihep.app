@@ -13,6 +13,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Confirmed `filelock>=3.20.3` remains in place for SoftFileLock TOCTOU mitigation across the same manifests.
 - Policy: all future commits and pushes must be cryptographically signed (verified signatures required on protected branches).
 
+## [2.1.0-alpha] - 2026-02-10
+
+### Session 8 - Security, Testing, UX, and PQC Framework
+
+#### Added
+- **API Route Auth Guards** -- `getServerSession(authOptions)` checks on all 19 API routes
+  - Returns 401 Unauthorized for unauthenticated requests
+  - Public exceptions: `auth/[...nextauth]`, `auth/register`, `health`
+- **Vitest Test Suite** -- 113 tests passing across 7 test files
+  - Math/matrix operations (29 tests)
+  - Extended Kalman Filter (16 tests)
+  - Control Barrier Functions (16 tests)
+  - EKF+CBF integration (5 tests)
+  - Auth registration flow (16 tests)
+  - Kyber KEM (19 tests)
+  - Full PQC integration (12 tests)
+- **Error Boundaries and Loading Skeletons**
+  - Global error boundary (`src/app/error.tsx`)
+  - Custom 404 page with inline SVG (`src/app/not-found.tsx`)
+  - Dashboard error boundary with retry
+  - Loading skeletons for dashboard, digital-twin, calendar, wellness
+- **Password Reset Flow**
+  - 4-step reset page (identify, verify, reset, confirm)
+  - API route with Zod validation and bcrypt 12 rounds
+  - `updateUserPassword()` added to mock store
+  - "Forgot Password?" link on login page
+- **Toast Notifications**
+  - `<Toaster />` in root layout
+  - Wired to signup, login, calendar, wellness, opportunities pages
+- **Mobile Navigation**
+  - Active route highlighting with `usePathname()`
+  - "More" overflow Sheet for 6+ nav items
+  - WCAG touch targets (44x44px minimum)
+  - Landing page hamburger menu
+
+#### Fixed
+- **CRITICAL: PQC Framework -- 3 root causes resolved for NIST compliance**
+  - `pqc-signatures.ts`: `@noble/post-quantum` v0.5.4 sign/verify argument order was inverted
+    - `sign(message, secretKey)` not `sign(secretKey, message)`
+    - `verify(signature, message, publicKey)` not `verify(publicKey, message, signature)`
+  - `pqc-hybrid-encryption.ts`: Envelope encryption dropped wrappedDEK/dekNonce from EncryptedData
+    - Added `wrappedDEK` and `dekNonce` fields to interface and all 4 serialization methods
+  - `pqc-hybrid-encryption.ts`: HKDF `deriveKey()` used random salt per call
+    - encrypt() and decrypt() derived different keys from same shared secret
+    - Fixed with deterministic zero salt (KEM shared secret provides full entropy)
+  - Updated `getParameters()` signature sizes to match noble v0.5.4 actual output
+- `not-found.tsx` build failure -- replaced Lucide icons with inline SVG (Next.js 16.1.5 prerenders at build time)
+- Missing `'use client'` directives on `toast.tsx`, `toaster.tsx`, `use-toast.ts`
+
+#### Changed
+- Tests: 106 passing / 7 failing -> 113 passing / 0 failures
+- Build: 65 pages compiled, 0 errors
+- PQC integration tests: 5/12 passing -> 12/12 passing
+
+### Metrics
+
+**Testing:**
+- Total tests: 113 (was 0 before Session 8)
+- Test files: 7
+- Failures: 0
+- PQC coverage: 12/12 integration + 19/19 Kyber KEM
+
+**Build:**
+- Pages: 65 (41 static, 24 dynamic)
+- Build time: ~6s compile + ~280ms static generation
+- TypeScript: 0 errors
+
+**Security:**
+- API routes protected: 19/19 (3 public exceptions)
+- PQC framework: Fully operational (FIPS 203, 204 compliant)
+- Encryption: XChaCha20-Poly1305 + Kyber KEM envelope encryption
+- Signatures: ML-DSA (Dilithium) at 3 security levels
+
 ## [2.0.0] - 2026-01-07
 
 ### Major Release - Security & Infrastructure Overhaul

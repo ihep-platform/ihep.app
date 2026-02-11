@@ -14,16 +14,18 @@
 
 | Category | Technology |
 |----------|------------|
-| Framework | Next.js 16.1.1 (App Router) |
+| Framework | Next.js 16.1.5 (App Router, Turbopack) |
 | Language | TypeScript 5 (strict mode) |
-| UI | React 19.2.3 |
+| UI | React 19 |
 | Styling | Tailwind CSS 4 |
 | Components | Radix UI + shadcn/ui |
-| Auth | NextAuth.js |
+| Auth | NextAuth.js v4 (credentials provider) |
 | State | TanStack Query |
 | Charts | Recharts 3 |
 | Forms | React Hook Form + Zod |
-| Database | Prisma (configured, schema pending) |
+| Database | Drizzle ORM (25+ tables defined, DATABASE_URL not configured) |
+| Testing | Vitest + React Testing Library (113 tests, 0 failures) |
+| Crypto | @noble/post-quantum v0.5.4 (ML-KEM, ML-DSA), @stablelib (XChaCha20-Poly1305, HKDF-SHA512) |
 
 ## Project Structure
 
@@ -197,22 +199,35 @@ hiv-health-insights/
 └── LICENSE
 ```
 
-## Current Version: 1.1.0-alpha
+## Current Version: 2.0.0-alpha
 
-### Recent Changes (Dec 26, 2024)
-- Updated landing page to general healthcare aftercare (not HIV-specific)
-- New color scheme: greens, gold, amber (matching logo)
-- Moved calendar and wellness dashboard to members-only area
-- Fixed all TypeScript errors for latest library versions
-- Build now passes successfully
+### Recent Changes (February 10, 2026 -- Session 8)
+- Auth guards on all 19 API routes (getServerSession checks)
+- Vitest test suite: 113 tests passing, 0 failures across 7 test files
+- Error boundaries and loading skeletons throughout dashboard
+- Password reset flow (4-step page, API route, mock store integration)
+- Toast notifications wired to signup, login, calendar, wellness, opportunities
+- Mobile navigation with active route highlighting and WCAG touch targets
+- PQC framework fully operational (fixed sign/verify argument order, envelope encryption DEK loss, HKDF salt non-determinism)
+- Custom 404 page with inline SVG (no Lucide icons -- Next.js 16.1.5 prerender constraint)
+- Build: 65 pages compiled, 0 errors
+
+### Previous Changes (February 9-10, 2026 -- Session 7)
+- Repository reorganization: hub-and-spoke architecture
+- Deleted 22 duplicate + 11 deprecated directories
+- Scaffolded clinical-frontend/ and provider-frontend/ apps
+- Created formal engineering documentation (PRD, Tech Specs, TDD)
 
 ## Development Commands
 
 ```bash
 npm run dev          # Start development server (http://localhost:3000)
-npm run build        # Production build
+npm run build        # Production build (Next.js 16.1.5, Turbopack)
 npm run start        # Start production server
 npm run lint         # Run ESLint
+npm test             # Run unit tests with Vitest (113 tests)
+npm run test:watch   # Watch mode for development
+npm run test:coverage # Generate coverage report
 ```
 
 ## Key Files for New Sessions

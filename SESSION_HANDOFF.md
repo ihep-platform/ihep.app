@@ -9,13 +9,14 @@
 
 ### 2. Vitest Test Suite (COMPLETED)
 - Installed Vitest + dependencies, configured vitest.config.ts
-- 106 tests passing across 6 test files:
+- 7 test files, 113 tests passing:
   - `src/lib/simulation/__tests__/math.test.ts` (29 tests) -- matrix ops
-  - `src/lib/simulation/__tests__/ekf.test.ts` (17 tests) -- Extended Kalman Filter
+  - `src/lib/simulation/__tests__/ekf.test.ts` (16 tests) -- Extended Kalman Filter
   - `src/lib/simulation/__tests__/cbf.test.ts` (16 tests) -- Control Barrier Functions
   - `src/lib/simulation/__tests__/integration.test.ts` (5 tests) -- EKF+CBF+Control
-  - `src/app/api/auth/register/__tests__/route.test.ts` (15 tests) -- registration flow
-  - `src/lib/crypto/__tests__/pqc-integration.test.ts` (7 failing, pre-existing key size issues)
+  - `src/app/api/auth/register/__tests__/route.test.ts` (16 tests) -- registration flow
+  - `src/lib/crypto/__tests__/pqc-kyber.test.ts` (19 tests) -- Kyber KEM
+  - `src/lib/crypto/__tests__/pqc-integration.test.ts` (12 tests) -- full PQC integration
 
 ### 3. Error Boundaries and Loading Skeletons (COMPLETED)
 - `src/app/error.tsx` -- global error boundary
@@ -44,24 +45,6 @@
 - `src/app/page.tsx` -- hamburger menu with Sheet for mobile
 - `src/app/globals.css` -- mobile menu styles
 
-## Current Project State
-
-- **Version**: 2.0.0-alpha
-- **Next.js**: 16.1.5 with Turbopack
-- **Build**: Passing (65 pages)
-- **Tests**: 113 passing, 0 failures (PQC framework fully operational)
-- **Auth**: NextAuth.js v4, credentials provider, mock user store, 19 API routes guarded
-- **Data**: File-based mock store (no production database connected)
-- **Database Schema**: Drizzle ORM with 25+ tables defined but DATABASE_URL not configured
-- **Security**: PQC encryption (Kyber KEM + XChaCha20-Poly1305), PQC signatures (ML-DSA/Dilithium), CSP headers, HIPAA-oriented design, auth guards
-- **3D**: Three.js DigitalTwinCanvas component (basic humanoid, health-score color mapping)
-- **Repo**: github.com/ihep-platform/ihep.app (master branch)
-
-## Key Build Fix
-`not-found.tsx` must NOT use Lucide icons or any library that calls `useState` internally.
-Next.js 16.1.5 prerenders this page at build time regardless of `'use client'`.
-Same applies to any component imported in `layout.tsx` -- must have `'use client'` if it uses hooks.
-
 ### 7. PQC Framework Fix (COMPLETED)
 - Fixed 3 root causes across `pqc-signatures.ts` and `pqc-hybrid-encryption.ts`:
   1. `@noble/post-quantum` v0.5.4 sign/verify argument order was inverted
@@ -70,11 +53,31 @@ Same applies to any component imported in `layout.tsx` -- must have `'use client
 - All 12 PQC integration tests now pass (was 5/12)
 - Full suite: 113 tests, 0 failures
 
+## Current Project State
+
+- **Version**: 2.0.0-alpha
+- **Next.js**: 16.1.5 with Turbopack
+- **Build**: Passing (65 pages, 0 errors)
+- **Tests**: 113 passing, 0 failures across 7 test files
+- **Auth**: NextAuth.js v4, credentials provider, mock user store, 19 API routes guarded
+- **Data**: File-based mock store (no production database connected)
+- **Database Schema**: Drizzle ORM with 25+ tables defined but DATABASE_URL not configured
+- **Security**: PQC encryption (Kyber KEM + XChaCha20-Poly1305), PQC signatures (ML-DSA/Dilithium), CSP headers, HIPAA-oriented design, auth guards
+- **3D**: Three.js DigitalTwinCanvas component (basic humanoid, health-score color mapping)
+- **Repo**: github.com/ihep-platform/ihep.app (master branch)
+
+## Key Build Fixes
+- `not-found.tsx` must NOT use Lucide icons or any library that calls `useState` internally.
+  Next.js 16.1.5 prerenders this page at build time regardless of `'use client'`.
+- Any component imported in `layout.tsx` must have `'use client'` if it uses hooks
+  (toast.tsx, toaster.tsx, use-toast.ts all required this directive).
+
 ## PQC Framework Notes (for next session)
 - `@noble/post-quantum` v0.5.4 API: `sign(message, secretKey)`, `verify(signature, message, publicKey)`
 - Envelope encryption uses XChaCha20-Poly1305 for both plaintext and DEK wrapping
 - HKDF-SHA512 key derivation uses fixed zero salt (KEM shared secret provides full entropy)
 - Signature sizes: ML-DSA44=2420, ML-DSA65=3309, ML-DSA87=4627
+- `EncryptedData` interface includes: ciphertext, kyberCiphertext, nonce, wrappedDEK, dekNonce, algorithm, keyId, timestamp, metadataHash
 
 ## Recommended Next Steps
 1. Implement RBAC checks per endpoint (patient vs provider vs admin roles)
