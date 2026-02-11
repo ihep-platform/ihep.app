@@ -117,13 +117,13 @@ export class PQCSignature {
 
     switch (this.algorithm) {
       case SignatureSecurityLevel.LEVEL_2:
-        signature = ml_dsa44.sign(secretKey, messageHash)
+        signature = ml_dsa44.sign(messageHash, secretKey)
         break
       case SignatureSecurityLevel.LEVEL_3:
-        signature = ml_dsa65.sign(secretKey, messageHash)
+        signature = ml_dsa65.sign(messageHash, secretKey)
         break
       case SignatureSecurityLevel.LEVEL_5:
-        signature = ml_dsa87.sign(secretKey, messageHash)
+        signature = ml_dsa87.sign(messageHash, secretKey)
         break
       default:
         throw new Error(`Unsupported signature security level: ${this.algorithm}`)
@@ -158,13 +158,13 @@ export class PQCSignature {
 
       switch (this.algorithm) {
         case SignatureSecurityLevel.LEVEL_2:
-          isValid = ml_dsa44.verify(publicKey, messageHash, signature)
+          isValid = ml_dsa44.verify(signature, messageHash, publicKey)
           break
         case SignatureSecurityLevel.LEVEL_3:
-          isValid = ml_dsa65.verify(publicKey, messageHash, signature)
+          isValid = ml_dsa65.verify(signature, messageHash, publicKey)
           break
         case SignatureSecurityLevel.LEVEL_5:
-          isValid = ml_dsa87.verify(publicKey, messageHash, signature)
+          isValid = ml_dsa87.verify(signature, messageHash, publicKey)
           break
         default:
           throw new Error(`Unsupported signature security level: ${this.algorithm}`)
@@ -210,12 +210,12 @@ export class PQCSignature {
       [SignatureSecurityLevel.LEVEL_3]: {
         publicKeySize: 1952,
         secretKeySize: 4032,
-        signatureSize: 3293,
+        signatureSize: 3309,
       },
       [SignatureSecurityLevel.LEVEL_5]: {
         publicKeySize: 2592,
         secretKeySize: 4896,
-        signatureSize: 4595,
+        signatureSize: 4627,
       },
     }
 

@@ -20,17 +20,20 @@ import { SHA512 } from '@stablelib/sha512'
 export interface EncryptedData {
   /** Encrypted ciphertext */
   ciphertext: Uint8Array
-  /** Kyber ciphertext (wrapped DEK) */
+  /** Kyber ciphertext (for shared secret recovery) */
   kyberCiphertext: Uint8Array
-  /** XChaCha20Poly1305 nonce */
+  /** XChaCha20Poly1305 nonce for plaintext encryption */
   nonce: Uint8Array
+  /** Wrapped Data Encryption Key (DEK encrypted with Kyber-derived key) */
+  wrappedDEK: Uint8Array
+  /** XChaCha20Poly1305 nonce for DEK wrapping */
+  dekNonce: Uint8Array
   /** Algorithm identifier */
   algorithm: string
   /** Recipient key ID */
   keyId: string
   /** Encryption timestamp */
   timestamp: number
-  /** AEAD authentication tag (included in ciphertext by XChaCha20Poly1305) */
   /** Metadata hash for integrity */
   metadataHash: Uint8Array
 }
@@ -98,9 +101,10 @@ export class HybridEncryption {
     const { ciphertext: kyberCiphertext, sharedSecret } = await this.kyberKEM.encapsulate(recipientPublicKey)
 
     // Derive encryption key for DEK from Kyber shared secret
+    // Use fixed zero salt -- KEM shared secret already has full entropy per encapsulation
     const dekEncryptionKey = await this.kyberKEM.deriveKey(
       sharedSecret,
-      undefined,
+      new Uint8Array(32),
       new TextEncoder().encode('IHEP-DEK-Wrapping-v1'),
       32
     )
@@ -122,11 +126,13 @@ export class HybridEncryption {
 
     const metadataHash = this.hashMetadata(metadata)
 
-    // Return encrypted structure
+    // Return encrypted structure with all components for decryption
     return {
       ciphertext,
       kyberCiphertext,
       nonce,
+      wrappedDEK,
+      dekNonce,
       algorithm,
       keyId,
       timestamp,
@@ -157,16 +163,30 @@ export class HybridEncryption {
     // Step 2: Decapsulate to recover shared secret
     const sharedSecret = await this.kyberKEM.decapsulate(encrypted.kyberCiphertext, recipientSecretKey)
 
-    // Derive DEK decryption key
+    // Derive DEK unwrapping key from Kyber shared secret
+    // Use fixed zero salt -- must match encrypt() derivation
     const dekEncryptionKey = await this.kyberKEM.deriveKey(
       sharedSecret,
-      undefined,
+      new Uint8Array(32),
       new TextEncoder().encode('IHEP-DEK-Wrapping-v1'),
       32
     )
 
-    // Step 3: Decrypt ciphertext with recovered DEK
-    const cipher = new XChaCha20Poly1305(dekEncryptionKey)
+    // Step 3: Unwrap DEK
+    const dekUnwrapCipher = new XChaCha20Poly1305(dekEncryptionKey)
+    let dek: Uint8Array
+    try {
+      const unwrapped = dekUnwrapCipher.open(encrypted.dekNonce, encrypted.wrappedDEK)
+      if (unwrapped === null) {
+        throw new Error('DEK unwrapping failed: Invalid wrapped key or authentication tag')
+      }
+      dek = unwrapped
+    } catch (error) {
+      throw new Error('Decryption failed: Invalid ciphertext or authentication tag')
+    }
+
+    // Step 4: Decrypt ciphertext with recovered DEK
+    const cipher = new XChaCha20Poly1305(dek)
 
     let plaintext: Uint8Array
     try {
@@ -303,6 +323,8 @@ export class HybridEncryption {
         ciphertext: Buffer.from(encrypted.ciphertext).toString('base64'),
         kyberCiphertext: Buffer.from(encrypted.kyberCiphertext).toString('base64'),
         nonce: Buffer.from(encrypted.nonce).toString('base64'),
+        wrappedDEK: Buffer.from(encrypted.wrappedDEK).toString('base64'),
+        dekNonce: Buffer.from(encrypted.dekNonce).toString('base64'),
         algorithm: encrypted.algorithm,
         keyId: encrypted.keyId,
         timestamp: encrypted.timestamp,
@@ -322,6 +344,8 @@ export class HybridEncryption {
       ciphertext: Uint8Array.from(Buffer.from(parsed.ciphertext, 'base64')),
       kyberCiphertext: Uint8Array.from(Buffer.from(parsed.kyberCiphertext, 'base64')),
       nonce: Uint8Array.from(Buffer.from(parsed.nonce, 'base64')),
+      wrappedDEK: Uint8Array.from(Buffer.from(parsed.wrappedDEK, 'base64')),
+      dekNonce: Uint8Array.from(Buffer.from(parsed.dekNonce, 'base64')),
       algorithm: parsed.algorithm,
       keyId: parsed.keyId,
       timestamp: parsed.timestamp,
@@ -383,6 +407,8 @@ export function serializeEncryptedData(encrypted: EncryptedData): string {
     ciphertext: Buffer.from(encrypted.ciphertext).toString('base64'),
     kyberCiphertext: Buffer.from(encrypted.kyberCiphertext).toString('base64'),
     nonce: Buffer.from(encrypted.nonce).toString('base64'),
+    wrappedDEK: Buffer.from(encrypted.wrappedDEK).toString('base64'),
+    dekNonce: Buffer.from(encrypted.dekNonce).toString('base64'),
     algorithm: encrypted.algorithm,
     keyId: encrypted.keyId,
     timestamp: encrypted.timestamp,
@@ -399,6 +425,8 @@ export function deserializeEncryptedData(serialized: string): EncryptedData {
     ciphertext: Uint8Array.from(Buffer.from(parsed.ciphertext, 'base64')),
     kyberCiphertext: Uint8Array.from(Buffer.from(parsed.kyberCiphertext, 'base64')),
     nonce: Uint8Array.from(Buffer.from(parsed.nonce, 'base64')),
+    wrappedDEK: Uint8Array.from(Buffer.from(parsed.wrappedDEK, 'base64')),
+    dekNonce: Uint8Array.from(Buffer.from(parsed.dekNonce, 'base64')),
     algorithm: parsed.algorithm,
     keyId: parsed.keyId,
     timestamp: parsed.timestamp,
