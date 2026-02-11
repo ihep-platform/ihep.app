@@ -516,9 +516,36 @@
   text-align: center;
 }
 
+.ihep-landing .mobile-menu-button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  border: none;
+  border-radius: var(--radius-base);
+  background: transparent;
+  color: var(--color-slate-900);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background 0.2s;
+}
+
+.ihep-landing .mobile-menu-button:hover {
+  background: var(--color-gray-200);
+}
+
 @media (max-width: 768px) {
   .ihep-landing .nav-links {
     display: none;
+  }
+  .ihep-landing .hidden-mobile {
+    display: none;
+  }
+  .ihep-landing .mobile-menu-button {
+    display: flex;
   }
   .ihep-landing .hero h1 {
     font-size: var(--font-size-2xl);

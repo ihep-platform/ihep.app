@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Activity, Heart, TrendingUp, Plus, X } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 export default function WellnessPage() {
   const [selectedPeriod, setSelectedPeriod] = useState('week')
@@ -22,11 +23,15 @@ export default function WellnessPage() {
   const [metricType, setMetricType] = useState('')
   const [metricValue, setMetricValue] = useState('')
   const [metricUnit, setMetricUnit] = useState('')
+  const { toast } = useToast()
 
   const handleAddMetric = (e: React.FormEvent) => {
     e.preventDefault()
     // TODO: Save metric to database
-    console.log('Adding metric:', { metricType, metricValue, metricUnit })
+    toast({
+      title: "Metric Recorded",
+      description: `${metricType ? metricType.replace('-', ' ') : 'Metric'}: ${metricValue} ${metricUnit} has been saved.`,
+    })
     setShowAddModal(false)
     setMetricType('')
     setMetricValue('')

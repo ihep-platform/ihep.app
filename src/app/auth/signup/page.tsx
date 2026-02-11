@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 
 export default function SignupPage() {
@@ -30,6 +31,7 @@ export default function SignupPage() {
     special: false,
   })
   const router = useRouter()
+  const { toast } = useToast()
 
   const validatePassword = (password: string) => {
     setPasswordChecks({
@@ -58,17 +60,38 @@ export default function SignupPage() {
       const data = await response.json()
 
       if (response.ok) {
+        toast({
+          title: "Registration Successful",
+          description: "Your account has been created. Please log in.",
+        })
         router.push('/auth/login?message=Registration successful, please log in')
       } else {
         // Show detailed validation errors if available
         if (data.errors && Array.isArray(data.errors)) {
-          setError(data.errors.map((e: { message: string }) => e.message).join(', '))
+          const errorMessage = data.errors.map((e: { message: string }) => e.message).join(', ')
+          setError(errorMessage)
+          toast({
+            title: "Registration Failed",
+            description: errorMessage,
+            variant: "destructive",
+          })
         } else {
-          setError(data.message || 'Registration failed')
+          const errorMessage = data.message || 'Registration failed'
+          setError(errorMessage)
+          toast({
+            title: "Registration Failed",
+            description: errorMessage,
+            variant: "destructive",
+          })
         }
       }
     } catch (error) {
       setError('An error occurred during registration')
+      toast({
+        title: "Error",
+        description: "An error occurred during registration. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }

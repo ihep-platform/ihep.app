@@ -2,6 +2,14 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from '@/components/ui/sheet';
+import { Menu } from 'lucide-react';
 
 type NavLink = { id: string; label: string };
 type Metric = { value: string; label: string };
@@ -112,6 +120,7 @@ const positions: Position[] = [
 
 export default function InvestorLandingPage() {
   const [email, setEmail] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const smoothScroll = useCallback((id: string) => {
     const el = document.getElementById(id);
@@ -154,13 +163,70 @@ export default function InvestorLandingPage() {
             </ul>
             <a
               href="#newsletter"
-              className="cta-button"
+              className="cta-button hidden-mobile"
               onClick={(e) => handleAnchor(e, 'newsletter')}
             >
               Subscribe
             </a>
+            {/* Mobile hamburger menu button */}
+            <button
+              className="mobile-menu-button"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open navigation menu"
+              type="button"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
           </div>
         </nav>
+
+        {/* Mobile navigation sheet */}
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetContent side="right" className="w-[85%] max-w-[350px] bg-white">
+            <SheetHeader className="mb-6">
+              <SheetTitle className="text-xl font-bold" style={{ color: 'var(--color-teal-600)' }}>
+                IHEP
+              </SheetTitle>
+              <SheetDescription className="sr-only">
+                Site navigation links
+              </SheetDescription>
+            </SheetHeader>
+            <div className="flex flex-col space-y-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={`#${link.id}`}
+                  onClick={(e) => {
+                    handleAnchor(e, link.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex items-center min-h-[48px] px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-base transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <a
+                href="/investor-dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center min-h-[48px] px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-base transition-colors"
+              >
+                Investor Dashboard
+              </a>
+              <hr className="my-3 border-gray-200" />
+              <a
+                href="#newsletter"
+                onClick={(e) => {
+                  handleAnchor(e, 'newsletter');
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center justify-center min-h-[48px] px-4 py-3 rounded-lg font-semibold text-base text-white transition-colors"
+                style={{ background: 'var(--color-teal-600)' }}
+              >
+                Subscribe
+              </a>
+            </div>
+          </SheetContent>
+        </Sheet>
 
         <section className="hero">
           <div className="hero-container">
@@ -605,7 +671,7 @@ export default function InvestorLandingPage() {
                   𝕏
                 </a>
                 <a href="https://github.com/" target="_blank" rel="noopener noreferrer" title="GitHub">
-                  ⚙️
+                  GH
                 </a>
               </div>
             </div>

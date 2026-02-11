@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Calendar as CalendarIcon, Plus, Clock, MapPin, User, X } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 type CalendarEvent = {
   id: string
@@ -31,6 +32,7 @@ export default function CalendarPage() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [appointments, setAppointments] = useState<CalendarEvent[]>([])
   const [loading, setLoading] = useState(true)
+  const { toast } = useToast()
   const [appointmentData, setAppointmentData] = useState({
     title: '',
     provider: '',
@@ -77,10 +79,21 @@ export default function CalendarPage() {
           type: appointmentData.type
         })
       })
+      if (!res.ok) {
+        throw new Error('Failed to schedule appointment')
+      }
       const { event } = await res.json()
       setAppointments((prev) => [...prev, event])
+      toast({
+        title: "Appointment Scheduled",
+        description: `"${appointmentData.title}" has been added to your calendar.`,
+      })
     } catch (err) {
-      console.error(err)
+      toast({
+        title: "Scheduling Failed",
+        description: "Could not schedule the appointment. Please try again.",
+        variant: "destructive",
+      })
     }
 
     setShowAddModal(false)

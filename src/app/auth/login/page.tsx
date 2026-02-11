@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { useToast } from '@/hooks/use-toast'
 import Link from 'next/link'
 
 export default function LoginPage() {
@@ -16,6 +17,7 @@ export default function LoginPage() {
   const [socialLoading, setSocialLoading] = useState<string | null>(null)
   const [error, setError] = useState('')
   const router = useRouter()
+  const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,6 +33,11 @@ export default function LoginPage() {
 
       if (result?.error) {
         setError('Invalid username or password')
+        toast({
+          title: "Login Failed",
+          description: "Invalid username or password. Please try again.",
+          variant: "destructive",
+        })
       } else {
         // Refresh session and redirect to dashboard
         await getSession()
@@ -38,6 +45,11 @@ export default function LoginPage() {
       }
     } catch (error) {
       setError('An error occurred during login')
+      toast({
+        title: "Error",
+        description: "An error occurred during login. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -116,7 +128,12 @@ export default function LoginPage() {
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
+            <Link href="/auth/reset-password" className="text-sm text-primary hover:underline">
+              Forgot Password?
+            </Link>
+          </div>
+          <div className="mt-3 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{' '}
               <Link href="/auth/signup" className="text-primary hover:underline">

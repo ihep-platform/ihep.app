@@ -95,6 +95,21 @@ class FileUserStore {
     await this.persist()
     return user
   }
+
+  /**
+   * Update a user's password by username.
+   * @param username - The username of the account to update
+   * @param newPasswordHash - The pre-hashed new password (bcrypt)
+   * @returns true if user was found and updated, false if user not found
+   */
+  async updateUserPassword(username: string, newPasswordHash: string): Promise<boolean> {
+    await this.ensureLoaded()
+    const user = this.users.find((u) => u.username === username)
+    if (!user) return false
+    user.password = newPasswordHash
+    await this.persist()
+    return true
+  }
 }
 
 export const mockStore = new FileUserStore()

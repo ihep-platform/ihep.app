@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Target, Briefcase, GraduationCap, FlaskConical, Users, X } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 interface Opportunity {
     title: string
@@ -162,6 +163,7 @@ export default function OpportunitiesPage() {
     const [navigatorScore, setNavigatorScore] = useState(0)
     const [error, setError] = useState('')
     const [isSearching, setIsSearching] = useState(false)
+    const { toast } = useToast()
 
     const addSkill = () => {
         const skill = skillInput.trim()
@@ -225,6 +227,11 @@ export default function OpportunitiesPage() {
 
         if (skills.length === 0) {
             setError('Please add at least one skill to find matching opportunities')
+            toast({
+                title: "Skills Required",
+                description: "Please add at least one skill to find matching opportunities.",
+                variant: "destructive",
+            })
             return
         }
 
@@ -252,6 +259,12 @@ export default function OpportunitiesPage() {
             setNavigatorScore(assessNavigatorFit())
             setShowResults(true)
             setIsSearching(false)
+
+            const totalMatches = gigs.length + training.length + research.length
+            toast({
+                title: "Opportunities Found",
+                description: `${totalMatches} opportunities matched across gigs, training, and research.`,
+            })
         }, 500)
     }
 
