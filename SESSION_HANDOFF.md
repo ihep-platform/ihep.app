@@ -49,11 +49,11 @@
 - **Version**: 2.0.0-alpha
 - **Next.js**: 16.1.5 with Turbopack
 - **Build**: Passing (65 pages)
-- **Tests**: 106 passing, 7 pre-existing PQC failures
+- **Tests**: 113 passing, 0 failures (PQC framework fully operational)
 - **Auth**: NextAuth.js v4, credentials provider, mock user store, 19 API routes guarded
 - **Data**: File-based mock store (no production database connected)
 - **Database Schema**: Drizzle ORM with 25+ tables defined but DATABASE_URL not configured
-- **Security**: PQC encryption (Kyber), CSP headers, HIPAA-oriented design, auth guards
+- **Security**: PQC encryption (Kyber KEM + XChaCha20-Poly1305), PQC signatures (ML-DSA/Dilithium), CSP headers, HIPAA-oriented design, auth guards
 - **3D**: Three.js DigitalTwinCanvas component (basic humanoid, health-score color mapping)
 - **Repo**: github.com/ihep-platform/ihep.app (master branch)
 
@@ -62,10 +62,23 @@
 Next.js 16.1.5 prerenders this page at build time regardless of `'use client'`.
 Same applies to any component imported in `layout.tsx` -- must have `'use client'` if it uses hooks.
 
+### 7. PQC Framework Fix (COMPLETED)
+- Fixed 3 root causes across `pqc-signatures.ts` and `pqc-hybrid-encryption.ts`:
+  1. `@noble/post-quantum` v0.5.4 sign/verify argument order was inverted
+  2. Envelope encryption dropped wrappedDEK/dekNonce from EncryptedData output
+  3. HKDF deriveKey() used random salt on each call, producing mismatched keys
+- All 12 PQC integration tests now pass (was 5/12)
+- Full suite: 113 tests, 0 failures
+
+## PQC Framework Notes (for next session)
+- `@noble/post-quantum` v0.5.4 API: `sign(message, secretKey)`, `verify(signature, message, publicKey)`
+- Envelope encryption uses XChaCha20-Poly1305 for both plaintext and DEK wrapping
+- HKDF-SHA512 key derivation uses fixed zero salt (KEM shared secret provides full entropy)
+- Signature sizes: ML-DSA44=2420, ML-DSA65=3309, ML-DSA87=4627
+
 ## Recommended Next Steps
 1. Implement RBAC checks per endpoint (patient vs provider vs admin roles)
 2. Add E2E tests with Playwright for critical user journeys
 3. Connect Drizzle ORM to a PostgreSQL database (DATABASE_URL)
 4. Replace mock store with database-backed user repository
-5. Fix 7 PQC test failures (key size mismatches in pqc-integration.test.ts)
-6. Continue grant application work (ARPA-H ADVOCATE due Feb 27, CMS ACCESS due Apr 1)
+5. Continue grant application work (ARPA-H ADVOCATE due Feb 27, CMS ACCESS due Apr 1)

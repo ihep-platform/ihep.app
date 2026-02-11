@@ -105,7 +105,10 @@ Last Updated: February 10, 2026 (Session 8)
 - [x] Add unit tests for authentication flow (register route)
 - [ ] Add E2E tests with Playwright for critical user journeys
 - [ ] Add accessibility tests with axe-core
-- [ ] Fix 7 pre-existing PQC test failures (key size mismatches in pqc-integration.test.ts)
+- [x] Fix 7 PQC test failures (Session 8, Feb 10) -- 3 root causes:
+  - [x] @noble/post-quantum sign/verify argument order (pqc-signatures.ts)
+  - [x] Envelope encryption missing wrappedDEK/dekNonce fields (pqc-hybrid-encryption.ts)
+  - [x] HKDF random salt non-determinism in key derivation (pqc-hybrid-encryption.ts)
 
 ### Grant Applications (URGENT)
 - [ ] **ARPA-H ADVOCATE TA2 Solution Summary -- due Feb 27, 2026**
@@ -171,7 +174,7 @@ Last Updated: February 10, 2026 (Session 8)
 - All dashboard pages protected with session check
 - All 19 API routes protected with getServerSession auth guards
 - Drizzle ORM schema defined (25+ tables) but no database connected
-- 106 Vitest tests passing (7 pre-existing PQC failures)
+- 113 Vitest tests passing (0 failures) -- PQC framework fully operational
 - Three engineering documents provide full traceability: PRD -> Tech Specs -> TDD
 - Repository reorganized into hub-and-spoke: ihep-application/ (hub) + spokes/ (16 services)
 - Repo published to: github.com/ihep-platform/ihep.app
