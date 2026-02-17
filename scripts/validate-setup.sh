@@ -7,8 +7,10 @@ echo ""
 
 ERRORS=0
 WARNINGS=0
+CHECKS=0
 
 # Check Node.js
+CHECKS=$((CHECKS + 1))
 echo -n "Checking Node.js version... "
 if command -v node &> /dev/null; then
     NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
@@ -24,6 +26,7 @@ else
 fi
 
 # Check npm
+CHECKS=$((CHECKS + 1))
 echo -n "Checking npm... "
 if command -v npm &> /dev/null; then
     echo "✅ $(npm -v)"
@@ -33,6 +36,7 @@ else
 fi
 
 # Check for node_modules
+CHECKS=$((CHECKS + 1))
 echo -n "Checking dependencies... "
 if [ -d "node_modules" ]; then
     echo "✅ node_modules exists"
@@ -42,6 +46,7 @@ else
 fi
 
 # Check .env.local
+CHECKS=$((CHECKS + 1))
 echo -n "Checking environment file... "
 if [ -f ".env.local" ]; then
     echo "✅ .env.local exists"
@@ -66,6 +71,7 @@ else
 fi
 
 # Check Docker
+CHECKS=$((CHECKS + 1))
 echo -n "Checking Docker... "
 if command -v docker &> /dev/null; then
     echo "✅ $(docker --version | cut -d',' -f1)"
@@ -81,6 +87,7 @@ else
 fi
 
 # Check Git
+CHECKS=$((CHECKS + 1))
 echo -n "Checking Git... "
 if command -v git &> /dev/null; then
     echo "✅ $(git --version | cut -d' ' -f1-3)"
@@ -90,6 +97,7 @@ else
 fi
 
 # Check TypeScript
+CHECKS=$((CHECKS + 1))
 echo -n "Checking TypeScript... "
 if [ -d "node_modules" ] && [ -f "node_modules/.bin/tsc" ]; then
     echo "✅ TypeScript installed"
@@ -99,6 +107,7 @@ else
 fi
 
 # Check for build directory
+CHECKS=$((CHECKS + 1))
 echo -n "Checking build artifacts... "
 if [ -d ".next" ]; then
     echo "✅ .next directory exists"
@@ -106,11 +115,14 @@ else
     echo "ℹ️  No build found (run 'npm run build' to create production build)"
 fi
 
+# Calculate passed checks
+PASSED=$((CHECKS - ERRORS - WARNINGS))
+
 # Summary
 echo ""
 echo "===================================="
 echo "Summary:"
-echo "  ✅ Passed: $((7 - ERRORS - WARNINGS))"
+echo "  ✅ Passed: $PASSED"
 echo "  ⚠️  Warnings: $WARNINGS"
 echo "  ❌ Errors: $ERRORS"
 echo ""
