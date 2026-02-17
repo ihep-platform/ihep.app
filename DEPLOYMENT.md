@@ -1,11 +1,15 @@
 # IHEP Next.js - Google Cloud Deployment
 
+> 🚨 **Before deploying to production, complete the [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md)**
+
 ## Prerequisites
 
 - Google Cloud Project: `YOUR_GCP_PROJECT_ID`
 - Workload Identity Pool configured
 - Service Account: `github-actions-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com`
 - Artifact Registry repository: `us-docker.pkg.dev/YOUR_GCP_PROJECT_ID/ihep`
+- PostgreSQL database provisioned and accessible
+- All environment variables configured (see [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md))
 
 ## Deployment Configuration
 
@@ -149,9 +153,24 @@ docker run -p 5000:5000 \
 curl http://localhost:5000
 ```
 
+## Production Readiness
+
+Before launching to production, ensure you have completed all items in:
+- **[PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md)** - Comprehensive pre-launch checklist
+
 ## Next Steps
 
-1. Configure environment variables in Cloud Run
-2. Set up custom domain (optional)
-3. Configure CI/CD monitoring and alerts
-4. Set up Cloud CDN (optional for static assets)
+1. **Complete [PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md)** ← Start here
+2. Configure all required environment variables in Cloud Run
+3. Run database migrations (`npm run db:migrate`)
+4. Set up custom domain (optional)
+5. Configure CI/CD monitoring and alerts
+6. Set up Cloud CDN (optional for static assets)
+7. Enable Cloud Monitoring and alerting
+8. Configure backup and disaster recovery procedures
+
+## Additional Resources
+
+- [CODESPACES_SETUP.md](./CODESPACES_SETUP.md) - Development environment setup
+- [SECURITY.md](./SECURITY.md) - Security guidelines and PHI handling
+- [README.md](./README.md) - Project overview and quick start
