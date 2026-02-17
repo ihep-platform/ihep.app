@@ -1,10 +1,14 @@
 # IHEP Platform
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=ihep-platform/ihep.app)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![License](https://img.shields.io/badge/license-Custom-green)
 
 The Integrated Health Engagement Platform (IHEP) is a Next.js-based healthcare aftercare platform with digital twin technology, wellness tracking, and financial empowerment tools.
 
 ## 🚀 Quick Start
+
+**New to the project?** See [GETTING_STARTED.md](./GETTING_STARTED.md) for all setup options.
 
 ### Option 1: GitHub Codespaces (Recommended)
 
@@ -27,6 +31,9 @@ cd ihep.app
 # Run the setup script
 bash scripts/dev-setup.sh
 
+# Validate your setup
+bash scripts/validate-setup.sh
+
 # Start the development server
 npm run dev
 ```
@@ -35,12 +42,14 @@ Open [http://localhost:5000](http://localhost:5000) with your browser.
 
 ## 📚 Documentation
 
-- **[CODESPACES_SETUP.md](./CODESPACES_SETUP.md)** - GitHub Codespaces quick start guide
-- **[QUICK_START.md](./QUICK_START.md)** - Detailed local development setup
+- **[GETTING_STARTED.md](./GETTING_STARTED.md)** - Start here! All setup options and quick reference
+- **[CODESPACES_SETUP.md](./CODESPACES_SETUP.md)** - GitHub Codespaces detailed guide
+- **[QUICK_START.md](./QUICK_START.md)** - Local development setup details
+- **[PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md)** - Pre-launch checklist (120+ items)
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - GCP Cloud Run deployment guide
-- **[PRODUCTION_CHECKLIST.md](./PRODUCTION_CHECKLIST.md)** - Pre-launch checklist
 - **[SECURITY.md](./SECURITY.md)** - Security guidelines and PHI handling
 - **[TODO.md](./TODO.md)** - Current tasks and project status
+- **[PROJECT_SUMMARY.md](./PROJECT_SUMMARY.md)** - Comprehensive project overview
 
 ## 🛠️ Tech Stack
 
@@ -73,6 +82,9 @@ ihep.app/
 ## 🧪 Development Commands
 
 ```bash
+# Validation
+bash scripts/validate-setup.sh  # Verify your setup is correct
+
 # Development
 npm run dev              # Start dev server (uses webpack for Three.js compatibility)
 npm run dev:turbo        # Start dev server with Turbopack
