@@ -13,12 +13,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'IHEP - Integrated Health Empowerment Program',
   description:
-    'IHEP - Transforming healthcare aftercare through AI-powered digital twins. Addressing the $290B crisis in treatment adherence.',
+    'IHEP helps patients navigate aftercare with 5-pillar digital twins, financial support tools, and a dynamic calendar—built with privacy-first safeguards.',
   keywords: [
     'digital health',
     'AI',
-    'HIV care',
     'digital twins',
+    'medication adherence',
+    'care coordination',
     'health equity',
     'healthcare technology',
     'aftercare management',
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
     url: '/',
     title: 'IHEP - AI-Powered Digital Health Aftercare Platform',
     description:
-      'Transforming aftercare management for life-altering conditions through digital twins and federated AI.',
+      'Navigate aftercare with 5-pillar digital twins, financial support, and a dynamic calendar—built with privacy-first safeguards.',
     siteName: 'IHEP',
   },
   robots: {

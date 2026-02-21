@@ -2,6 +2,8 @@
 'use client';
 
 import React, { useCallback, useState } from 'react';
+import { getSession, signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import {
   Sheet,
   SheetContent,
@@ -9,118 +11,77 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Menu } from 'lucide-react';
 
 type NavLink = { id: string; label: string };
-type Metric = { value: string; label: string };
 type DocumentCard = { href: string; icon: string; title: string; desc: string; format: string };
-type Position = { title: string; reqs: string; comp: string };
 
 const navLinks: NavLink[] = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'documents', label: 'Documents' },
-  { id: 'press', label: 'Press Kit' },
-  { id: 'team', label: 'Team' },
-  { id: 'partner', label: 'Partner With Us' },
+  { id: 'digital-twins', label: '5-Pillar Twins' },
+  { id: 'financial', label: 'Financial Support' },
+  { id: 'research', label: 'Research (Optional)' },
+  { id: 'program', label: 'What You Get' },
+  { id: 'documents', label: 'Resources' },
+  { id: 'get-started', label: 'Get Started' },
 ];
 
-const metrics: Metric[] = [
-  { value: '$290B', label: 'Annual Cost of Non-Adherence' },
-  { value: '40%', label: 'HIV Patients Lost in 6 Months' },
-  { value: '66%', label: 'Current Viral Suppression Rate' },
-  { value: '1.2M', label: 'Americans Living with HIV' },
-];
-
-const documents: DocumentCard[] = [
+const patientResources: DocumentCard[] = [
   {
-    href: '/docs/A%20Recursive%20Blueprint%20for%20a%20Global%20Problem.pdf',
-    icon: 'Doc',
-    title: 'One-Page Overview',
-    desc: "Quick introduction to IHEP's problem, solution, market opportunity, and funding ask. Perfect for first impressions.",
-    format: 'PDF',
+    href: '/resources',
+    icon: 'Hub',
+    title: 'Resource Hub',
+    desc: 'Programs, groups, and articles curated to your needs and condition.',
+    format: 'Page',
   },
   {
-    href: '/docs/ihep-pitch-deck.pdf',
-    icon: 'Deck',
-    title: 'Investor Deck',
-    desc: 'Comprehensive 10-12 slide presentation covering market opportunity, technology differentiation, financial projections, team, and investment terms.',
-    format: 'PDF',
+    href: '/dashboard/digital-twin',
+    icon: 'Twin',
+    title: 'Digital Twin Dashboard',
+    desc: 'Your 5-pillar snapshots, insights, and next-step recommendations (members-only).',
+    format: 'Members',
   },
   {
-    href: '/docs/architecture/HUB_AND_SPOKE_ARCHITECTURE.md',
-    icon: 'Arch',
-    title: 'Hub-and-Spoke Architecture',
-    desc: 'Complete technical architecture showing how IHEP uses a central hub with domain spokes for omnidirectional data flow and HIPAA compliance.',
-    format: 'Markdown',
+    href: '/dashboard/calendar',
+    icon: 'Calendar',
+    title: 'Dynamic Calendar',
+    desc: 'Appointments, medications, and support tasks consolidated in one schedule (members-only).',
+    format: 'Members',
   },
   {
-    href: '/docs/IHEP%20System%20Architecture%20Document.pdf',
-    icon: 'Build',
-    title: 'Technical Architecture',
-    desc: 'Detailed whitepaper covering digital twin technology, federated learning, morphogenetic framework, and NIST compliance architecture.',
-    format: 'PDF',
-  },
-  {
-    href: '/docs/IHEP%20Comprehensive%20Financial%20Model.pdf',
+    href: '/dashboard/financials',
     icon: 'Finance',
-    title: 'Financial Model',
-    desc: 'Phase I budget breakdown, 10-year financial projections, unit economics, and path to profitability. Conservative assumptions detailed.',
-    format: 'PDF',
+    title: 'Financial Empowerment',
+    desc: 'Benefits optimization and opportunity matching to reduce treatment drop-off (members-only).',
+    format: 'Members',
   },
   {
-    href: '/docs/IHEP%20Phase%20I%20Detailed%20Project%20Plan.pdf',
-    icon: 'Plan',
-    title: 'Pilot Plan & Timeline',
-    desc: 'Detailed Phase I implementation roadmap with milestones, success metrics, outcome measurement methodology, and measurable endpoints.',
-    format: 'PDF',
-  },
-  {
-    href: '/docs/IHEP%20Complete%20Due%20Diligence%20Package.pdf',
-    icon: 'Checklist',
-    title: 'Due Diligence Package',
-    desc: 'Complete due diligence documentation for investor review including all key materials and supporting documents.',
-    format: 'PDF',
-  },
-  {
-    href: '/investor-dashboard',
-    icon: 'Dashboard',
-    title: 'Investor Dashboard',
-    desc: 'Interactive 10 year Income Streams, Financial Impact, Income Streams, Op Costs, Funding Model & ROI Analysis.',
-    format: 'HTML',
+    href: '/legal/trust',
+    icon: 'Shield',
+    title: 'Privacy & Trust',
+    desc: 'How we protect your data with security-first controls and HIPAA-aligned safeguards.',
+    format: 'Page',
   },
 ];
 
-const positions: Position[] = [
-  {
-    title: 'Chief Technology Officer',
-    reqs: '10+ years software architecture, healthcare tech background, AIML expertise, HIPAA-compliant systems at scale',
-    comp: '$200K base + 3% equity + performance bonuses',
-  },
-  {
-    title: 'Chief Security & Compliance Officer',
-    reqs: 'CISSP/equivalent, healthcare compliance expertise (HIPAA, NIST), FDA digital health regulations',
-    comp: '$180K base + 2% equity',
-  },
-  {
-    title: 'Clinical Director',
-    reqs: 'MD/equivalent, HIV/AIDS clinical expertise, clinical informatics background',
-    comp: '$220K base + 2% equity',
-  },
-  {
-    title: 'Community Engagement Director',
-    reqs: '7+ years community health work, HIV/AIDS service org leadership, lived experience preferred',
-    comp: '$140K base + 1.5% equity',
-  },
-  {
-    title: 'AIML Lead Engineer',
-    reqs: 'PhD in CS/ML or equivalent, healthcare AI experience, federated learning expertise',
-    comp: '$180K base + 2% equity',
-  },
-];
-
-export default function InvestorLandingPage() {
+export default function LandingPage() {
   const [email, setEmail] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [signInOpen, setSignInOpen] = useState(false);
+  const [signInUsername, setSignInUsername] = useState('');
+  const [signInPassword, setSignInPassword] = useState('');
+  const [signInLoading, setSignInLoading] = useState(false);
+  const [signInError, setSignInError] = useState<string | null>(null);
+  const router = useRouter();
 
   const smoothScroll = useCallback((id: string) => {
     const el = document.getElementById(id);
@@ -135,6 +96,44 @@ export default function InvestorLandingPage() {
     [smoothScroll],
   );
 
+  const openSignIn = useCallback(() => {
+    setSignInError(null);
+    setSignInOpen(true);
+  }, []);
+
+  const handleSignIn = useCallback(
+    async (event: React.FormEvent) => {
+      event.preventDefault();
+      if (signInLoading) return;
+
+      setSignInLoading(true);
+      setSignInError(null);
+
+      try {
+        const result = await signIn('credentials', {
+          username: signInUsername,
+          password: signInPassword,
+          redirect: false,
+        });
+
+        if (result?.error) {
+          setSignInError('Invalid username or password');
+          return;
+        }
+
+        await getSession();
+        setSignInOpen(false);
+        setSignInPassword('');
+        router.push('/dashboard');
+      } catch {
+        setSignInError('An error occurred during sign in');
+      } finally {
+        setSignInLoading(false);
+      }
+    },
+    [router, signInLoading, signInPassword, signInUsername],
+  );
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     alert('Thank you for subscribing! Check your email for a welcome message.');
@@ -144,9 +143,71 @@ export default function InvestorLandingPage() {
   return (
     <>
       <div className="ihep-landing">
+        <Dialog
+          open={signInOpen}
+          onOpenChange={(open) => {
+            setSignInOpen(open);
+            if (!open) {
+              setSignInError(null);
+              setSignInPassword('');
+            }
+          }}
+        >
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Sign in</DialogTitle>
+              <DialogDescription>
+                Access your dashboard, calendar, and personalized next steps.
+              </DialogDescription>
+            </DialogHeader>
+
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="ihep-signin-username">Email or username</Label>
+                <Input
+                  id="ihep-signin-username"
+                  type="text"
+                  value={signInUsername}
+                  onChange={(e) => setSignInUsername(e.target.value)}
+                  autoComplete="username"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ihep-signin-password">Password</Label>
+                <Input
+                  id="ihep-signin-password"
+                  type="password"
+                  value={signInPassword}
+                  onChange={(e) => setSignInPassword(e.target.value)}
+                  autoComplete="current-password"
+                  required
+                />
+              </div>
+
+              {signInError ? <div className="text-sm text-red-600">{signInError}</div> : null}
+
+              <Button type="submit" className="w-full" disabled={signInLoading}>
+                {signInLoading ? 'Signing in…' : 'Sign in'}
+              </Button>
+            </form>
+
+            <div className="text-center text-sm text-muted-foreground">
+              Don&apos;t have an account?{' '}
+              <a href="/register" className="text-primary hover:underline">
+                Create one
+              </a>
+              <span className="mx-2">·</span>
+              <a href="/login" className="hover:underline">
+                Use full sign-in page
+              </a>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <nav>
           <div className="nav-container">
-            <a href="#overview" className="logo" onClick={(e) => handleAnchor(e, 'overview')}>
+            <a href="#digital-twins" className="logo" onClick={(e) => handleAnchor(e, 'digital-twins')}>
               IHEP
             </a>
             <ul className="nav-links">
@@ -157,16 +218,24 @@ export default function InvestorLandingPage() {
                   </a>
                 </li>
               ))}
-              <li>
-                <a href="/investor-dashboard">Investor Dashboard</a>
+              <li className="hidden-mobile">
+                <a
+                  href="/login"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openSignIn();
+                  }}
+                >
+                  Sign in
+                </a>
               </li>
             </ul>
             <a
-              href="#newsletter"
+              href="#get-started"
               className="cta-button hidden-mobile"
-              onClick={(e) => handleAnchor(e, 'newsletter')}
+              onClick={(e) => handleAnchor(e, 'get-started')}
             >
-              Subscribe
+              Get Started
             </a>
             {/* Mobile hamburger menu button */}
             <button
@@ -206,23 +275,27 @@ export default function InvestorLandingPage() {
                 </a>
               ))}
               <a
-                href="/investor-dashboard"
-                onClick={() => setMobileMenuOpen(false)}
+                href="/login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  openSignIn();
+                }}
                 className="flex items-center min-h-[48px] px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 font-medium text-base transition-colors"
               >
-                Investor Dashboard
+                Sign in
               </a>
               <hr className="my-3 border-gray-200" />
               <a
-                href="#newsletter"
+                href="#get-started"
                 onClick={(e) => {
-                  handleAnchor(e, 'newsletter');
+                  handleAnchor(e, 'get-started');
                   setMobileMenuOpen(false);
                 }}
                 className="flex items-center justify-center min-h-[48px] px-4 py-3 rounded-lg font-semibold text-base text-white transition-colors"
                 style={{ background: 'var(--color-teal-600)' }}
               >
-                Subscribe
+                Get Started
               </a>
             </div>
           </SheetContent>
@@ -230,119 +303,270 @@ export default function InvestorLandingPage() {
 
         <section className="hero">
           <div className="hero-container">
-            <h1>Transforming Healthcare Aftercare Through AI-Powered Digital Twins</h1>
+            <h1>Adherence support that adapts to you</h1>
             <p>
-              The Integrated Health Empowerment Program (IHEP) solves the $290 billion problem of
-              treatment non-adherence by combining patient digital twins, organizational ecosystem
-              mapping, and federated AI learning—built on Google Cloud with compliance-first
-              architecture.
+              IHEP helps you keep appointments, take medications on time, and navigate aftercare by
+              turning your clinical and daily-life signals into clear next steps—across 5-pillar
+              digital twins, financial support, and a dynamic calendar—built with privacy-first
+              safeguards.
             </p>
             <div>
-              <button type="button" className="cta-button" onClick={() => smoothScroll('overview')}>
-                Learn More
+              <button type="button" className="cta-button" onClick={() => smoothScroll('get-started')}>
+                Get Started
               </button>
-              <a
-                href="/docs/ihep-pitch-deck.pdf"
-                className="secondary-button"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Download Our Deck
+              <a href="#program" className="secondary-button" onClick={(e) => handleAnchor(e, 'program')}>
+                What you get
               </a>
-            <a
-              href="/investor-dashboard"
-              className="secondary-button"
-              rel="noopener noreferrer"
-            >
-              View Investor Dashboard
-            </a>
+              <a
+                href="#digital-twins"
+                className="secondary-button"
+                onClick={(e) => handleAnchor(e, 'digital-twins')}
+              >
+                How it works
+              </a>
             </div>
           </div>
         </section>
 
-        <section id="overview" className="light">
+        <section id="digital-twins" className="light">
           <div className="container">
-            <h2 className="text-center">IHEP in 90 Seconds</h2>
-
-            <div className="metrics text-center">
-              {metrics.map((metric) => (
-                <div className="metric" key={metric.label}>
-                  <div className="metric-number">{metric.value}</div>
-                  <div className="metric-label">{metric.label}</div>
-                </div>
-              ))}
-            </div>
+            <h2 className="text-center">5-Pillar Twin System</h2>
+            <p
+              className="text-center"
+              style={{ marginBottom: 'var(--spacing-32)', color: 'var(--color-slate-500)' }}
+            >
+              Clinical · Behavioral · Social · Financial · Personal
+            </p>
 
             <div className="overview-grid">
               <div className="overview-card">
-                <h3>The Problem</h3>
+                <h3>Clinical Twin</h3>
                 <p>
-                  When patients receive life-altering diagnoses like HIV, cancer, or rare blood
-                  diseases, the healthcare system provides excellent acute care but abandons them in
-                  the critical months that follow. The result: 40% dropout rates, $290 billion in
-                  wasted healthcare costs, and preventable deaths.
+                  Represents diagnoses, medications, vitals, labs, and care plan milestones. It
+                  synthesizes EHR signals and time-series telemetry to surface risks and next-step
+                  actions for the patient and care team.
                 </p>
               </div>
 
               <div className="overview-card">
-                <h3>The Solution</h3>
+                <h3>Behavioral Twin</h3>
                 <p>
-                  <span className="highlight">Patient Digital Twins</span> fuse clinical,
-                  psychosocial, environmental, and behavioral data to anticipate challenges before
-                  they manifest. <span className="highlight">Organizational Twins</span> map entire
-                  care ecosystems. <span className="highlight">Federated AI</span> learns across
-                  sites without moving private health information.
+                  Represents daily habits and engagement (sleep, activity, nutrition, routines). It
+                  converts self-reports and wearable patterns into achievable micro-goals and
+                  adherence-support nudges tailored to readiness.
                 </p>
               </div>
 
               <div className="overview-card">
-                <h3>The Impact</h3>
+                <h3>Social Twin</h3>
                 <p>
-                  Phase I pilot targeting 15% improvement in appointment adherence, 25% reduction in
-                  emergency department visits, and 85% viral suppression rate (vs. 66% national
-                  average). Built on Google Cloud with NIST SP 800-53r5 compliance-first
-                  architecture.
+                  Represents social determinants and support systems (housing, transportation, food,
+                  community support). It flags barriers early and orchestrates referrals to the
+                  right programs, groups, and services.
+                </p>
+              </div>
+
+              <div className="overview-card">
+                <h3>Financial Twin</h3>
+                <p>
+                  Represents affordability, benefits utilization, and income stability. It powers
+                  benefit optimization, opportunity matching, and financial health scoring to
+                  reduce financial friction that drives treatment drop-off.
+                </p>
+              </div>
+
+              <div className="overview-card">
+                <h3>Personal Twin</h3>
+                <p>
+                  Represents goals, preferences, values, and sentiment over time. It aligns
+                  recommendations to what matters most to the person and adapts communication to
+                  improve engagement and follow-through.
                 </p>
               </div>
             </div>
 
             <div
               style={{
-                background: 'var(--color-gray-200)',
-                padding: 'var(--spacing-24)',
-                borderRadius: 'var(--radius-lg)',
-                marginTop: 'var(--spacing-32)',
+                background: varString('--color-gray-200'),
+                padding: varString('--spacing-24'),
+                borderRadius: varString('--radius-lg'),
+                marginTop: varString('--spacing-32'),
               }}
             >
-              <h3 style={{ marginTop: 0 }}>Raising $3.5M Series Seed</h3>
-              <p>
-                To fund Phase I pilot deployment in Miami/Orlando, executive team assembly,
-                compliance validation, and outcome demonstration.
+              <h3 style={{ marginTop: 0 }}>How it works</h3>
+              <p style={{ marginBottom: varString('--spacing-16') }}>
+                Each pillar produces a time-updated snapshot (scores, trends, and insights). IHEP
+                then synthesizes the pillars into a single prioritized action plan across patient,
+                care team, and community resources.
               </p>
-              <p>
-                <strong>Investment Terms:</strong> Convertible note, 20% Series A discount, $15M
-                cap, 6% interest, 24-month maturity. Minimum investment $100K.
-              </p>
-              <p>
-                <strong>Timeline:</strong> Operations commence March 2026. SBIR Phase I application
-                April 5, 2026 ($300K non-dilutive if successful).
-              </p>
+              <ul style={{ marginTop: 0 }}>
+                <li>Ingest signals (EHR, labs, wearables, check-ins, SDOH screens, benefits data)</li>
+                <li>Compute pillar scores, trends, and risk indicators</li>
+                <li>Generate recommendations and next-best actions</li>
+                <li>Coordinate tasks and follow-ups across stakeholders</li>
+                <li>Improve continuously via privacy-preserving learning (federated AI)</li>
+              </ul>
+            </div>
+
+            <div
+              style={{
+                background: varString('--color-gray-200'),
+                padding: varString('--spacing-24'),
+                borderRadius: varString('--radius-lg'),
+                marginTop: varString('--spacing-24'),
+              }}
+            >
+              <h3 style={{ marginTop: 0 }}>How this supports adherence</h3>
+              <ul style={{ marginTop: 0 }}>
+                <li>Helps you build medication routines and keep track of next steps</li>
+                <li>Surfaces early warning signs (missed tasks, barriers, stress) before you fall behind</li>
+                <li>Connects you to the right resources when cost, transportation, or support is the blocker</li>
+                <li>Creates a clear, prioritized plan you can follow day to day</li>
+              </ul>
             </div>
           </div>
         </section>
 
-        <section id="documents" className="gray">
+        <section id="financial" className="gray">
           <div className="container">
-            <h2 className="text-center">Document Library</h2>
+            <h2 className="text-center">Financial Support</h2>
+            <div className="overview-grid">
+              <div className="overview-card">
+                <h3>Benefits &amp; Coverage</h3>
+                <p>
+                  Helps you identify programs you may qualify for and organize what to do next—so
+                  cost and paperwork do not become the reason you miss care.
+                </p>
+              </div>
+              <div className="overview-card">
+                <h3>Opportunities &amp; Stability</h3>
+                <p>
+                  Matches you with opportunities aligned to your health constraints and readiness,
+                  helping stabilize income during treatment and recovery.
+                </p>
+              </div>
+              <div className="overview-card">
+                <h3>Affordability Check-ins</h3>
+                <p>
+                  Flags affordability stress early and recommends support options before it turns
+                  into missed doses, missed appointments, or delayed labs.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="research" className="light">
+          <div className="container">
+            <h2 className="text-center">Clinical Research (Optional)</h2>
             <p
               className="text-center"
               style={{ marginBottom: 'var(--spacing-32)', color: 'var(--color-slate-500)' }}
             >
-              All materials available for download. Password-protected materials upon request.
+              Participation is always opt-in. Choosing not to participate does not impact your
+              program access.
+            </p>
+            <div className="overview-grid">
+              <div className="overview-card">
+                <h3>Opt-in Participation</h3>
+                <p>
+                  If you choose, you can contribute to research studies designed to improve
+                  aftercare and treatment support.
+                </p>
+              </div>
+              <div className="overview-card">
+                <h3>Consent &amp; De-identification</h3>
+                <p>
+                  Research workflows are built around consent, audit trails, and privacy-first
+                  controls to protect sensitive health information.
+                </p>
+              </div>
+              <div className="overview-card">
+                <h3>Better Support Over Time</h3>
+                <p>
+                  Helps improve the quality of support for future patients by learning what works
+                  best—without exposing private data.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="program" className="gray">
+          <div className="container">
+            <h2 className="text-center">What You Get</h2>
+            <p
+              className="text-center"
+              style={{ marginBottom: 'var(--spacing-32)', color: 'var(--color-slate-500)' }}
+            >
+              IHEP is designed to reduce aftercare overload by consolidating guidance, resources,
+              and follow-through into one place.
+            </p>
+
+            <div className="overview-grid">
+              <div className="overview-card">
+                <h3>Adherence Support Plan</h3>
+                <p>
+                  Clear next steps to help you stay on therapy—medication routines, appointment
+                  follow-through, and barrier resolution aligned to your situation.
+                </p>
+              </div>
+
+              <div className="overview-card">
+                <h3>Care Coordination</h3>
+                <p>
+                  A dynamic calendar to organize appointments, labs, medications, and support tasks
+                  with reminders and easy-to-follow routines.
+                </p>
+              </div>
+
+              <div className="overview-card">
+                <h3>Benefits &amp; Cost Support</h3>
+                <p>
+                  Tools that reduce financial barriers to care so you can keep appointments, labs,
+                  and medications on track.
+                </p>
+              </div>
+
+              <div className="overview-card">
+                <h3>Resource Matching</h3>
+                <p>
+                  Curated programs, groups, and evidence-based education—matched to your situation
+                  and updated as your needs change.
+                </p>
+              </div>
+
+              <div className="overview-card">
+                <h3>Community Support</h3>
+                <p>
+                  Access community pathways and support touchpoints that reduce isolation and
+                  improve follow-through over time.
+                </p>
+              </div>
+
+              <div className="overview-card">
+                <h3>Privacy-First Design</h3>
+                <p>
+                  Built with security-first controls and HIPAA-aligned safeguards to protect
+                  sensitive health information.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="documents" className="light">
+          <div className="container">
+            <h2 className="text-center">Patient Resources</h2>
+            <p
+              className="text-center"
+              style={{ marginBottom: 'var(--spacing-32)', color: 'var(--color-slate-500)' }}
+            >
+              Explore program tools and support resources. Some features require an account.
             </p>
 
             <div className="doc-grid">
-              {documents.map((doc) => (
+              {patientResources.map((doc) => (
                 <a
                   key={doc.title}
                   className="doc-card"
@@ -368,183 +592,75 @@ export default function InvestorLandingPage() {
                 fontSize: 'var(--font-size-sm)',
               }}
             >
-              Additional materials available upon request: Technical specifications • Security &
-              Compliance Framework • Clinical Study Protocol • Partnership Agreements • Regulatory
-              Strategy
+              Need help navigating aftercare resources? Contact{' '}
+              <a href="mailto:support@ihep.app">support@ihep.app</a>.
             </p>
           </div>
         </section>
 
-        <section id="press" className="light">
+        <section id="get-started" className="gray">
           <div className="container">
-            <h2 className="text-center">Press &amp; Media Kit</h2>
-
-            <div
-              style={{
-                background: varString('--color-gray-200'),
-                padding: varString('--spacing-32'),
-                borderRadius: varString('--radius-lg'),
-                marginTop: varString('--spacing-32'),
-              }}
+            <h2 className="text-center">Get Started</h2>
+            <p
+              className="text-center"
+              style={{ marginBottom: 'var(--spacing-32)', color: 'var(--color-slate-500)' }}
             >
-              <h3>Company Boilerplate</h3>
-              <p style={{ marginBottom: varString('--spacing-16') }}>
-                <strong>50-word version:</strong>
-              </p>
-              <p
-                style={{
-                  marginBottom: varString('--spacing-24'),
-                  fontStyle: 'italic',
-                  color: varString('--color-slate-600'),
-                }}
-              >
-                "The Integrated Health Empowerment Program (IHEP) is an AI-driven digital health
-                platform transforming aftercare for life-altering conditions. Using patient digital
-                twins, organizational ecosystem mapping, and federated learning, IHEP addresses the
-                $290 billion problem of treatment non-adherence while building the data
-                infrastructure for breakthrough treatments. Founded by Jason Jarmacz."
-              </p>
+              Create an account to access your dashboard, calendar, and personalized recommendations.
+              If you are not ready yet, subscribe for updates and program announcements.
+            </p>
 
-              <p style={{ marginBottom: varString('--spacing-16') }}>
-                <strong>100-word version:</strong>
-              </p>
-              <p
-                style={{
-                  marginBottom: varString('--spacing-24'),
-                  fontStyle: 'italic',
-                  color: varString('--color-slate-600'),
-                }}
-              >
-                "The Integrated Health Empowerment Program (IHEP) is a morphogenetic digital health
-                ecosystem solving the $290 billion annual crisis of treatment non-adherence in
-                life-altering conditions like HIV, cancer, and rare blood diseases. IHEP combines
-                three layers of innovation: patient digital twins that anticipate challenges before
-                they manifest, organizational twins that optimize entire care ecosystems, and
-                federated AI networks that learn across sites without moving private health
-                information. Built on Google Cloud with compliance-first NIST SP 800-53r5
-                architecture, IHEP demonstrates measurable outcomes while building the data
-                infrastructure for functional cures. Founded by Jason Jarmacz, Chief Evolution
-                Strategist, IHEP is raising a $3.5M Series Seed to fund Phase I pilot operations."
-              </p>
-
-              <h3 style={{ marginTop: varString('--spacing-32') }}>Media Assets</h3>
-              <ul style={{ marginTop: varString('--spacing-16') }}>
-                <li style={{ marginBottom: varString('--spacing-8') }}>
-                  <strong>Logo Files:</strong> SVG, PNG (white, dark, full color versions) available
-                  upon request
-                </li>
-                <li style={{ marginBottom: varString('--spacing-8') }}>
-                  <strong>Founder Photo:</strong> High-resolution headshot (JPG, 4000x5000px)
-                  available upon request
-                </li>
-                <li style={{ marginBottom: varString('--spacing-8') }}>
-                  <strong>Key Statistics:</strong> $290B annual cost, 40% dropout rate, 1.2M
-                  Americans with HIV, 25.9% digital health CAGR
-                </li>
-                <li style={{ marginBottom: varString('--spacing-8') }}>
-                  <strong>Media Contact:</strong> press@ihep.app
-                </li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section id="team" className="gray">
-          <div className="container">
-            <h2 className="text-center">Founding Team &amp; Advisory</h2>
-
-            <div style={{ maxWidth: 800, margin: `${varString('--spacing-32')} auto` }}>
-              <h3>Jason Jarmacz, Founder &amp; Principal Investigator</h3>
-              <p style={{ marginBottom: varString('--spacing-16') }}>
-                15+ years in business development and research analytics; 5+ years in healthcare
-                insights. Jason has persevered through multiple hardships pursuing his life goal of
-                developing an application that changes humanity and provides uplift to community.
-                His evolution strategy framework informed IHEP's three-layer architecture. Based in
-                Newark, New Jersey.
-              </p>
-
-              <h3 style={{ marginTop: varString('--spacing-32') }}>Positions Now Hiring (Phase I)</h3>
-              <div style={{ marginTop: varString('--spacing-16') }}>
-                {positions.map((job) => (
-                  <p key={job.title} style={{ marginTop: varString('--spacing-16') }}>
-                    <strong>{job.title}</strong>
-                    <br />
-                    Requirements: {job.reqs}
-                    <br />
-                    Compensation: {job.comp}
-                  </p>
-                ))}
+            <div className="overview-grid">
+              <div className="overview-card">
+                <h3>Create Your Account</h3>
+                <p>
+                  Join IHEP to unlock your 5-pillar twins, resource matching, and financial support
+                  tools.
+                </p>
+                <p style={{ marginTop: varString('--spacing-12') }}>
+                  <a className="cta-button" href="/register">
+                    Create account
+                  </a>
+                </p>
               </div>
 
-              <p style={{ marginTop: varString('--spacing-24') }}>
-                <strong>Advisory Board Status:</strong> Building advisory board of healthcare
-                researchers, health equity experts, AI ethicists, and experienced founders. Advisor
-                compensation: 0.25% equity, 2-year vest, quarterly engagement requirements.
-              </p>
-            </div>
-          </div>
-        </section>
+              <div className="overview-card">
+                <h3>Sign In</h3>
+                <p>
+                  Already enrolled? Sign in to review your next steps, schedule, and progress.
+                </p>
+                <p style={{ marginTop: varString('--spacing-12') }}>
+                  <a
+                    className="secondary-button"
+                    href="/login"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      openSignIn();
+                    }}
+                  >
+                    Sign in
+                  </a>
+                </p>
+              </div>
 
-        <section id="partner" className="light">
-          <div className="container">
-            <h2 className="text-center">Partner With IHEP</h2>
-
-            <div style={{ maxWidth: 900, margin: `${varString('--spacing-32')} auto` }}>
-              <p
-                style={{
-                  fontSize: varString('--font-size-lg'),
-                  textAlign: 'center',
-                  marginBottom: varString('--spacing-32'),
-                }}
-              >
-                We're seeking partnerships across three dimensions: investment, clinical
-                collaboration, and technology integration.
-              </p>
-
-              <div className="overview-grid">
-                <div className="overview-card">
-                  <h3>Funding Partnership</h3>
-                  <p>
-                    <strong>Investment Opportunity:</strong> $3.5M Series Seed round at $12M
-                    pre-money valuation. Convertible note terms: 20% Series A discount, $15M cap, 6%
-                    interest, 24-month maturity.
-                  </p>
-                  <p style={{ marginTop: varString('--spacing-12') }}>
-                    <strong>Investor Types:</strong> VCs, impact investors, angels, strategic
-                    investors, foundations.
-                  </p>
-                </div>
-
-                <div className="overview-card">
-                  <h3>Healthcare System Partnership</h3>
-                  <p>
-                    <strong>Phase I Pilot Sites:</strong> Seeking 2-4 healthcare systems in
-                    Miami/Orlando for 150-300 participant pilot. Pilot partners receive early access
-                    to platform, co-publication opportunities, revenue sharing on successful
-                    outcomes.
-                  </p>
-                </div>
-
-                <div className="overview-card">
-                  <h3>Research Collaboration</h3>
-                  <p>
-                    <strong>Academic Partners:</strong> Co-PI arrangements, data access agreements,
-                    joint publications. Platform offers unprecedented longitudinal dataset for HIV
-                    treatment research.
-                  </p>
-                  <p style={{ marginTop: varString('--spacing-12') }}>
-                    <strong>Also Seeking:</strong> Regulatory consultants, clinical advisors, AI
-                    ethics experts.
-                  </p>
-                </div>
+              <div className="overview-card">
+                <h3>Need Help?</h3>
+                <p>
+                  If you are stuck, need support, or want to learn how the program works, email our
+                  support team.
+                </p>
+                <p style={{ marginTop: varString('--spacing-12') }}>
+                  <a className="secondary-button" href="mailto:support@ihep.app">
+                    support@ihep.app
+                  </a>
+                </p>
               </div>
             </div>
 
-            <div id="newsletter" className="newsletter-form">
+            <div className="newsletter-form" style={{ marginTop: varString('--spacing-48') }}>
               <h3>Stay Connected</h3>
               <p>
-                Subscribe to IHEP Progress Brief—weekly updates on digital health innovation,
-                clinical outcomes, and fundraising milestones.
+                Subscribe to IHEP Progress Brief—weekly updates on aftercare support, new features,
+                and program access.
               </p>
               <form className="form-group" onSubmit={handleSubmit}>
                 <input
@@ -567,25 +683,27 @@ export default function InvestorLandingPage() {
         <footer>
           <div className="footer-container">
             <div className="footer-section">
-              <h4>About IHEP</h4>
+              <h4>Program</h4>
               <ul>
                 <li>
-                  <a href="#overview" onClick={(e) => handleAnchor(e, 'overview')}>
-                    Our Mission
+                  <a href="#digital-twins" onClick={(e) => handleAnchor(e, 'digital-twins')}>
+                    5-Pillar Twins
                   </a>
                 </li>
                 <li>
-                  <a href="#team" onClick={(e) => handleAnchor(e, 'team')}>
-                    Leadership
+                  <a href="#program" onClick={(e) => handleAnchor(e, 'program')}>
+                    What You Get
                   </a>
                 </li>
                 <li>
-                  <a href="#partner" onClick={(e) => handleAnchor(e, 'partner')}>
-                    Careers
+                  <a href="#financial" onClick={(e) => handleAnchor(e, 'financial')}>
+                    Financial Support
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:press@ihep.app">Press Inquiries</a>
+                  <a href="#get-started" onClick={(e) => handleAnchor(e, 'get-started')}>
+                    Get Started
+                  </a>
                 </li>
               </ul>
             </div>
@@ -595,89 +713,41 @@ export default function InvestorLandingPage() {
               <ul>
                 <li>
                   <a href="#documents" onClick={(e) => handleAnchor(e, 'documents')}>
-                    Document Library
+                    Patient Resources
                   </a>
                 </li>
                 <li>
-                  <a href="#documents" onClick={(e) => handleAnchor(e, 'documents')}>
-                    Investor Deck
-                  </a>
+                  <a href="/resources">Resource Hub</a>
                 </li>
                 <li>
-                  <a href="/investor-dashboard">Investor Dashboard</a>
+                  <a href="/about">About IHEP</a>
                 </li>
                 <li>
-                  <a href="#documents" onClick={(e) => handleAnchor(e, 'documents')}>
-                    FAQ
-                  </a>
+                  <a href="/legal/trust">Privacy &amp; Trust</a>
+                </li>
+                <li>
+                  <a href="/investors">Investors</a>
                 </li>
               </ul>
             </div>
 
             <div className="footer-section">
-              <h4>Architecture</h4>
+              <h4>Support</h4>
               <ul>
                 <li>
-                  <a href="/docs/architecture/HUB_AND_SPOKE_ARCHITECTURE.md">
-                    Hub-and-Spoke Design
-                  </a>
+                  <a href="mailto:support@ihep.app">support@ihep.app</a>
                 </li>
                 <li>
-                  <a href="/RESTRUCTURING_REPORT.md">
-                    System Structure
-                  </a>
+                  <a href="/register">Create account</a>
                 </li>
                 <li>
-                  <a href="/docs/IHEP%20System%20Architecture%20Document.pdf">
-                    Technical Whitepaper
-                  </a>
-                </li>
-                <li>
-                  <a href="/docs/Phase_4_Deployment_Architecture_on_Google_Cloud_Platform.md">
-                    GCP Deployment
-                  </a>
+                  <a href="mailto:press@ihep.app">Press inquiries</a>
                 </li>
               </ul>
             </div>
 
             <div className="footer-section">
-              <h4>Connect</h4>
-              <ul>
-                <li>
-                  <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer">
-                    LinkedIn
-                  </a>
-                </li>
-                <li>
-                  <a href="https://substack.com/" target="_blank" rel="noopener noreferrer">
-                    Newsletter
-                  </a>
-                </li>
-                <li>
-                  <a href="mailto:jason@ihep.app">Contact Us</a>
-                </li>
-                <li>
-                  <a href="https://zenodo.org/" target="_blank" rel="noopener noreferrer">
-                    Publications (DOI)
-                  </a>
-                </li>
-              </ul>
-
-              <div className="social-links" style={{ marginTop: varString('--spacing-16') }}>
-                <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-                  in
-                </a>
-                <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" title="Twitter/X">
-                  𝕏
-                </a>
-                <a href="https://github.com/" target="_blank" rel="noopener noreferrer" title="GitHub">
-                  GH
-                </a>
-              </div>
-            </div>
-
-            <div className="footer-section">
-              <h4>Compliance</h4>
+              <h4>Legal</h4>
               <ul>
                 <li>
                   <a href="/legal/privacy">Privacy Policy</a>
@@ -686,10 +756,10 @@ export default function InvestorLandingPage() {
                   <a href="/legal/terms">Terms of Service</a>
                 </li>
                 <li>
-                  <a href="/legal/compliance">Security Framework</a>
+                  <a href="/legal/trust">Trust Center</a>
                 </li>
                 <li>
-                  <a href="/legal/compliance">HIPAA Notice</a>
+                  <a href="/legal/compliance">Security Framework</a>
                 </li>
               </ul>
             </div>
@@ -698,8 +768,8 @@ export default function InvestorLandingPage() {
           <div className="footer-bottom">
             <p>© 2026 Integrated Health Empowerment Program (IHEP). All rights reserved.</p>
             <p style={{ marginTop: varString('--spacing-8') }}>
-              Building the future of healthcare aftercare through AI-powered digital twins and
-              community partnership.
+              Built to help patients navigate aftercare with clarity, support, and privacy-first
+              design.
             </p>
           </div>
         </footer>
