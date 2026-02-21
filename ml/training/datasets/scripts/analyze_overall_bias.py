@@ -2,16 +2,12 @@
 """
 Analyze overall bias across all training datasets
 Security: Uses json module (not eval), validates input
-PHI Safety: Uses structured logging, no PHI in log output
+PHI Safety: No sensitive data in log output, no exception details exposed
 """
 import json
-import logging
 import sys
 from pathlib import Path
-from collections import Counter
-from typing import Dict, Tuple
-
-logger = logging.getLogger(__name__)
+from typing import Tuple
 
 def analyze_gender_balance(file_path: Path) -> Tuple[int, int, int]:
     """
@@ -55,15 +51,15 @@ def analyze_gender_balance(file_path: Path) -> Tuple[int, int, int]:
 
                 except json.JSONDecodeError:
                     continue
-                except Exception as e:
-                    print(f"Error processing line {line_num} in {file_path}: {e}", file=sys.stderr)
+                except Exception:
+                    print(f"Error processing line {line_num}", file=sys.stderr)
                     continue
 
     except FileNotFoundError:
-        print(f"File not found: {file_path}", file=sys.stderr)
+        print("File not found", file=sys.stderr)
         return (0, 0, 0)
-    except Exception as e:
-        print(f"Error reading {file_path}: {e}", file=sys.stderr)
+    except Exception:
+        print("Error reading file", file=sys.stderr)
         return (0, 0, 0)
 
     return (total_male, total_female, total_neutral)
@@ -116,13 +112,8 @@ def main():
     print("-" * 80)
 
     for stats in file_stats:
-        # Log aggregate counts only; use basename to avoid exposing full paths
         file_label = Path(stats['file']).name if stats.get('file') else 'unknown'
-        logger.info(
-            "File: %s | Male: %d | Female: %d | Neutral: %d | Total: %d",
-            file_label, stats['male'], stats['female'],
-            stats['neutral'], stats['total']
-        )
+        print(f"{str(file_label):<50} {stats['male']:<8} {stats['female']:<8} {stats['neutral']:<8} {stats['total']:<8}")
 
     print()
 
@@ -134,13 +125,13 @@ def main():
         female_pct = (total_stats["female"] / grand_total * 100)
         neutral_pct = (total_stats["neutral"] / grand_total * 100)
 
-        logger.info("=" * 80)
-        logger.info("OVERALL STATISTICS:")
-        logger.info("=" * 80)
-        logger.info("Total examples analyzed: %d", grand_total)
-        logger.info("  Male-dominant examples:    %5d (%5.1f%%)", total_stats['male'], male_pct)
-        logger.info("  Female-dominant examples:  %5d (%5.1f%%)", total_stats['female'], female_pct)
-        logger.info("  Gender-neutral examples:   %5d (%5.1f%%)", total_stats['neutral'], neutral_pct)
+        print("=" * 80)
+        print("OVERALL STATISTICS:")
+        print("=" * 80)
+        print(f"Total examples analyzed: {grand_total}")
+        print(f"  Male-dominant examples:    {total_stats['male']:5d} ({male_pct:5.1f}%)")
+        print(f"  Female-dominant examples:  {total_stats['female']:5d} ({female_pct:5.1f}%)")
+        print(f"  Gender-neutral examples:   {total_stats['neutral']:5d} ({neutral_pct:5.1f}%)")
         print()
 
         # Calculate balance ratio
