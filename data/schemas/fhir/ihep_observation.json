@@ -1,0 +1,607 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ihep.app/schemas/fhir/ihep_observation.json",
+  "title": "IHEP Canonical Observation Resource",
+  "description": "Canonical IHEP Observation schema based on FHIR R4 Observation resource with IHEP-specific extensions for data quality scoring and source system tracking. Supports lab results, vital signs, and clinical measurements.",
+  "type": "object",
+  "properties": {
+    "resourceType": {
+      "type": "string",
+      "const": "Observation",
+      "description": "FHIR resource type identifier. Must always be 'Observation'."
+    },
+    "id": {
+      "type": "string",
+      "description": "Logical resource ID assigned by the IHEP platform (UUID v4 format).",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the resource including source system and versioning.",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "URI identifying the source EHR system."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the most recent update (ISO 8601)."
+        },
+        "versionId": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "profile": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" },
+          "default": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+            "https://ihep.app/fhir/StructureDefinition/ihep-observation"
+          ]
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["registered", "preliminary", "final", "amended", "corrected", "cancelled", "entered-in-error", "unknown"],
+      "description": "Status of the observation result as defined by FHIR R4."
+    },
+    "category": {
+      "type": "array",
+      "description": "Classification of the type of observation (laboratory, vital-signs, etc.).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "system": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Code system URI.",
+                  "default": "http://terminology.hl7.org/CodeSystem/observation-category"
+                },
+                "code": {
+                  "type": "string",
+                  "enum": [
+                    "vital-signs",
+                    "laboratory",
+                    "imaging",
+                    "procedure",
+                    "survey",
+                    "exam",
+                    "therapy",
+                    "activity",
+                    "social-history"
+                  ],
+                  "description": "Category code for the observation."
+                },
+                "display": {
+                  "type": "string",
+                  "description": "Human-readable display text for the category."
+                }
+              },
+              "required": ["system", "code"]
+            }
+          },
+          "text": {
+            "type": "string",
+            "description": "Plain text representation of the category."
+          }
+        },
+        "required": ["coding"]
+      },
+      "minItems": 1
+    },
+    "code": {
+      "type": "object",
+      "description": "Observation code, typically from LOINC for laboratory and vital sign observations.",
+      "properties": {
+        "coding": {
+          "type": "array",
+          "description": "Coded representations of the observation type.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": "string",
+                "format": "uri",
+                "description": "Code system URI (LOINC, SNOMED CT, etc.).",
+                "examples": [
+                  "http://loinc.org",
+                  "http://snomed.info/sct"
+                ]
+              },
+              "code": {
+                "type": "string",
+                "description": "Code value from the specified system.",
+                "examples": ["85354-9", "8867-4", "25836-8"]
+              },
+              "display": {
+                "type": "string",
+                "description": "Human-readable display name.",
+                "examples": [
+                  "Blood pressure panel",
+                  "Heart rate",
+                  "HIV 1 RNA [#/volume] (viral load)"
+                ]
+              }
+            },
+            "required": ["system", "code"]
+          },
+          "minItems": 1
+        },
+        "text": {
+          "type": "string",
+          "description": "Plain text representation of the observation code."
+        }
+      },
+      "required": ["coding"]
+    },
+    "subject": {
+      "type": "object",
+      "description": "Reference to the Patient this observation is about.",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "description": "FHIR reference to the Patient resource.",
+          "pattern": "^Patient/[a-zA-Z0-9\\-\\.]+$"
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable patient name for display purposes."
+        },
+        "identifier": {
+          "type": "object",
+          "description": "Patient identifier for cross-referencing when reference is not available.",
+          "properties": {
+            "system": { "type": "string", "format": "uri" },
+            "value": { "type": "string" }
+          }
+        }
+      },
+      "required": ["reference"]
+    },
+    "encounter": {
+      "type": "object",
+      "description": "Reference to the Encounter during which this observation was made.",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "pattern": "^Encounter/[a-zA-Z0-9\\-\\.]+$"
+        },
+        "display": { "type": "string" }
+      }
+    },
+    "effectiveDateTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Clinically relevant time for the observation (when the measurement was taken)."
+    },
+    "effectivePeriod": {
+      "type": "object",
+      "description": "Clinically relevant time period for the observation.",
+      "properties": {
+        "start": { "type": "string", "format": "date-time" },
+        "end": { "type": "string", "format": "date-time" }
+      },
+      "required": ["start"]
+    },
+    "issued": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date/time this observation was made available to providers."
+    },
+    "valueQuantity": {
+      "type": "object",
+      "description": "Measured value with units (for quantitative observations).",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Numerical measurement value."
+        },
+        "unit": {
+          "type": "string",
+          "description": "Human-readable unit string.",
+          "examples": ["mg/dL", "mmHg", "copies/mL", "%", "beats/minute"]
+        },
+        "system": {
+          "type": "string",
+          "format": "uri",
+          "description": "System that defines the unit code (typically UCUM).",
+          "default": "http://unitsofmeasure.org"
+        },
+        "code": {
+          "type": "string",
+          "description": "UCUM coded unit form.",
+          "examples": ["mg/dL", "mm[Hg]", "{copies}/mL", "%", "/min"]
+        },
+        "comparator": {
+          "type": "string",
+          "enum": ["<", "<=", ">=", ">"],
+          "description": "Comparator if the value is not exact (e.g., < 20 copies/mL)."
+        }
+      },
+      "required": ["value", "unit", "system", "code"]
+    },
+    "valueString": {
+      "type": "string",
+      "description": "String value for qualitative observations (e.g., 'Positive', 'Negative')."
+    },
+    "valueCodeableConcept": {
+      "type": "object",
+      "description": "Coded value for observations with enumerated results.",
+      "properties": {
+        "coding": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": { "type": "string", "format": "uri" },
+              "code": { "type": "string" },
+              "display": { "type": "string" }
+            },
+            "required": ["system", "code"]
+          }
+        },
+        "text": { "type": "string" }
+      }
+    },
+    "dataAbsentReason": {
+      "type": "object",
+      "description": "Reason why the expected value is missing.",
+      "properties": {
+        "coding": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": "string",
+                "default": "http://terminology.hl7.org/CodeSystem/data-absent-reason"
+              },
+              "code": {
+                "type": "string",
+                "enum": ["unknown", "asked-unknown", "temp-unknown", "not-asked", "asked-declined", "masked", "not-applicable", "unsupported", "as-text", "error", "not-a-number", "negative-infinity", "positive-infinity", "not-performed", "not-permitted"]
+              },
+              "display": { "type": "string" }
+            }
+          }
+        },
+        "text": { "type": "string" }
+      }
+    },
+    "interpretation": {
+      "type": "array",
+      "description": "Clinical interpretation of the observation value (high, low, normal, etc.).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "system": {
+                  "type": "string",
+                  "format": "uri",
+                  "default": "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation"
+                },
+                "code": {
+                  "type": "string",
+                  "enum": ["H", "HH", "L", "LL", "N", "A", "AA", "HU", "LU", "CR"],
+                  "description": "H=High, HH=Critical High, L=Low, LL=Critical Low, N=Normal, A=Abnormal, AA=Critical Abnormal."
+                },
+                "display": {
+                  "type": "string"
+                }
+              },
+              "required": ["system", "code"]
+            }
+          },
+          "text": { "type": "string" }
+        },
+        "required": ["coding"]
+      }
+    },
+    "referenceRange": {
+      "type": "array",
+      "description": "Reference ranges for interpreting the observation value.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "low": {
+            "type": "object",
+            "properties": {
+              "value": { "type": "number" },
+              "unit": { "type": "string" },
+              "system": { "type": "string", "format": "uri" },
+              "code": { "type": "string" }
+            }
+          },
+          "high": {
+            "type": "object",
+            "properties": {
+              "value": { "type": "number" },
+              "unit": { "type": "string" },
+              "system": { "type": "string", "format": "uri" },
+              "code": { "type": "string" }
+            }
+          },
+          "type": {
+            "type": "object",
+            "description": "Type of reference range (normal, recommended, treatment, etc.).",
+            "properties": {
+              "coding": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "system": { "type": "string" },
+                    "code": { "type": "string" },
+                    "display": { "type": "string" }
+                  }
+                }
+              },
+              "text": { "type": "string" }
+            }
+          },
+          "appliesTo": {
+            "type": "array",
+            "description": "Population the range applies to (age, sex, etc.).",
+            "items": {
+              "type": "object",
+              "properties": {
+                "coding": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "system": { "type": "string" },
+                      "code": { "type": "string" },
+                      "display": { "type": "string" }
+                    }
+                  }
+                },
+                "text": { "type": "string" }
+              }
+            }
+          },
+          "age": {
+            "type": "object",
+            "description": "Applicable age range.",
+            "properties": {
+              "low": {
+                "type": "object",
+                "properties": {
+                  "value": { "type": "number" },
+                  "unit": { "type": "string" }
+                }
+              },
+              "high": {
+                "type": "object",
+                "properties": {
+                  "value": { "type": "number" },
+                  "unit": { "type": "string" }
+                }
+              }
+            }
+          },
+          "text": {
+            "type": "string",
+            "description": "Human-readable reference range text."
+          }
+        }
+      }
+    },
+    "performer": {
+      "type": "array",
+      "description": "Who performed the observation (practitioners, organizations, etc.).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Reference to the performing entity.",
+            "pattern": "^(Practitioner|Organization|PractitionerRole|CareTeam|Patient|RelatedPerson)/[a-zA-Z0-9\\-\\.]+$"
+          },
+          "display": {
+            "type": "string",
+            "description": "Human-readable name of the performer."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["Practitioner", "Organization", "PractitionerRole", "CareTeam", "Patient", "RelatedPerson"]
+          }
+        }
+      }
+    },
+    "note": {
+      "type": "array",
+      "description": "Comments about the observation.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "authorReference": {
+            "type": "object",
+            "properties": {
+              "reference": { "type": "string" },
+              "display": { "type": "string" }
+            }
+          },
+          "time": { "type": "string", "format": "date-time" },
+          "text": { "type": "string" }
+        },
+        "required": ["text"]
+      }
+    },
+    "component": {
+      "type": "array",
+      "description": "Component observations (e.g., systolic and diastolic for blood pressure).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "object",
+            "properties": {
+              "coding": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "system": { "type": "string", "format": "uri" },
+                    "code": { "type": "string" },
+                    "display": { "type": "string" }
+                  },
+                  "required": ["system", "code"]
+                }
+              },
+              "text": { "type": "string" }
+            },
+            "required": ["coding"]
+          },
+          "valueQuantity": {
+            "type": "object",
+            "properties": {
+              "value": { "type": "number" },
+              "unit": { "type": "string" },
+              "system": { "type": "string", "format": "uri" },
+              "code": { "type": "string" }
+            }
+          },
+          "valueString": { "type": "string" },
+          "interpretation": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "coding": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "system": { "type": "string" },
+                      "code": { "type": "string" },
+                      "display": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "referenceRange": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "low": {
+                  "type": "object",
+                  "properties": {
+                    "value": { "type": "number" },
+                    "unit": { "type": "string" }
+                  }
+                },
+                "high": {
+                  "type": "object",
+                  "properties": {
+                    "value": { "type": "number" },
+                    "unit": { "type": "string" }
+                  }
+                },
+                "text": { "type": "string" }
+              }
+            }
+          }
+        },
+        "required": ["code"]
+      }
+    },
+    "extension": {
+      "type": "array",
+      "description": "IHEP-specific extensions for data quality and source tracking.",
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "properties": {
+              "url": {
+                "type": "string",
+                "const": "https://ihep.app/fhir/StructureDefinition/ihep-data-quality-score"
+              },
+              "extension": {
+                "type": "array",
+                "description": "Composite data quality score with dimensional breakdown.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "enum": [
+                        "overall-score",
+                        "completeness",
+                        "accuracy",
+                        "timeliness",
+                        "conformance",
+                        "assessment-timestamp"
+                      ]
+                    },
+                    "valueDecimal": {
+                      "type": "number",
+                      "minimum": 0.0,
+                      "maximum": 1.0,
+                      "description": "Score between 0.0 and 1.0 where 1.0 represents perfect quality."
+                    },
+                    "valueDateTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  },
+                  "required": ["url"]
+                }
+              }
+            },
+            "required": ["url", "extension"]
+          },
+          {
+            "properties": {
+              "url": {
+                "type": "string",
+                "const": "https://ihep.app/fhir/StructureDefinition/ihep-source-system"
+              },
+              "extension": {
+                "type": "array",
+                "description": "Source EHR system identification and extraction metadata.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "enum": [
+                        "system-id",
+                        "system-name",
+                        "system-version",
+                        "extraction-timestamp",
+                        "mapping-version",
+                        "original-resource-id"
+                      ]
+                    },
+                    "valueString": { "type": "string" },
+                    "valueDateTime": { "type": "string", "format": "date-time" },
+                    "valueUri": { "type": "string", "format": "uri" }
+                  },
+                  "required": ["url"]
+                }
+              }
+            },
+            "required": ["url", "extension"]
+          }
+        ]
+      }
+    }
+  },
+  "required": ["resourceType", "id", "status", "code", "subject"],
+  "additionalProperties": false
+}

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Outbound Sync Channel
+  Pushes IHEP data back to EHR systems.
+  Multiple destination connectors for each vendor.
+
+  Author: Jason M Jarmacz | Co-Author: Claude by Anthropic
+-->
+<channel version="4.5.0">
+  <id>outbound-sync-007</id>
+  <nextMetaDataId>5</nextMetaDataId>
+  <name>EHR Outbound Sync</name>
+  <description>Pushes IHEP data back to connected EHR systems.
+Receives outbound requests from the integration gateway and routes
+to the appropriate vendor API with proper authentication.</description>
+  <revision>1</revision>
+  <enabled>true</enabled>
+
+  <sourceConnector version="4.5.0">
+    <metaDataId>0</metaDataId>
+    <name>Outbound Request Listener</name>
+    <properties class="com.mirth.connect.connectors.http.HttpReceiverProperties" version="4.5.0">
+      <pluginProperties/>
+      <listenerConnectorProperties version="4.5.0">
+        <host>0.0.0.0</host>
+        <port>8080</port>
+      </listenerConnectorProperties>
+      <sourceConnectorProperties version="4.5.0">
+        <responseVariable>d1</responseVariable>
+        <respondAfterProcessing>true</respondAfterProcessing>
+        <processBatch>false</processBatch>
+        <processingThreads>4</processingThreads>
+        <queueBufferSize>1000</queueBufferSize>
+      </sourceConnectorProperties>
+      <contextPath>/outbound/sync</contextPath>
+      <timeout>60000</timeout>
+      <xmlBody>false</xmlBody>
+      <includeMetadata>true</includeMetadata>
+      <responseContentType>application/json</responseContentType>
+      <responseStatusCode>200</responseStatusCode>
+      <charset>UTF-8</charset>
+    </properties>
+    <transformer version="4.5.0">
+      <elements>
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.0">
+          <name>Route Outbound Request</name>
+          <sequenceNumber>0</sequenceNumber>
+          <enabled>true</enabled>
+          <script>
+var rawMsg = connectorMessage.getRawData();
+var outboundRequest = JSON.parse(rawMsg);
+
+var targetVendor = outboundRequest.target_vendor || 'unknown';
+var targetUrl = outboundRequest.target_url || '';
+var authToken = outboundRequest.auth_token || '';
+var resourceType = outboundRequest.resource_type || 'Unknown';
+var httpMethod = outboundRequest.method || 'POST';
+
+channelMap.put('target_vendor', targetVendor);
+channelMap.put('target_url', targetUrl);
+channelMap.put('auth_token', authToken);
+channelMap.put('resource_type', resourceType);
+channelMap.put('http_method', httpMethod);
+channelMap.put('sent_at', new Date().toISOString());
+
+// The payload to send to the EHR
+var fhirPayload = outboundRequest.fhir_resource || outboundRequest.payload;
+tmp = JSON.stringify(fhirPayload);
+
+logger.info('Outbound sync: ' + httpMethod + ' ' + resourceType +
+            ' to ' + targetVendor + ' at ' + targetUrl);
+          </script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+      </elements>
+      <inboundDataType>RAW</inboundDataType>
+      <outboundDataType>RAW</outboundDataType>
+    </transformer>
+    <filter version="4.5.0"><elements/></filter>
+  </sourceConnector>
+
+  <destinationConnectors>
+    <connector version="4.5.0">
+      <metaDataId>1</metaDataId>
+      <name>EHR Vendor API</name>
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="4.5.0">
+        <destinationConnectorProperties version="4.5.0">
+          <queueEnabled>true</queueEnabled>
+          <sendFirst>true</sendFirst>
+          <retryIntervalMillis>15000</retryIntervalMillis>
+          <retryCount>3</retryCount>
+          <threadCount>4</threadCount>
+          <queueBufferSize>1000</queueBufferSize>
+        </destinationConnectorProperties>
+        <host>${target_url}</host>
+        <method>${http_method}</method>
+        <headers class="linked-hash-map">
+          <entry><string>Content-Type</string><string>application/fhir+json</string></entry>
+          <entry><string>Authorization</string><string>Bearer ${auth_token}</string></entry>
+          <entry><string>Accept</string><string>application/fhir+json</string></entry>
+          <entry><string>X-Request-Source</string><string>ihep-platform</string></entry>
+        </headers>
+        <content>${message.encodedData}</content>
+        <contentType>application/fhir+json</contentType>
+        <socketTimeout>60000</socketTimeout>
+        <charset>UTF-8</charset>
+      </properties>
+      <transformer version="4.5.0"><elements/><inboundDataType>RAW</inboundDataType><outboundDataType>RAW</outboundDataType></transformer>
+      <filter version="4.5.0"><elements/></filter>
+    </connector>
+    <connector version="4.5.0">
+      <metaDataId>2</metaDataId>
+      <name>Audit Logger</name>
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="4.5.0">
+        <destinationConnectorProperties version="4.5.0">
+          <queueEnabled>true</queueEnabled>
+          <retryCount>2</retryCount>
+          <threadCount>1</threadCount>
+        </destinationConnectorProperties>
+        <host>http://ehr-integration-service:8093/api/v1/ehr/audit</host>
+        <method>POST</method>
+        <headers class="linked-hash-map">
+          <entry><string>Content-Type</string><string>application/json</string></entry>
+        </headers>
+        <content>{"action":"outbound_sync","vendor":"${target_vendor}","resource_type":"${resource_type}","timestamp":"${sent_at}","target_url":"${target_url}"}</content>
+        <contentType>application/json</contentType>
+        <socketTimeout>10000</socketTimeout>
+        <charset>UTF-8</charset>
+      </properties>
+      <transformer version="4.5.0"><elements/><inboundDataType>RAW</inboundDataType><outboundDataType>RAW</outboundDataType></transformer>
+      <filter version="4.5.0"><elements/></filter>
+    </connector>
+  </destinationConnectors>
+
+  <preprocessingScript>return message;</preprocessingScript>
+  <postprocessingScript>return;</postprocessingScript>
+  <deployScript>logger.info('EHR Outbound Sync channel deployed');</deployScript>
+
+  <properties version="4.5.0">
+    <messageStorageMode>PRODUCTION</messageStorageMode>
+    <encryptData>true</encryptData>
+    <initialState>STARTED</initialState>
+    <tags class="linked-hash-set">
+      <string>EHR</string><string>Outbound</string><string>Sync</string>
+    </tags>
+  </properties>
+</channel>
