@@ -25,6 +25,12 @@ from config import EHRConfig, load_partner_config
 from adapters import AdapterRegistry
 from webhooks.handler import WebhookHandler
 from sync.bidirectional_sync import InboundSync, OutboundSync, SyncState
+from onboarding.orchestrator import OnboardingOrchestrator
+from onboarding.communication import CommunicationManager
+from onboarding.connection_manager import ConnectionManager
+from onboarding.status_reporter import StatusReporter
+from onboarding.provider_discovery import ProviderDiscovery
+from onboarding.models import OnboardingPhase, ProviderProfile, ProviderContact
 
 # Configuration
 JWT_SECRET = os.getenv('JWT_SECRET')
@@ -108,6 +114,17 @@ def _load_ehr_config() -> EHRConfig:
 
 # Load configuration at startup
 ehr_config = _load_ehr_config()
+
+# Initialize onboarding system
+onboarding_orchestrator = OnboardingOrchestrator()
+onboarding_comm_manager = CommunicationManager()
+onboarding_conn_manager = ConnectionManager()
+onboarding_status_reporter = StatusReporter()
+onboarding_discovery = ProviderDiscovery(
+    orchestrator=onboarding_orchestrator,
+    communication_manager=onboarding_comm_manager,
+    connection_manager=onboarding_conn_manager,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -554,6 +571,551 @@ def get_partner_status(partner_id: str, current_user: Dict[str, Any] = None):
             f"{type(e).__name__}: {str(e)}"
         )
         return jsonify({'error': 'Failed to retrieve partner status'}), 500
+
+
+# ---------------------------------------------------------------------------
+# Onboarding API Endpoints
+# ---------------------------------------------------------------------------
+
+@app.route('/api/v1/onboarding/providers', methods=['POST'])
+@rate_limit(limit=20, per=60)
+@require_auth
+def register_provider(current_user: Dict[str, Any] = None):
+    """
+    Register a new EHR provider and initiate the onboarding workflow.
+
+    Accepts provider details, creates a profile, registers with the
+    onboarding orchestrator, and optionally sends initial outreach.
+
+    Request body:
+        {
+            "organization_name": "Example Health System",
+            "ehr_vendor": "epic",
+            "contacts": [{"name": "Jane Doe", "email": "jane@example.com", "role": "IT Director"}],
+            "base_url": "https://fhir.example.com/api/FHIR/R4",
+            "sync_mode": "bidirectional",
+            "auto_outreach": true,
+            "organization_type": "hospital",
+            "size_category": "large",
+            "location": "Chicago, IL",
+            "npi": "1234567890",
+            "notes": "Priority integration partner"
+        }
+    """
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'Request body is required'}), 400
+
+        organization_name = data.get('organization_name')
+        ehr_vendor = data.get('ehr_vendor')
+        if not organization_name or not ehr_vendor:
+            return jsonify({
+                'error': 'organization_name and ehr_vendor are required'
+            }), 400
+
+        profile = onboarding_discovery.create_provider_profile(
+            organization_name=organization_name,
+            ehr_vendor=ehr_vendor,
+            contacts=data.get('contacts', []),
+            base_url=data.get('base_url', ''),
+            sync_mode=data.get('sync_mode', 'bidirectional'),
+            organization_type=data.get('organization_type', ''),
+            size_category=data.get('size_category', ''),
+            location=data.get('location', ''),
+            npi=data.get('npi', ''),
+            notes=data.get('notes', ''),
+            tags=data.get('tags', []),
+        )
+
+        result = onboarding_discovery.initiate_onboarding(
+            profile,
+            auto_outreach=data.get('auto_outreach', True),
+        )
+
+        audit_logger.log(
+            user_id=current_user.get('user_id', 'system'),
+            action='ONBOARDING_PROVIDER_REGISTERED',
+            resource='OnboardingProvider',
+            outcome='SUCCESS',
+            details={
+                'provider_id': _hash_identifier(result['provider_id']),
+                'vendor': ehr_vendor,
+            }
+        )
+
+        return jsonify({'success': True, 'data': result}), 201
+
+    except Exception as e:
+        logger.error(f"Provider registration error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to register provider'}), 500
+
+
+@app.route('/api/v1/onboarding/providers/batch', methods=['POST'])
+@rate_limit(limit=5, per=60)
+@require_auth
+def batch_register_providers(current_user: Dict[str, Any] = None):
+    """
+    Batch-register multiple EHR providers for onboarding.
+
+    Request body:
+        {
+            "providers": [
+                {"organization_name": "...", "ehr_vendor": "epic", "contacts": [...]},
+                {"organization_name": "...", "ehr_vendor": "cerner", "contacts": [...]}
+            ],
+            "auto_outreach": true
+        }
+    """
+    try:
+        data = request.json
+        if not data or 'providers' not in data:
+            return jsonify({'error': 'providers list is required'}), 400
+
+        results = onboarding_discovery.batch_initiate(
+            providers=data['providers'],
+            auto_outreach=data.get('auto_outreach', True),
+        )
+
+        audit_logger.log(
+            user_id=current_user.get('user_id', 'system'),
+            action='ONBOARDING_BATCH_REGISTER',
+            resource='OnboardingProvider',
+            outcome='SUCCESS',
+            details={'count': len(results)}
+        )
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'results': results,
+                'total': len(results),
+                'successful': sum(1 for r in results if r.get('success')),
+            }
+        }), 201
+
+    except Exception as e:
+        logger.error(f"Batch registration error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to batch register providers'}), 500
+
+
+@app.route('/api/v1/onboarding/providers', methods=['GET'])
+@rate_limit(limit=30, per=60)
+@require_auth
+def list_onboarding_providers(current_user: Dict[str, Any] = None):
+    """
+    List all providers in the onboarding pipeline with summary status.
+
+    Query parameters:
+        phase: Filter by onboarding phase
+        status: Filter by overall status
+        vendor: Filter by EHR vendor
+    """
+    try:
+        all_states = onboarding_orchestrator.get_all_states()
+
+        # Apply filters
+        phase_filter = request.args.get('phase')
+        status_filter = request.args.get('status')
+        vendor_filter = request.args.get('vendor')
+
+        summaries = []
+        for state in all_states.values():
+            if phase_filter and state.current_phase != phase_filter:
+                continue
+            if status_filter and state.overall_status != status_filter:
+                continue
+            if vendor_filter and state.provider_profile:
+                if state.provider_profile.ehr_vendor != vendor_filter:
+                    continue
+            summaries.append(state.to_summary())
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'providers': summaries,
+                'total': len(summaries),
+            }
+        }), 200
+
+    except Exception as e:
+        logger.error(f"List onboarding providers error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to list providers'}), 500
+
+
+@app.route('/api/v1/onboarding/providers/<provider_id>', methods=['GET'])
+@rate_limit(limit=60, per=60)
+@require_auth
+def get_onboarding_provider(provider_id: str, current_user: Dict[str, Any] = None):
+    """
+    Get the full onboarding state for a specific provider.
+
+    Returns phase details, checklist status, test results,
+    communication history, and event log.
+    """
+    try:
+        state = onboarding_orchestrator.get_state(provider_id)
+        if not state:
+            return jsonify({'error': 'Provider not found'}), 404
+
+        return jsonify({
+            'success': True,
+            'data': state.to_dict()
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Get provider error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to retrieve provider'}), 500
+
+
+@app.route('/api/v1/onboarding/providers/<provider_id>/advance', methods=['POST'])
+@rate_limit(limit=10, per=60)
+@require_auth
+def advance_onboarding_phase(provider_id: str, current_user: Dict[str, Any] = None):
+    """
+    Advance a provider to the next onboarding phase.
+
+    Request body (optional):
+        {"force": false}
+    """
+    try:
+        data = request.json or {}
+        force = data.get('force', False)
+
+        state = onboarding_orchestrator.advance_phase(
+            provider_id=provider_id,
+            actor=current_user.get('user_id', 'admin'),
+            force=force,
+        )
+
+        audit_logger.log(
+            user_id=current_user.get('user_id', 'system'),
+            action='ONBOARDING_PHASE_ADVANCED',
+            resource='OnboardingProvider',
+            outcome='SUCCESS',
+            details={
+                'provider_id': _hash_identifier(provider_id),
+                'new_phase': state.current_phase,
+            }
+        )
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'provider_id': provider_id,
+                'current_phase': state.current_phase,
+                'completion_percentage': state.completion_percentage(),
+            }
+        }), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        logger.error(f"Phase advance error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to advance phase'}), 500
+
+
+@app.route('/api/v1/onboarding/providers/<provider_id>/checklist', methods=['PATCH'])
+@rate_limit(limit=30, per=60)
+@require_auth
+def update_checklist(provider_id: str, current_user: Dict[str, Any] = None):
+    """
+    Update checklist items for a provider's current phase.
+
+    Request body:
+        {
+            "phase": "credentialing",
+            "items": {
+                "sandbox_credentials_received": true,
+                "credentials_stored": true
+            }
+        }
+    """
+    try:
+        data = request.json
+        if not data or 'phase' not in data or 'items' not in data:
+            return jsonify({'error': 'phase and items are required'}), 400
+
+        phase = OnboardingPhase(data['phase'])
+        state = onboarding_orchestrator.update_checklist_items(
+            provider_id=provider_id,
+            phase=phase,
+            items=data['items'],
+            actor=current_user.get('user_id', 'admin'),
+        )
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'provider_id': provider_id,
+                'current_phase': state.current_phase,
+                'phase_checklist': state.get_phase_state(phase).to_dict(),
+                'completion_percentage': state.completion_percentage(),
+            }
+        }), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        logger.error(f"Checklist update error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to update checklist'}), 500
+
+
+@app.route('/api/v1/onboarding/providers/<provider_id>/connect', methods=['POST'])
+@rate_limit(limit=10, per=60)
+@require_auth
+def setup_connection(provider_id: str, current_user: Dict[str, Any] = None):
+    """
+    Set up the API connection for a provider with credentials.
+
+    Stores credentials, generates partner config, and runs connection tests.
+
+    Request body:
+        {
+            "credentials": {
+                "client_id": "...",
+                "client_secret": "..."
+            },
+            "connection_details": {
+                "base_url": "https://fhir.example.com/api/FHIR/R4",
+                "auth_url": "https://fhir.example.com/oauth2/authorize",
+                "token_url": "https://fhir.example.com/oauth2/token"
+            }
+        }
+    """
+    try:
+        data = request.json
+        if not data or 'credentials' not in data:
+            return jsonify({'error': 'credentials are required'}), 400
+
+        result = onboarding_discovery.setup_provider_connection(
+            provider_id=provider_id,
+            credentials=data['credentials'],
+            connection_details=data.get('connection_details'),
+        )
+
+        audit_logger.log(
+            user_id=current_user.get('user_id', 'system'),
+            action='ONBOARDING_CONNECTION_SETUP',
+            resource='OnboardingProvider',
+            outcome='SUCCESS',
+            details={
+                'provider_id': _hash_identifier(provider_id),
+                'tests_passed': result['tests_passed'],
+                'tests_total': result['tests_total'],
+            }
+        )
+
+        return jsonify({'success': True, 'data': result}), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        logger.error(f"Connection setup error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to set up connection'}), 500
+
+
+@app.route('/api/v1/onboarding/providers/<provider_id>/test', methods=['POST'])
+@rate_limit(limit=10, per=300)
+@require_auth
+def run_connection_tests(provider_id: str, current_user: Dict[str, Any] = None):
+    """
+    Run the connection test suite for a provider.
+
+    Returns detailed test results including response times and errors.
+    """
+    try:
+        state = onboarding_orchestrator.get_state(provider_id)
+        if not state:
+            return jsonify({'error': 'Provider not found'}), 404
+
+        results = onboarding_conn_manager.run_test_suite(state)
+        onboarding_orchestrator._save_state(state)
+
+        passed = sum(1 for r in results if r.passed)
+        total = len(results)
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'provider_id': provider_id,
+                'tests_passed': passed,
+                'tests_total': total,
+                'summary': onboarding_conn_manager.format_test_summary(results),
+                'results': [r.to_dict() for r in results],
+            }
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Connection test error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to run tests'}), 500
+
+
+@app.route('/api/v1/onboarding/providers/<provider_id>/communicate', methods=['POST'])
+@rate_limit(limit=10, per=60)
+@require_auth
+def send_communication(provider_id: str, current_user: Dict[str, Any] = None):
+    """
+    Send a communication to a provider.
+
+    Request body:
+        {
+            "communication_type": "follow_up",
+            "custom_message": "Optional additional message"
+        }
+    """
+    try:
+        data = request.json or {}
+        comm_type = data.get('communication_type')
+        if not comm_type:
+            return jsonify({'error': 'communication_type is required'}), 400
+
+        state = onboarding_orchestrator.get_state(provider_id)
+        if not state:
+            return jsonify({'error': 'Provider not found'}), 404
+
+        extra = {}
+        if data.get('custom_message'):
+            extra['custom_message'] = data['custom_message']
+
+        record = onboarding_comm_manager.create_communication(
+            state, comm_type, extra
+        )
+        sent = onboarding_comm_manager.send_communication(state, record)
+        onboarding_orchestrator._save_state(state)
+
+        return jsonify({
+            'success': True,
+            'data': {
+                'communication_id': sent.communication_id,
+                'type': sent.communication_type,
+                'recipient': sent.recipient,
+                'status': sent.status,
+                'subject': sent.subject,
+            }
+        }), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        logger.error(f"Communication error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to send communication'}), 500
+
+
+@app.route('/api/v1/onboarding/dashboard', methods=['GET'])
+@rate_limit(limit=30, per=60)
+@require_auth
+def onboarding_dashboard(current_user: Dict[str, Any] = None):
+    """
+    Get the onboarding dashboard with aggregate metrics.
+
+    Returns phase distribution, status breakdown, vendor counts,
+    active provider health, and recent events.
+    """
+    try:
+        all_states = onboarding_orchestrator.get_all_states()
+        dashboard = onboarding_status_reporter.generate_dashboard(all_states)
+
+        return jsonify({
+            'success': True,
+            'data': dashboard.to_dict()
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Dashboard error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to generate dashboard'}), 500
+
+
+@app.route('/api/v1/onboarding/providers/<provider_id>/readiness', methods=['GET'])
+@rate_limit(limit=30, per=60)
+@require_auth
+def provider_readiness(provider_id: str, current_user: Dict[str, Any] = None):
+    """
+    Get a production readiness assessment for a provider.
+
+    Returns readiness score, blockers, and recommendations.
+    """
+    try:
+        state = onboarding_orchestrator.get_state(provider_id)
+        if not state:
+            return jsonify({'error': 'Provider not found'}), 404
+
+        report = onboarding_status_reporter.generate_readiness_report(state)
+
+        return jsonify({
+            'success': True,
+            'data': report.to_dict()
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Readiness report error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to generate readiness report'}), 500
+
+
+@app.route('/api/v1/onboarding/operations', methods=['GET'])
+@rate_limit(limit=10, per=60)
+@require_auth
+def operations_summary(current_user: Dict[str, Any] = None):
+    """
+    Get an operations summary across all EHR integrations.
+
+    Returns active integrations, in-progress onboarding, blocked
+    providers, and recent completions.
+    """
+    try:
+        all_states = onboarding_orchestrator.get_all_states()
+        summary = onboarding_status_reporter.generate_operations_summary(all_states)
+
+        return jsonify({
+            'success': True,
+            'data': summary
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Operations summary error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to generate operations summary'}), 500
+
+
+@app.route('/api/v1/onboarding/engagement-cycle', methods=['POST'])
+@rate_limit(limit=5, per=3600)
+@require_auth
+def run_engagement_cycle(current_user: Dict[str, Any] = None):
+    """
+    Trigger an automated engagement cycle.
+
+    Sends follow-ups, runs tests, and advances providers as appropriate.
+    Designed to be called by Cloud Scheduler or manually by admins.
+
+    Request body (optional):
+        {
+            "follow_up_after_days": 3,
+            "max_follow_ups": 3
+        }
+    """
+    try:
+        data = request.json or {}
+        result = onboarding_discovery.run_engagement_cycle(
+            follow_up_after_days=data.get('follow_up_after_days', 3),
+            max_follow_ups=data.get('max_follow_ups', 3),
+        )
+
+        audit_logger.log(
+            user_id=current_user.get('user_id', 'system'),
+            action='ONBOARDING_ENGAGEMENT_CYCLE',
+            resource='OnboardingProvider',
+            outcome='SUCCESS',
+            details={
+                'providers_processed': result['providers_processed'],
+                'follow_ups_sent': result['follow_ups_sent'],
+                'tests_run': result['tests_run'],
+            }
+        )
+
+        return jsonify({'success': True, 'data': result}), 200
+
+    except Exception as e:
+        logger.error(f"Engagement cycle error: {type(e).__name__}: {e}")
+        return jsonify({'error': 'Failed to run engagement cycle'}), 500
 
 
 # ---------------------------------------------------------------------------
