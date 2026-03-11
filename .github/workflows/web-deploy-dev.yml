@@ -5,67 +5,64 @@ on:
     branches: ["dev"]
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/web
+
 jobs:
-  build-and-deploy:
+  build-and-publish:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: read
+      packages: write
     env:
-      REGION: us-central1
-      PROJECT_ID: YOUR_GCP_PROJECT_ID
-      PROJECT_NUMBER: "934473355501"
-      SERVICE_NAME: ihep-web-dev
-      IMAGE: us-docker.pkg.dev/YOUR_GCP_PROJECT_ID/ihep/web:${{ github.sha }}
-      WIF_PROVIDER: projects/934473355501/locations/global/workloadIdentityPools/github-actions-pool/providers/github-provider
-      GCP_SA_EMAIL: github-actions-sa@YOUR_GCP_PROJECT_ID.iam.gserviceaccount.com
-    
+      IMAGE_TAG: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-${{ github.sha }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Auth to Google Cloud (OIDC)
-        uses: google-github-actions/auth@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          workload_identity_provider: ${{ env.WIF_PROVIDER }}
-          service_account: ${{ env.GCP_SA_EMAIL }}
+          node-version: 22
+          cache: npm
 
-      - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v2
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Configure Docker auth for Artifact Registry
-        run: gcloud auth configure-docker us-docker.pkg.dev --quiet
+      - name: Lint
+        run: npm run lint
 
-      - name: Build Docker image
+      - name: Type check
+        run: npm run check
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-latest
+
+      - name: Summary
         run: |
-          docker build -t "$IMAGE" \
-            --build-arg NODE_ENV=production \
-            .
-
-      - name: Push image to Artifact Registry
-        run: docker push "$IMAGE"
-
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy "$SERVICE_NAME" \
-            --project "$PROJECT_ID" \
-            --region "$REGION" \
-            --image "$IMAGE" \
-            --platform managed \
-            --no-allow-unauthenticated \
-            --ingress internal-and-cloud-load-balancing \
-            --memory 512Mi \
-            --cpu 1 \
-            --max-instances 10 \
-            --min-instances 0 \
-            --port 5000 \
-            --set-env-vars "NODE_ENV=production" \
-            --quiet
-      
-      - name: Get Service URL
-        run: |
-          SERVICE_URL=$(gcloud run services describe "$SERVICE_NAME" \
-            --project "$PROJECT_ID" \
-            --region "$REGION" \
-            --format 'value(status.url)')
-          echo " Deployed to: $SERVICE_URL"
+          echo "### Dev Build Published" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev-${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
