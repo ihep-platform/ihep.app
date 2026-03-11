@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-IHEP Deep Agent factory — Claude Opus 4.6 primary + Gemini subagent.
+IHEP Deep Agent factory — Claude Opus 4.6 primary + full subagent constellation.
 
 Usage:
     from hub.core.deep_agent import build_ihep_agent
 
-    agent = build_ihep_agent()          # defaults
+    agent = build_ihep_agent()          # defaults (full 29-agent constellation)
     agent = build_ihep_agent(           # custom
         IHEPAgentConfig(
             primary_model="anthropic:claude-opus-4-6",
@@ -25,6 +25,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from deepagents import create_deep_agent, SubAgent
+
+from .constellation import ALL_SUBAGENTS
 
 
 # ---------------------------------------------------------------------------
@@ -59,24 +61,29 @@ class IHEPAgentConfig:
 
     # Primary agent system prompt
     system_prompt: str = (
-        "You are the IHEP (Integrated Health Empowerment Platform) AI agent.\n\n"
+        "You are the IHEP (Integrated Health Empowerment Platform) master orchestrator "
+        "coordinating a constellation of specialized subagents.\n\n"
         "You orchestrate healthcare workflows, analyse patient data, manage "
         "EHR integrations, and ensure HIPAA compliance across all operations.\n\n"
-        "You have access to a Google Gemini subagent (named 'google') that "
-        "you can delegate research, cross-validation, and large-context "
-        "analysis tasks to via the `task` tool.\n\n"
+        "Analyze each request and delegate to the most appropriate subagent(s) "
+        "using the `task` tool. You may invoke multiple subagents in parallel "
+        "for complex, multi-faceted tasks.\n\n"
         "Rules:\n"
         "- Never expose PHI in logs or external calls.\n"
         "- Validate all clinical assertions with evidence.\n"
-        "- Use the Gemini subagent for second-opinion analysis when appropriate.\n"
-        "- Follow HIPAA Safe Harbor de-identification before sharing data externally."
+        "- Delegate to specialized subagents for domain-specific analysis.\n"
+        "- Follow HIPAA Safe Harbor de-identification before sharing data externally.\n"
+        "- Synthesize subagent outputs into coherent, actionable responses."
     )
 
     # Agent name (shows in LangGraph traces)
     agent_name: str = "ihep-deep-agent"
 
-    # Extra subagents beyond the Gemini one
+    # Extra subagents beyond the default constellation
     extra_subagents: list[SubAgent] = field(default_factory=list)
+
+    # Whether to include the full 29-agent constellation
+    use_constellation: bool = True
 
     debug: bool = False
 
@@ -94,18 +101,29 @@ def build_ihep_agent(config: IHEPAgentConfig | None = None):
     """
     cfg = config or IHEPAgentConfig()
 
-    gemini_subagent: SubAgent = {
-        "name": cfg.gemini_name,
-        "description": cfg.gemini_description,
-        "system_prompt": cfg.gemini_system_prompt,
-        "model": cfg.gemini_model,
-    }
+    # Build subagent list: constellation + any extras
+    if cfg.use_constellation:
+        subagents: list[SubAgent] = [*ALL_SUBAGENTS, *cfg.extra_subagents]
+    else:
+        # Minimal mode: single Gemini subagent only
+        gemini_subagent: SubAgent = {
+            "name": cfg.gemini_name,
+            "description": cfg.gemini_description,
+            "system_prompt": cfg.gemini_system_prompt,
+            "model": cfg.gemini_model,
+        }
+        subagents = [gemini_subagent, *cfg.extra_subagents]
 
-    subagents: list[SubAgent] = [gemini_subagent, *cfg.extra_subagents]
+    # Append subagent roster to system prompt so the orchestrator knows what's available
+    roster = "\n".join(f"- {s['name']}: {s['description']}" for s in subagents)
+    system_prompt = (
+        f"{cfg.system_prompt}\n\n"
+        f"Available subagents ({len(subagents)}):\n{roster}"
+    )
 
     agent = create_deep_agent(
         model=cfg.primary_model,
-        system_prompt=cfg.system_prompt,
+        system_prompt=system_prompt,
         subagents=subagents,
         name=cfg.agent_name,
         debug=cfg.debug,
