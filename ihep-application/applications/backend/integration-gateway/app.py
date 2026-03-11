@@ -122,19 +122,41 @@ def create_app(config: AppConfig = None) -> Flask:
     @require_auth
     def receive_inbound_data(current_user: Dict[str, Any] = None):
         """Receive transformed data from Mirth Connect channels."""
-        data = request.json
-        if not data:
-            return jsonify({"error": "Request body required"}), 400
+        # Support both:
+        # 1) Original contract: wrapper object in JSON body with
+        #    channel_id/message_type/partner_id/payload
+        # 2) Mirth contract: raw normalized payload with routing info in headers
+        data = request.get_json(silent=True)
+        if data is None:
+            return jsonify({"error": "Request body required (JSON expected)"}), 400
 
-        channel_id = data.get("channel_id")
-        message_type = data.get("message_type")
-        partner_id = data.get("partner_id")
-        payload = data.get("payload")
-        metadata = data.get("metadata", {})
+        # Detect whether the body contains the wrapper fields
+        has_wrapper_keys = any(
+            key in data for key in ("channel_id", "message_type", "partner_id", "payload")
+        )
+
+        if has_wrapper_keys:
+            # Existing behavior: all routing data comes from the JSON wrapper
+            channel_id = data.get("channel_id")
+            message_type = data.get("message_type")
+            partner_id = data.get("partner_id")
+            payload = data.get("payload")
+            metadata = data.get("metadata", {})
+        else:
+            # New behavior: treat the entire JSON body as the normalized payload
+            # and derive routing from headers set by Mirth.
+            channel_id = request.headers.get("X-IHEP-Channel-Id")
+            message_type = request.headers.get("X-IHEP-Message-Type")
+            partner_id = request.headers.get("X-IHEP-Partner-Id")
+            payload = data
+            metadata = {}
 
         if not all([channel_id, message_type, partner_id, payload]):
             return jsonify({
-                "error": "channel_id, message_type, partner_id, and payload required"
+                "error": (
+                    "channel_id, message_type, partner_id, and payload required "
+                    "(either in JSON wrapper body or via X-IHEP-* headers plus body)"
+                )
             }), 400
 
         partner = config.partners.get(partner_id)
