@@ -7,7 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  output: 'standalone',
+  // Use standalone output for Docker/Cloud Run; Vercel manages its own output
+  output: process.env.VERCEL ? undefined : 'standalone',
   // Enable React Compiler for performance optimizations
   reactCompiler: true,
   // Transpile Three.js and related packages for proper bundling

@@ -1,0 +1,430 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ihep.app/schemas/fhir/ihep_patient.json",
+  "title": "IHEP Canonical Patient Resource",
+  "description": "Canonical IHEP Patient schema based on FHIR R4 Patient resource with IHEP-specific extensions for consent management, data sharing preferences, and research participation tracking.",
+  "type": "object",
+  "properties": {
+    "resourceType": {
+      "type": "string",
+      "const": "Patient",
+      "description": "FHIR resource type identifier. Must always be 'Patient'."
+    },
+    "id": {
+      "type": "string",
+      "description": "Logical resource ID assigned by the IHEP platform (UUID v4 format).",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the resource including source system and versioning.",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "URI identifying the source EHR system that originated this record.",
+          "examples": [
+            "urn:ehr:epic:sandbox-001",
+            "urn:ehr:cerner:sandbox-001",
+            "urn:ihep:patient-portal"
+          ]
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the most recent update to this resource (ISO 8601)."
+        },
+        "versionId": {
+          "type": "string",
+          "description": "Version-specific identifier for optimistic concurrency control.",
+          "pattern": "^[0-9]+$"
+        },
+        "profile": {
+          "type": "array",
+          "description": "FHIR profiles this resource conforms to.",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "default": [
+            "http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient",
+            "https://ihep.app/fhir/StructureDefinition/ihep-patient"
+          ]
+        }
+      },
+      "required": ["source", "lastUpdated"]
+    },
+    "identifier": {
+      "type": "array",
+      "description": "Patient identifiers from various systems (MRN, SSN last-4, insurance ID, etc.).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "system": {
+            "type": "string",
+            "format": "uri",
+            "description": "Namespace URI for the identifier (e.g., hospital OID, NPI system).",
+            "examples": [
+              "urn:oid:1.2.840.114350.1.13.0.1.7.5.737384.0",
+              "http://hl7.org/fhir/sid/us-ssn",
+              "https://ihep.app/fhir/sid/ihep-id"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "description": "The actual identifier value.",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "type": {
+            "type": "object",
+            "description": "Coded type of identifier.",
+            "properties": {
+              "coding": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "system": {
+                      "type": "string",
+                      "format": "uri",
+                      "default": "http://terminology.hl7.org/CodeSystem/v2-0203"
+                    },
+                    "code": {
+                      "type": "string",
+                      "enum": ["MR", "SS", "DL", "PPN", "MB", "PI"],
+                      "description": "MR=Medical Record, SS=SSN, DL=Driver License, PPN=Passport, MB=Member, PI=Patient Internal."
+                    },
+                    "display": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["system", "code"]
+                }
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          },
+          "use": {
+            "type": "string",
+            "enum": ["usual", "official", "temp", "secondary", "old"],
+            "description": "Purpose of the identifier."
+          },
+          "period": {
+            "type": "object",
+            "description": "Time period during which the identifier is/was valid.",
+            "properties": {
+              "start": { "type": "string", "format": "date-time" },
+              "end": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "required": ["system", "value"]
+      },
+      "minItems": 1
+    },
+    "name": {
+      "type": "array",
+      "description": "Patient name(s). At least one official name is required.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "use": {
+            "type": "string",
+            "enum": ["usual", "official", "temp", "nickname", "anonymous", "old", "maiden"],
+            "description": "Context in which this name is used."
+          },
+          "family": {
+            "type": "string",
+            "description": "Family (last) name.",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "given": {
+            "type": "array",
+            "description": "Given (first/middle) names.",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            },
+            "minItems": 1
+          },
+          "prefix": {
+            "type": "array",
+            "description": "Name prefixes (e.g., Dr., Mr., Ms.).",
+            "items": { "type": "string" }
+          },
+          "suffix": {
+            "type": "array",
+            "description": "Name suffixes (e.g., Jr., III, PhD).",
+            "items": { "type": "string" }
+          },
+          "text": {
+            "type": "string",
+            "description": "Full text representation of the name."
+          },
+          "period": {
+            "type": "object",
+            "description": "Time period when this name was/is in use.",
+            "properties": {
+              "start": { "type": "string", "format": "date-time" },
+              "end": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "required": ["family", "given"]
+      },
+      "minItems": 1
+    },
+    "birthDate": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of birth in YYYY-MM-DD format.",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "gender": {
+      "type": "string",
+      "enum": ["male", "female", "other", "unknown"],
+      "description": "Administrative gender as defined by FHIR R4."
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Whether this patient record is in active use.",
+      "default": true
+    },
+    "address": {
+      "type": "array",
+      "description": "Patient addresses.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "use": {
+            "type": "string",
+            "enum": ["home", "work", "temp", "old", "billing"],
+            "description": "Purpose of this address."
+          },
+          "type": {
+            "type": "string",
+            "enum": ["postal", "physical", "both"]
+          },
+          "line": {
+            "type": "array",
+            "description": "Street address lines.",
+            "items": { "type": "string" }
+          },
+          "city": { "type": "string" },
+          "district": { "type": "string" },
+          "state": {
+            "type": "string",
+            "description": "US state abbreviation or full name.",
+            "maxLength": 50
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "ZIP or postal code.",
+            "pattern": "^[0-9]{5}(-[0-9]{4})?$"
+          },
+          "country": {
+            "type": "string",
+            "default": "US"
+          },
+          "period": {
+            "type": "object",
+            "properties": {
+              "start": { "type": "string", "format": "date-time" },
+              "end": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    "telecom": {
+      "type": "array",
+      "description": "Contact details (phone, email, etc.).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "system": {
+            "type": "string",
+            "enum": ["phone", "fax", "email", "pager", "url", "sms", "other"],
+            "description": "Type of telecommunications system."
+          },
+          "value": {
+            "type": "string",
+            "description": "Contact detail value."
+          },
+          "use": {
+            "type": "string",
+            "enum": ["home", "work", "temp", "old", "mobile"],
+            "description": "Purpose of the contact point."
+          },
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Preferred order of use (1 = highest)."
+          },
+          "period": {
+            "type": "object",
+            "properties": {
+              "start": { "type": "string", "format": "date-time" },
+              "end": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "required": ["system", "value"]
+      }
+    },
+    "managingOrganization": {
+      "type": "object",
+      "description": "Organization responsible for this patient record.",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "description": "Reference to the Organization resource.",
+          "pattern": "^Organization/[a-zA-Z0-9\\-\\.]+$"
+        },
+        "display": {
+          "type": "string",
+          "description": "Human-readable name of the organization."
+        },
+        "identifier": {
+          "type": "object",
+          "description": "Organization identifier for cross-referencing.",
+          "properties": {
+            "system": { "type": "string", "format": "uri" },
+            "value": { "type": "string" }
+          }
+        }
+      }
+    },
+    "communication": {
+      "type": "array",
+      "description": "Languages the patient can communicate in.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "object",
+            "properties": {
+              "coding": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "system": {
+                      "type": "string",
+                      "default": "urn:ietf:bcp:47"
+                    },
+                    "code": { "type": "string" },
+                    "display": { "type": "string" }
+                  }
+                }
+              },
+              "text": { "type": "string" }
+            }
+          },
+          "preferred": { "type": "boolean" }
+        }
+      }
+    },
+    "extension": {
+      "type": "array",
+      "description": "IHEP-specific extensions for consent, data sharing, and research.",
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "properties": {
+              "url": {
+                "type": "string",
+                "const": "https://ihep.app/fhir/StructureDefinition/ihep-consent-status"
+              },
+              "valueCode": {
+                "type": "string",
+                "enum": ["granted", "denied", "pending", "revoked", "expired"],
+                "description": "Current patient consent status for data usage within the IHEP platform."
+              }
+            },
+            "required": ["url", "valueCode"]
+          },
+          {
+            "properties": {
+              "url": {
+                "type": "string",
+                "const": "https://ihep.app/fhir/StructureDefinition/ihep-data-sharing-preferences"
+              },
+              "extension": {
+                "type": "array",
+                "description": "Granular data sharing preferences controlling what data categories can be shared.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "enum": [
+                        "share-with-researchers",
+                        "share-with-providers",
+                        "share-with-payers",
+                        "share-demographics",
+                        "share-lab-results",
+                        "share-medications",
+                        "share-diagnoses",
+                        "share-mental-health",
+                        "share-substance-use",
+                        "share-hiv-status"
+                      ]
+                    },
+                    "valueBoolean": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["url", "valueBoolean"]
+                }
+              }
+            },
+            "required": ["url", "extension"]
+          },
+          {
+            "properties": {
+              "url": {
+                "type": "string",
+                "const": "https://ihep.app/fhir/StructureDefinition/ihep-research-participation"
+              },
+              "extension": {
+                "type": "array",
+                "description": "Research study participation tracking for clinical trials and observational studies.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "enum": ["study-id", "enrollment-date", "status", "consent-document-ref"]
+                    },
+                    "valueString": { "type": "string" },
+                    "valueDate": { "type": "string", "format": "date" },
+                    "valueCode": {
+                      "type": "string",
+                      "enum": ["enrolled", "active", "completed", "withdrawn", "screening"]
+                    },
+                    "valueReference": {
+                      "type": "object",
+                      "properties": {
+                        "reference": { "type": "string" }
+                      }
+                    }
+                  },
+                  "required": ["url"]
+                }
+              }
+            },
+            "required": ["url", "extension"]
+          }
+        ]
+      }
+    }
+  },
+  "required": ["resourceType", "id", "name", "birthDate", "gender"],
+  "additionalProperties": false
+}

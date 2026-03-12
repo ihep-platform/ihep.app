@@ -234,6 +234,36 @@ services:
     networks:
       - ihep-network
 
+  # EHR Integration Service
+  ehr-integration-service:
+    build:
+      context: ./spokes/ehr-integration
+      dockerfile: Dockerfile
+    ports:
+      - "8093:8093"
+    environment:
+      - PORT=8093
+      - JWT_SECRET=${JWT_SECRET}
+      - PROJECT_ID=${PROJECT_ID}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - EPIC_CLIENT_ID=${EPIC_CLIENT_ID}
+      - EPIC_CLIENT_SECRET=${EPIC_CLIENT_SECRET}
+      - CERNER_CLIENT_ID=${CERNER_CLIENT_ID}
+      - CERNER_CLIENT_SECRET=${CERNER_CLIENT_SECRET}
+      - ALLSCRIPTS_API_KEY=${ALLSCRIPTS_API_KEY}
+      - ATHENA_CLIENT_ID=${ATHENA_CLIENT_ID}
+      - ATHENA_CLIENT_SECRET=${ATHENA_CLIENT_SECRET}
+      - ATHENA_PRACTICE_ID=${ATHENA_PRACTICE_ID}
+      - PUBSUB_EHR_INBOUND_TOPIC=ihep-ehr-inbound-events
+      - PUBSUB_EHR_OUTBOUND_TOPIC=ihep-ehr-outbound-events
+    depends_on:
+      - redis
+      - postgres
+    networks:
+      - ihep-network
+
   # Infrastructure Services
   redis:
     image: redis:7-alpine

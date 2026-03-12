@@ -1,0 +1,126 @@
+# =============================================================================
+# IHEP EHR Partner Onboarding Template
+# =============================================================================
+# Copy this template to configs/ehr-partners/{vendor}/{partner_id}.yaml
+# and fill in the required values for each new EHR partner integration.
+#
+# Author: Jason M Jarmacz | Co-Author: Claude by Anthropic
+# =============================================================================
+
+partner:
+  # Unique partner identifier (UUID recommended)
+  id: "partner-uuid-here"
+  # Human-readable partner name
+  name: "Example Health System"
+  # EHR vendor: epic | cerner | allscripts | athenahealth | generic_fhir | hl7v2
+  ehr_vendor: "epic"
+  # Integration status: sandbox | validation | production
+  status: "sandbox"
+  # Enable/disable this partner integration
+  enabled: true
+
+connection:
+  # Connection type: smart_on_fhir | oauth2 | api_key | hl7_tcp
+  type: "smart_on_fhir"
+  # FHIR server base URL
+  base_url: "https://fhir.example.com/api/FHIR/R4"
+  # OAuth authorization endpoint
+  auth_url: "https://fhir.example.com/oauth2/authorize"
+  # OAuth token endpoint
+  token_url: "https://fhir.example.com/oauth2/token"
+  # Credentials stored in GCP Secret Manager
+  # Reference format: ${SECRET_<PARTNER>_<CREDENTIAL>}
+  client_id: "${SECRET_PARTNER_CLIENT_ID}"
+  client_secret: "${SECRET_PARTNER_CLIENT_SECRET}"
+  # OAuth scopes (SMART on FHIR)
+  scopes:
+    - "patient/Patient.read"
+    - "patient/Observation.read"
+    - "patient/Appointment.read"
+    - "patient/CarePlan.read"
+    - "launch/patient"
+  # For HL7 v2.x TCP connections
+  # tcp_host: "hl7.example.com"
+  # tcp_port: 6661
+  # mllp_enabled: true
+
+data_scope:
+  # Toggle which resource types to sync
+  patients: true
+  observations: true
+  appointments: true
+  care_plans: true
+  medications: false    # Opt-in per partner
+  encounters: true
+  diagnostic_reports: false
+
+sync:
+  # Sync mode: inbound_only | outbound_only | bidirectional
+  mode: "bidirectional"
+  # Polling frequency in minutes (for scheduled sync)
+  frequency_minutes: 15
+  # Enable real-time webhook notifications
+  webhook_enabled: true
+  # Webhook URL registered with the EHR (auto-configured)
+  webhook_url: "https://mirth.ihep.app/webhooks/ehr"
+  # Maximum records per batch sync
+  batch_size: 100
+  # Number of retry attempts for failed syncs
+  retry_attempts: 3
+  # Retry backoff in seconds (multiplied by attempt number)
+  retry_backoff_seconds: 30
+
+field_mappings:
+  patient:
+    # Partner's MRN OID (Object Identifier)
+    mrn_system: "urn:oid:2.16.840.1.113883.4.1"
+    # Custom FHIR extensions to extract
+    custom_extensions: []
+    # Field name mappings (if non-standard)
+    # field_overrides:
+    #   given_name: "firstName"
+    #   family_name: "lastName"
+
+rate_limits:
+  # Maximum API requests per minute
+  requests_per_minute: 60
+  # Maximum API requests per hour
+  requests_per_hour: 1000
+
+mirth_channel: ""  # Auto-assigned based on ehr_vendor
+
+# Onboarding checklist (track progress)
+onboarding:
+  steps:
+    - name: "Partner Registration"
+      status: "pending"     # pending | in_progress | completed
+      completed_at: null
+    - name: "Credential Configuration"
+      status: "pending"
+      completed_at: null
+    - name: "Sandbox Connection Test"
+      status: "pending"
+      completed_at: null
+    - name: "Data Mapping Validation"
+      status: "pending"
+      completed_at: null
+    - name: "Field Mapping Review"
+      status: "pending"
+      completed_at: null
+    - name: "Production Credentials"
+      status: "pending"
+      completed_at: null
+    - name: "Initial Bulk Sync"
+      status: "pending"
+      completed_at: null
+    - name: "Webhook Activation"
+      status: "pending"
+      completed_at: null
+    - name: "Monitoring Setup"
+      status: "pending"
+      completed_at: null
+    - name: "Go-Live Approval"
+      status: "pending"
+      completed_at: null
+
+notes: ""

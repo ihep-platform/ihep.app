@@ -1,0 +1,137 @@
+# =============================================================================
+# IHEP EHR Provider Onboarding Configuration
+# =============================================================================
+# Global settings for the automated provider onboarding system.
+# Controls engagement timing, communication behavior, testing thresholds,
+# and monitoring parameters.
+#
+# Author: Jason M Jarmacz | Co-Author: Claude by Anthropic
+# =============================================================================
+
+version: "1.0"
+last_updated: "2026-02-24T00:00:00Z"
+
+# Engagement automation settings
+engagement:
+  # How often to run automated engagement cycles (minutes)
+  cycle_interval_minutes: 1440  # Daily
+  # Days to wait before sending a follow-up to unresponsive providers
+  follow_up_after_days: 3
+  # Maximum number of follow-up attempts before escalation
+  max_follow_ups: 3
+  # Days after escalation to mark as stale
+  stale_threshold_days: 30
+
+# Communication settings
+communication:
+  # Default sender identity
+  sender_name: "IHEP Integration Team"
+  sender_email: "integration@ihep.app"
+  # GCP Pub/Sub topic for outbound communications
+  pubsub_topic: "ihep-onboarding-communications"
+  # Communication channels enabled
+  channels:
+    email: true
+    webhook: true
+    pubsub: true
+
+# Connection testing thresholds
+testing:
+  # Maximum time (seconds) to wait for API responses
+  request_timeout_seconds: 30
+  # Response time thresholds (ms)
+  response_time_warning_ms: 5000
+  response_time_critical_ms: 15000
+  # Consecutive failure thresholds for health status
+  failure_threshold_degraded: 2
+  failure_threshold_down: 5
+  # Auto-retest interval for providers in testing phases (minutes)
+  retest_interval_minutes: 60
+
+# Monitoring settings for active integrations
+monitoring:
+  # Health check interval (minutes)
+  health_check_interval_minutes: 15
+  # Alert notification channels
+  alert_channels:
+    - email
+    - pubsub
+  # SLA for responding to health alerts (hours)
+  alert_sla_hours: 4
+
+# Phase-specific configurations
+phases:
+  discovery:
+    auto_advance: true
+    description: "Identify and profile the provider organization"
+  outreach:
+    auto_advance: false
+    auto_send_communication: true
+    description: "Initiate contact with the provider"
+  engagement:
+    auto_advance: false
+    description: "Agree on integration scope and timeline"
+  credentialing:
+    auto_advance: true
+    description: "Exchange and store API credentials"
+  sandbox_testing:
+    auto_advance: true
+    auto_run_tests: true
+    description: "Validate connectivity in sandbox environment"
+  data_validation:
+    auto_advance: false
+    auto_send_report: true
+    description: "Verify data quality and transformation accuracy"
+  production_setup:
+    auto_advance: true
+    description: "Configure production credentials and channels"
+  initial_sync:
+    auto_advance: true
+    description: "Perform initial bulk data synchronization"
+  monitoring_setup:
+    auto_advance: true
+    description: "Activate health checks and alerting"
+  go_live:
+    auto_advance: false
+    requires_approval: true
+    description: "Final approval and production activation"
+  active:
+    description: "Integration live and monitored"
+
+# Supported EHR vendors and their defaults
+vendors:
+  epic:
+    display_name: "Epic Systems"
+    auth_type: smart_on_fhir
+    fhir_version: R4
+    marketplace: "App Orchard"
+    sandbox_url: "https://fhir.epic.com/interconnect-fhir-oauth/api/FHIR/R4"
+    documentation_url: "https://fhir.epic.com/Documentation"
+  cerner:
+    display_name: "Cerner (Oracle Health)"
+    auth_type: oauth2
+    fhir_version: R4
+    marketplace: "Cerner Code"
+    sandbox_url: "https://fhir-open.cerner.com/r4"
+    documentation_url: "https://fhir.cerner.com/millennium/r4/"
+  allscripts:
+    display_name: "Allscripts (Veradigm)"
+    auth_type: api_key
+    fhir_version: R4
+    marketplace: "Allscripts Developer Portal"
+    sandbox_url: "https://cloud.allscriptsunity.com/FHIR/R4"
+  athenahealth:
+    display_name: "athenahealth"
+    auth_type: oauth2
+    fhir_version: R4
+    marketplace: "athenahealth Marketplace"
+    sandbox_url: "https://api.preview.platform.athenahealth.com/fhir/r4"
+    documentation_url: "https://docs.athenahealth.com/api/"
+  generic_fhir:
+    display_name: "Generic FHIR Server"
+    auth_type: oauth2
+    fhir_version: R4
+  hl7v2:
+    display_name: "Legacy HL7 v2.x"
+    auth_type: hl7_tcp
+    protocol: MLLP

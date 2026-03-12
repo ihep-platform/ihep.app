@@ -1,0 +1,419 @@
+<!--
+  =============================================================================
+  IHEP Platform - Allscripts FHIR R4 Inbound Channel
+  =============================================================================
+  Receives FHIR R4 Bundles from Allscripts (Veradigm) EHR systems via
+  HTTP POST. Handles Allscripts-specific FHIR extensions and Unity/Sunrise
+  resource patterns. Transforms incoming data using fhir_to_ihep.js and
+  forwards normalized payloads to the IHEP integration gateway.
+
+  Author: Jason M Jarmacz | Evolution Strategist | jason@ihep.app
+  Co-Author: Claude by Anthropic
+  =============================================================================
+-->
+<channel version="4.5.0">
+  <id>a1b2c3d4-e5f6-7890-abcd-300000000003</id>
+  <nextMetaDataId>3</nextMetaDataId>
+  <name>IHEP_Allscripts_FHIR_Inbound</name>
+  <description>Receives FHIR R4 Bundles and individual Resources from Allscripts (Veradigm).
+Handles Allscripts Unity and Sunrise Clinical Manager data patterns.
+Normalizes data to IHEP format and forwards to the integration gateway.</description>
+  <revision>1</revision>
+  <sourceConnector version="4.5.0">
+    <metaDataId>0</metaDataId>
+    <name>Allscripts FHIR HTTP Listener</name>
+    <properties class="com.mirth.connect.connectors.http.HttpReceiverProperties" version="4.5.0">
+      <pluginProperties/>
+      <listenerConnectorProperties version="4.5.0">
+        <host>0.0.0.0</host>
+        <port>8080</port>
+      </listenerConnectorProperties>
+      <sourceConnectorProperties version="4.5.0">
+        <responseVariable>d1</responseVariable>
+        <respondAfterProcessing>true</respondAfterProcessing>
+        <processBatch>false</processBatch>
+        <firstResponse>false</firstResponse>
+        <processingThreads>10</processingThreads>
+        <resourceIds class="linked-hash-map">
+          <entry>
+            <string>Default Resource</string>
+            <string>[Default Resource]</string>
+          </entry>
+        </resourceIds>
+        <queueBufferSize>1000</queueBufferSize>
+      </sourceConnectorProperties>
+      <contextPath>/allscripts/fhir</contextPath>
+      <timeout>30000</timeout>
+      <xmlBody>false</xmlBody>
+      <parseMultipart>true</parseMultipart>
+      <includeMetadata>true</includeMetadata>
+      <binaryMimeTypes>application/pdf,image/*</binaryMimeTypes>
+      <binaryMimeTypesRegex>false</binaryMimeTypesRegex>
+      <responseContentType>application/fhir+json</responseContentType>
+      <responseDataTypesId>JSON</responseDataTypesId>
+      <responseStatusCode>200</responseStatusCode>
+      <charset>UTF-8</charset>
+      <staticResources/>
+    </properties>
+    <transformer version="4.5.0">
+      <elements>
+        <!-- Step 1: Validate incoming Allscripts FHIR payload -->
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.0">
+          <name>Validate Allscripts FHIR Payload</name>
+          <sequenceNumber>0</sequenceNumber>
+          <enabled>true</enabled>
+          <script>
+// =============================================================================
+// Allscripts FHIR R4 Payload Validation
+// =============================================================================
+// Validates the incoming request is a properly formed FHIR R4 resource
+// from Allscripts Unity or Sunrise Clinical Manager.
+// =============================================================================
+
+var payload = msg;
+var contentType = sourceMap.get('Header').getField('Content-Type') || '';
+var allscriptsAppName = sourceMap.get('Header').getField('X-Allscripts-AppName') || '';
+var allscriptsToken = sourceMap.get('Header').getField('X-Allscripts-Token') || '';
+
+// Validate Content-Type
+if (contentType.indexOf('application/fhir+json') === -1 &amp;&amp;
+    contentType.indexOf('application/json') === -1) {
+    logger.error('ALLSCRIPTS_INBOUND: Invalid Content-Type: ' + contentType);
+    channelMap.put('responseStatusCode', '415');
+    channelMap.put('responseBody', JSON.stringify({
+        resourceType: 'OperationOutcome',
+        issue: [{
+            severity: 'error',
+            code: 'invalid',
+            diagnostics: 'Content-Type must be application/fhir+json or application/json'
+        }]
+    }));
+    return;
+}
+
+// Parse and validate FHIR resource
+var fhirData;
+try {
+    fhirData = JSON.parse(msg);
+} catch (e) {
+    logger.error('ALLSCRIPTS_INBOUND: Failed to parse JSON: ' + e.message);
+    channelMap.put('responseStatusCode', '400');
+    channelMap.put('responseBody', JSON.stringify({
+        resourceType: 'OperationOutcome',
+        issue: [{
+            severity: 'error',
+            code: 'invalid',
+            diagnostics: 'Invalid JSON payload'
+        }]
+    }));
+    return;
+}
+
+if (!fhirData.resourceType) {
+    logger.error('ALLSCRIPTS_INBOUND: Missing resourceType in FHIR payload');
+    channelMap.put('responseStatusCode', '400');
+    return;
+}
+
+// Allscripts-specific: Detect Unity vs Sunrise source
+var allscriptsProduct = 'unknown';
+if (fhirData.meta &amp;&amp; fhirData.meta.source) {
+    if (fhirData.meta.source.indexOf('unity') !== -1) {
+        allscriptsProduct = 'unity';
+    } else if (fhirData.meta.source.indexOf('sunrise') !== -1) {
+        allscriptsProduct = 'sunrise';
+    }
+}
+
+// Track source metadata
+channelMap.put('fhirResourceType', fhirData.resourceType);
+channelMap.put('ehrVendor', 'allscripts');
+channelMap.put('allscriptsProduct', allscriptsProduct);
+channelMap.put('allscriptsAppName', allscriptsAppName);
+channelMap.put('receivedTimestamp', new Date().toISOString());
+channelMap.put('fhirPayload', JSON.stringify(fhirData));
+
+logger.info('ALLSCRIPTS_INBOUND: Received ' + fhirData.resourceType +
+    ' from Allscripts ' + allscriptsProduct + ' (App: ' + allscriptsAppName + ')');
+          </script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+
+        <!-- Step 2: Transform FHIR to IHEP format -->
+        <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.0">
+          <name>Transform FHIR to IHEP Format</name>
+          <sequenceNumber>1</sequenceNumber>
+          <enabled>true</enabled>
+          <script>
+// =============================================================================
+// FHIR to IHEP Transformation
+// =============================================================================
+var transformerPath = '/opt/connect/transformers/fhir_to_ihep.js';
+var transformer = FileUtil.read(transformerPath);
+eval(transformer);
+
+var fhirPayload = JSON.parse(channelMap.get('fhirPayload'));
+
+var ihepPayload = transformFhirToIhep(fhirPayload, {
+    vendor: 'allscripts',
+    product: channelMap.get('allscriptsProduct'),
+    appName: channelMap.get('allscriptsAppName'),
+    receivedAt: channelMap.get('receivedTimestamp'),
+    channelName: 'IHEP_Allscripts_FHIR_Inbound'
+});
+
+if (ihepPayload &amp;&amp; ihepPayload.success) {
+    channelMap.put('ihepPayload', JSON.stringify(ihepPayload.data));
+    channelMap.put('resourceCount', ihepPayload.resourceCount || 1);
+    logger.info('ALLSCRIPTS_INBOUND: Transformed ' + ihepPayload.resourceCount +
+        ' resource(s) to IHEP format');
+} else {
+    var errorMsg = ihepPayload ? ihepPayload.error : 'Transformation returned null';
+    logger.error('ALLSCRIPTS_INBOUND: Transformation failed: ' + errorMsg);
+    channelMap.put('transformError', errorMsg);
+}
+          </script>
+        </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+      </elements>
+      <inboundDataType>RAW</inboundDataType>
+      <outboundDataType>RAW</outboundDataType>
+      <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+      <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+    </transformer>
+    <filter version="4.5.0">
+      <elements>
+        <com.mirth.connect.plugins.javascriptrule.JavaScriptRule version="4.5.0">
+          <name>Filter Invalid Payloads</name>
+          <sequenceNumber>0</sequenceNumber>
+          <enabled>true</enabled>
+          <script>
+return channelMap.get('ihepPayload') != null &amp;&amp; channelMap.get('transformError') == null;
+          </script>
+        </com.mirth.connect.plugins.javascriptrule.JavaScriptRule>
+      </elements>
+    </filter>
+  </sourceConnector>
+
+  <destinationConnectors>
+    <connector version="4.5.0">
+      <metaDataId>1</metaDataId>
+      <name>IHEP Integration Gateway</name>
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="4.5.0">
+        <pluginProperties/>
+        <destinationConnectorProperties version="4.5.0">
+          <queueEnabled>true</queueEnabled>
+          <sendFirst>true</sendFirst>
+          <retryIntervalMillis>30000</retryIntervalMillis>
+          <regenerateTemplate>false</regenerateTemplate>
+          <retryCount>3</retryCount>
+          <rotate>false</rotate>
+          <includeFilterTransformer>false</includeFilterTransformer>
+          <threadCount>5</threadCount>
+          <threadAssignmentVariable/>
+          <validateResponse>false</validateResponse>
+          <resourceIds class="linked-hash-map">
+            <entry>
+              <string>Default Resource</string>
+              <string>[Default Resource]</string>
+            </entry>
+          </resourceIds>
+          <queueBufferSize>1000</queueBufferSize>
+          <reattachAttachments>true</reattachAttachments>
+        </destinationConnectorProperties>
+        <host>http://ehr-integration-service:8093/api/v1/ehr/inbound</host>
+        <useProxyServer>false</useProxyServer>
+        <method>POST</method>
+        <headers class="linked-hash-map">
+          <entry>
+            <string>Content-Type</string>
+            <string>application/json</string>
+          </entry>
+          <entry>
+            <string>X-IHEP-Source</string>
+            <string>mirth-connect</string>
+          </entry>
+          <entry>
+            <string>X-IHEP-Vendor</string>
+            <string>allscripts</string>
+          </entry>
+          <entry>
+            <string>X-IHEP-Channel</string>
+            <string>IHEP_Allscripts_FHIR_Inbound</string>
+          </entry>
+          <entry>
+            <string>X-IHEP-Timestamp</string>
+            <string>${receivedTimestamp}</string>
+          </entry>
+        </headers>
+        <parameters class="linked-hash-map"/>
+        <useHeadersVariable>false</useHeadersVariable>
+        <useParametersVariable>false</useParametersVariable>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>true</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <multipart>false</multipart>
+        <socketTimeout>60000</socketTimeout>
+        <connectTimeout>10000</connectTimeout>
+        <charset>UTF-8</charset>
+        <content>${ihepPayload}</content>
+        <contentType>application/json</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
+        <authentication>false</authentication>
+      </properties>
+      <transformer version="4.5.0">
+        <elements/>
+        <inboundDataType>RAW</inboundDataType>
+        <outboundDataType>RAW</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+      </transformer>
+      <responseTransformer version="4.5.0">
+        <elements>
+          <com.mirth.connect.plugins.javascriptstep.JavaScriptStep version="4.5.0">
+            <name>Process Gateway Response</name>
+            <sequenceNumber>0</sequenceNumber>
+            <enabled>true</enabled>
+            <script>
+var statusCode = $('responseStatusLine');
+logger.info('ALLSCRIPTS_INBOUND: Gateway responded with status ' + statusCode);
+if (statusCode &amp;&amp; statusCode.indexOf('200') === -1 &amp;&amp; statusCode.indexOf('201') === -1) {
+    logger.warn('ALLSCRIPTS_INBOUND: Non-success response: ' + $('responsePayload'));
+}
+            </script>
+          </com.mirth.connect.plugins.javascriptstep.JavaScriptStep>
+        </elements>
+        <inboundDataType>RAW</inboundDataType>
+        <outboundDataType>RAW</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+      </responseTransformer>
+      <filter version="4.5.0">
+        <elements/>
+      </filter>
+      <waitForPrevious>true</waitForPrevious>
+    </connector>
+
+    <connector version="4.5.0">
+      <metaDataId>2</metaDataId>
+      <name>Audit Logger</name>
+      <properties class="com.mirth.connect.connectors.http.HttpDispatcherProperties" version="4.5.0">
+        <pluginProperties/>
+        <destinationConnectorProperties version="4.5.0">
+          <queueEnabled>true</queueEnabled>
+          <sendFirst>true</sendFirst>
+          <retryIntervalMillis>10000</retryIntervalMillis>
+          <regenerateTemplate>false</regenerateTemplate>
+          <retryCount>2</retryCount>
+          <rotate>false</rotate>
+          <includeFilterTransformer>false</includeFilterTransformer>
+          <threadCount>2</threadCount>
+          <threadAssignmentVariable/>
+          <validateResponse>false</validateResponse>
+          <resourceIds class="linked-hash-map">
+            <entry>
+              <string>Default Resource</string>
+              <string>[Default Resource]</string>
+            </entry>
+          </resourceIds>
+          <queueBufferSize>1000</queueBufferSize>
+          <reattachAttachments>false</reattachAttachments>
+        </destinationConnectorProperties>
+        <host>http://ehr-integration-service:8093/api/v1/ehr/audit</host>
+        <useProxyServer>false</useProxyServer>
+        <method>POST</method>
+        <headers class="linked-hash-map">
+          <entry>
+            <string>Content-Type</string>
+            <string>application/json</string>
+          </entry>
+        </headers>
+        <parameters class="linked-hash-map"/>
+        <useHeadersVariable>false</useHeadersVariable>
+        <useParametersVariable>false</useParametersVariable>
+        <responseXmlBody>false</responseXmlBody>
+        <responseParseMultipart>false</responseParseMultipart>
+        <responseIncludeMetadata>false</responseIncludeMetadata>
+        <multipart>false</multipart>
+        <socketTimeout>15000</socketTimeout>
+        <connectTimeout>5000</connectTimeout>
+        <charset>UTF-8</charset>
+        <content>{
+  "event": "ehr_data_received",
+  "vendor": "allscripts",
+  "product": "${allscriptsProduct}",
+  "channel": "IHEP_Allscripts_FHIR_Inbound",
+  "resourceType": "${fhirResourceType}",
+  "resourceCount": ${resourceCount},
+  "timestamp": "${receivedTimestamp}"
+}</content>
+        <contentType>application/json</contentType>
+        <dataTypeBinary>false</dataTypeBinary>
+        <authentication>false</authentication>
+      </properties>
+      <transformer version="4.5.0">
+        <elements/>
+        <inboundDataType>RAW</inboundDataType>
+        <outboundDataType>RAW</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+      </transformer>
+      <responseTransformer version="4.5.0">
+        <elements/>
+        <inboundDataType>RAW</inboundDataType>
+        <outboundDataType>RAW</outboundDataType>
+        <inboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+        <outboundProperties class="com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties"/>
+      </responseTransformer>
+      <filter version="4.5.0">
+        <elements/>
+      </filter>
+      <waitForPrevious>false</waitForPrevious>
+    </connector>
+  </destinationConnectors>
+
+  <preprocessingScript>// Allscripts Inbound Preprocessing
+logger.debug('ALLSCRIPTS_INBOUND: Raw message received, length: ' + message.length);
+return message;</preprocessingScript>
+
+  <postprocessingScript>// Allscripts Inbound Postprocessing
+logger.info('ALLSCRIPTS_INBOUND: Message processing complete for ' +
+    channelMap.get('fhirResourceType') + ' resource');
+return;</postprocessingScript>
+
+  <deployScript>// Allscripts Inbound Deploy Script
+logger.info('IHEP Allscripts FHIR Inbound channel deployed successfully');
+logger.info('Listening on /allscripts/fhir for FHIR R4 resources');
+return;</deployScript>
+
+  <undeployScript>// Allscripts Inbound Undeploy Script
+logger.info('IHEP Allscripts FHIR Inbound channel undeployed');
+return;</undeployScript>
+
+  <properties version="4.5.0">
+    <clearGlobalChannelMap>true</clearGlobalChannelMap>
+    <messageStorageMode>PRODUCTION</messageStorageMode>
+    <encryptData>true</encryptData>
+    <removeContentOnCompletion>false</removeContentOnCompletion>
+    <removeOnlyFilteredOnCompletion>false</removeOnlyFilteredOnCompletion>
+    <removeAttachmentsOnCompletion>false</removeAttachmentsOnCompletion>
+    <initialState>STARTED</initialState>
+    <storeAttachments>true</storeAttachments>
+    <tags>
+      <tag>allscripts</tag>
+      <tag>veradigm</tag>
+      <tag>fhir</tag>
+      <tag>inbound</tag>
+      <tag>ihep</tag>
+    </tags>
+    <metaDataColumns/>
+    <attachmentProperties version="4.5.0">
+      <type>None</type>
+      <properties/>
+    </attachmentProperties>
+    <resourceIds class="linked-hash-map">
+      <entry>
+        <string>Default Resource</string>
+        <string>[Default Resource]</string>
+      </entry>
+    </resourceIds>
+  </properties>
+</channel>

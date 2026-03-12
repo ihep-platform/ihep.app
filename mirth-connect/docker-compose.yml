@@ -1,0 +1,164 @@
+# =============================================================================
+# IHEP Platform - Mirth Connect (NextGen Connect) Docker Compose
+# =============================================================================
+# Deploys Mirth Connect integration engine with PostgreSQL backend for
+# EHR interoperability. Handles HL7 v2.x, FHIR R4, and webhook-based
+# integrations with Epic, Cerner, Allscripts, athenahealth, and others.
+#
+# Author: Jason M Jarmacz | Evolution Strategist | jason@ihep.app
+# Co-Author: Claude by Anthropic
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # ---------------------------------------------------------------------------
+  # Mirth Connect Integration Engine
+  # ---------------------------------------------------------------------------
+  # NextGen Connect (formerly Mirth Connect) is the core integration engine
+  # handling all EHR data flows: inbound FHIR, HL7 v2.x, webhooks, and
+  # outbound synchronization to vendor systems.
+  # ---------------------------------------------------------------------------
+  mirth-connect:
+    image: nextgenhealthcare/connect:latest
+    container_name: ihep-mirth-connect
+    restart: unless-stopped
+    ports:
+      # Mirth Administrator Web UI (HTTPS)
+      - "8443:8443"
+      # HTTP Listener for FHIR/webhook inbound channels
+      - "8080:8080"
+      # HL7 v2.x TCP/MLLP Listener
+      - "6661:6661"
+    environment:
+      # --- Database Configuration ---
+      DATABASE: postgres
+      DATABASE_URL: jdbc:postgresql://mirth-postgres:5432/mirthdb
+      DATABASE_USERNAME: ${MIRTH_DB_USER:-mirth}
+      DATABASE_PASSWORD: ${MIRTH_DB_PASSWORD:-mirth_secure_password}
+      DATABASE_MAX_CONNECTIONS: 20
+      DATABASE_BLOCKING_TIMEOUT: 10000
+
+      # --- JVM Tuning ---
+      # Production: adjust -Xmx based on expected message volume
+      _MP_JVM_OPTIONS: >-
+        -Xms512m
+        -Xmx2g
+        -XX:+UseG1GC
+        -XX:MaxGCPauseMillis=200
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:HeapDumpPath=/opt/connect/logs
+        -Djava.net.preferIPv4Stack=true
+
+      # --- Mirth Configuration ---
+      VMOPTIONS: >-
+        -Dhttp.port=8080
+        -Dhttps.port=8443
+        -Ddir.appdata=/opt/connect/appdata
+
+      # --- IHEP Platform Integration ---
+      IHEP_GATEWAY_URL: http://ehr-integration-service:8093/api/v1/ehr
+      IHEP_PROJECT_ID: ${PROJECT_ID}
+      IHEP_ENVIRONMENT: ${ENVIRONMENT:-development}
+
+      # --- TLS/Security ---
+      KEYSTORE_PATH: /opt/connect/appdata/keystore.jks
+      KEYSTORE_PASSWORD: ${MIRTH_KEYSTORE_PASSWORD:-changeit}
+      KEYSTORE_TYPE: JKS
+    volumes:
+      # Persist Mirth application data (channels, code templates, etc.)
+      - mirth_appdata:/opt/connect/appdata
+      # Persist log files for auditing and debugging
+      - mirth_logs:/opt/connect/logs
+      # Mount custom channel definitions for import
+      - ./channels:/opt/connect/channels:ro
+      # Mount custom JavaScript transformers
+      - ./transformers:/opt/connect/transformers:ro
+    depends_on:
+      mirth-postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsSk https://localhost:8443/api/system/stats || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    networks:
+      - ihep-network
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL for Mirth Connect
+  # ---------------------------------------------------------------------------
+  # Dedicated PostgreSQL instance for Mirth channel configurations,
+  # message history, and metadata. Separated from the main IHEP Postgres
+  # to isolate integration engine workloads.
+  # ---------------------------------------------------------------------------
+  mirth-postgres:
+    image: postgres:15-alpine
+    container_name: ihep-mirth-postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: mirthdb
+      POSTGRES_USER: ${MIRTH_DB_USER:-mirth}
+      POSTGRES_PASSWORD: ${MIRTH_DB_PASSWORD:-mirth_secure_password}
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+      # Performance tuning for integration workloads
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+    volumes:
+      - mirth_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${MIRTH_DB_USER:-mirth} -d mirthdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ihep-network
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c effective_cache_size=768MB
+      -c work_mem=8MB
+      -c maintenance_work_mem=128MB
+      -c max_connections=100
+      -c password_encryption=scram-sha-256
+      -c log_min_duration_statement=1000
+      -c log_checkpoints=on
+      -c log_connections=on
+      -c log_disconnections=on
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+# =============================================================================
+# Networks
+# =============================================================================
+# Uses the existing ihep-network bridge network defined in the parent
+# docker-compose.yml. When running standalone, creates a compatible network.
+# =============================================================================
+networks:
+  ihep-network:
+    external: true
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  # Mirth Connect application data (channels, code templates, global scripts)
+  mirth_appdata:
+    driver: local
+  # Mirth Connect log files
+  mirth_logs:
+    driver: local
+  # PostgreSQL data for Mirth Connect
+  mirth_postgres_data:
+    driver: local

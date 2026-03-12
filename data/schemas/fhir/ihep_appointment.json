@@ -1,0 +1,475 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ihep.app/schemas/fhir/ihep_appointment.json",
+  "title": "IHEP Canonical Appointment Resource",
+  "description": "Canonical IHEP Appointment schema based on FHIR R4 Appointment resource with IHEP-specific extensions for virtual visit management and telehealth link distribution.",
+  "type": "object",
+  "properties": {
+    "resourceType": {
+      "type": "string",
+      "const": "Appointment",
+      "description": "FHIR resource type identifier. Must always be 'Appointment'."
+    },
+    "id": {
+      "type": "string",
+      "description": "Logical resource ID assigned by the IHEP platform (UUID v4 format).",
+      "pattern": "^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$"
+    },
+    "meta": {
+      "type": "object",
+      "description": "Metadata about the resource including source system and versioning.",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "URI identifying the source EHR scheduling system."
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of the most recent update (ISO 8601)."
+        },
+        "versionId": {
+          "type": "string",
+          "pattern": "^[0-9]+$"
+        },
+        "profile": {
+          "type": "array",
+          "items": { "type": "string", "format": "uri" },
+          "default": [
+            "https://ihep.app/fhir/StructureDefinition/ihep-appointment"
+          ]
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "pending",
+        "booked",
+        "arrived",
+        "fulfilled",
+        "cancelled",
+        "noshow",
+        "entered-in-error",
+        "checked-in",
+        "waitlist"
+      ],
+      "description": "Current status of the appointment as defined by FHIR R4."
+    },
+    "cancelationReason": {
+      "type": "object",
+      "description": "Coded reason for appointment cancellation.",
+      "properties": {
+        "coding": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": "string",
+                "default": "http://terminology.hl7.org/CodeSystem/appointment-cancellation-reason"
+              },
+              "code": { "type": "string" },
+              "display": { "type": "string" }
+            }
+          }
+        },
+        "text": { "type": "string" }
+      }
+    },
+    "serviceCategory": {
+      "type": "array",
+      "description": "Broad category of service being performed.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "system": { "type": "string", "format": "uri" },
+                "code": { "type": "string" },
+                "display": { "type": "string" }
+              }
+            }
+          },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "serviceType": {
+      "type": "array",
+      "description": "Specific type of service being performed (e.g., HIV consultation, lab draw).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "system": {
+                  "type": "string",
+                  "format": "uri",
+                  "default": "http://terminology.hl7.org/CodeSystem/service-type"
+                },
+                "code": {
+                  "type": "string",
+                  "description": "Service type code."
+                },
+                "display": {
+                  "type": "string",
+                  "description": "Human-readable service type name.",
+                  "examples": [
+                    "General Practice",
+                    "Infectious Disease Consultation",
+                    "HIV Follow-up",
+                    "Lab Work",
+                    "Mental Health Counseling",
+                    "Telehealth Visit"
+                  ]
+                }
+              },
+              "required": ["code"]
+            }
+          },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "specialty": {
+      "type": "array",
+      "description": "Medical specialty of the practitioner required for the appointment.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "system": {
+                  "type": "string",
+                  "default": "http://snomed.info/sct"
+                },
+                "code": { "type": "string" },
+                "display": { "type": "string" }
+              }
+            }
+          },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "appointmentType": {
+      "type": "object",
+      "description": "Style of appointment (routine, urgent, walk-in, etc.).",
+      "properties": {
+        "coding": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": "string",
+                "default": "http://terminology.hl7.org/CodeSystem/v2-0276"
+              },
+              "code": {
+                "type": "string",
+                "enum": ["ROUTINE", "WALKIN", "CHECKUP", "FOLLOWUP", "EMERGENCY"],
+                "description": "Appointment type code."
+              },
+              "display": { "type": "string" }
+            }
+          }
+        },
+        "text": { "type": "string" }
+      }
+    },
+    "reasonCode": {
+      "type": "array",
+      "description": "Coded reason(s) for the appointment (diagnosis, symptom, etc.).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "coding": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "system": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Code system (SNOMED CT, ICD-10, etc.).",
+                  "examples": [
+                    "http://snomed.info/sct",
+                    "http://hl7.org/fhir/sid/icd-10-cm"
+                  ]
+                },
+                "code": {
+                  "type": "string",
+                  "examples": ["86406008", "B20"]
+                },
+                "display": {
+                  "type": "string",
+                  "examples": [
+                    "Human immunodeficiency virus infection",
+                    "Follow-up encounter",
+                    "Routine health maintenance"
+                  ]
+                }
+              }
+            }
+          },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "reasonReference": {
+      "type": "array",
+      "description": "References to Condition, Procedure, Observation, or ImmunizationRecommendation resources.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "reference": { "type": "string" },
+          "display": { "type": "string" }
+        }
+      }
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Priority level (0 = routine, higher = more urgent)."
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief human-readable description of the appointment.",
+      "maxLength": 1024
+    },
+    "start": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled start date/time of the appointment (ISO 8601)."
+    },
+    "end": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled end date/time of the appointment (ISO 8601)."
+    },
+    "minutesDuration": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1440,
+      "description": "Duration of the appointment in minutes."
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date/time the appointment was initially created."
+    },
+    "comment": {
+      "type": "string",
+      "description": "Additional comments about the appointment.",
+      "maxLength": 2048
+    },
+    "patientInstruction": {
+      "type": "string",
+      "description": "Instructions for the patient (e.g., fasting requirements, documents to bring).",
+      "maxLength": 2048
+    },
+    "participant": {
+      "type": "array",
+      "description": "Participants in the appointment (patient, practitioners, locations, etc.).",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "array",
+            "description": "Role of the participant in the appointment.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "coding": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "system": {
+                        "type": "string",
+                        "default": "http://terminology.hl7.org/CodeSystem/v3-ParticipationType"
+                      },
+                      "code": {
+                        "type": "string",
+                        "enum": ["ATND", "PPRF", "SPRF", "ADM", "SBJ", "LOC", "PART"],
+                        "description": "ATND=Attender, PPRF=Primary Performer, SPRF=Secondary Performer, ADM=Admitter, SBJ=Subject, LOC=Location, PART=Participant."
+                      },
+                      "display": { "type": "string" }
+                    }
+                  }
+                },
+                "text": { "type": "string" }
+              }
+            }
+          },
+          "actor": {
+            "type": "object",
+            "description": "Reference to the participant resource.",
+            "properties": {
+              "reference": {
+                "type": "string",
+                "description": "FHIR reference (Patient/xxx, Practitioner/xxx, Location/xxx, etc.).",
+                "pattern": "^(Patient|Practitioner|PractitionerRole|RelatedPerson|Device|HealthcareService|Location)/[a-zA-Z0-9\\-\\.]+$"
+              },
+              "display": {
+                "type": "string",
+                "description": "Human-readable name of the participant."
+              },
+              "identifier": {
+                "type": "object",
+                "properties": {
+                  "system": { "type": "string", "format": "uri" },
+                  "value": { "type": "string" }
+                }
+              }
+            },
+            "required": ["reference"]
+          },
+          "required": {
+            "type": "string",
+            "enum": ["required", "optional", "information-only"],
+            "description": "Whether the participant attendance is required."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["accepted", "declined", "tentative", "needs-action"],
+            "description": "Participation acceptance status."
+          },
+          "period": {
+            "type": "object",
+            "description": "Participation period if different from the appointment.",
+            "properties": {
+              "start": { "type": "string", "format": "date-time" },
+              "end": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "required": ["actor", "status"]
+      },
+      "minItems": 1
+    },
+    "requestedPeriod": {
+      "type": "array",
+      "description": "Requested time period(s) for scheduling.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": { "type": "string", "format": "date-time" },
+          "end": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+    "extension": {
+      "type": "array",
+      "description": "IHEP-specific extensions for virtual visits and telehealth.",
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "properties": {
+              "url": {
+                "type": "string",
+                "const": "https://ihep.app/fhir/StructureDefinition/ihep-virtual-visit"
+              },
+              "extension": {
+                "type": "array",
+                "description": "Virtual visit configuration and metadata.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "enum": [
+                        "is-virtual",
+                        "platform",
+                        "requires-video",
+                        "requires-audio",
+                        "patient-device-check-status",
+                        "recording-consent",
+                        "waiting-room-enabled",
+                        "interpreter-requested",
+                        "interpreter-language"
+                      ]
+                    },
+                    "valueBoolean": { "type": "boolean" },
+                    "valueString": { "type": "string" },
+                    "valueCode": {
+                      "type": "string",
+                      "enum": ["passed", "failed", "pending", "not-required", "granted", "denied"]
+                    }
+                  },
+                  "required": ["url"]
+                }
+              }
+            },
+            "required": ["url", "extension"]
+          },
+          {
+            "properties": {
+              "url": {
+                "type": "string",
+                "const": "https://ihep.app/fhir/StructureDefinition/ihep-telehealth-link"
+              },
+              "extension": {
+                "type": "array",
+                "description": "Telehealth session link details with access control and expiry.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "enum": [
+                        "session-url",
+                        "session-id",
+                        "access-code",
+                        "provider-join-url",
+                        "patient-join-url",
+                        "expires-at",
+                        "created-at",
+                        "max-participants",
+                        "encryption-level"
+                      ]
+                    },
+                    "valueUrl": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "valueString": { "type": "string" },
+                    "valueDateTime": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "valueInteger": {
+                      "type": "integer",
+                      "minimum": 2
+                    },
+                    "valueCode": {
+                      "type": "string",
+                      "enum": ["e2e-256", "e2e-128", "tls-only"],
+                      "description": "Encryption level for the telehealth session."
+                    }
+                  },
+                  "required": ["url"]
+                }
+              }
+            },
+            "required": ["url", "extension"]
+          }
+        ]
+      }
+    }
+  },
+  "required": ["resourceType", "id", "status", "start", "participant"],
+  "additionalProperties": false
+}
