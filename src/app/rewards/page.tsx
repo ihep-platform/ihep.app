@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function RewardsPage() {
   return (
     <main className="min-h-screen bg-stone-50">
@@ -48,9 +50,9 @@ export default function RewardsPage() {
             <a className="px-5 py-2 rounded-full border border-teal-600 text-teal-700 text-sm font-medium hover:bg-teal-50" href="/register">
               Create account
             </a>
-            <a className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50" href="/">
+            <Link className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50" href="/">
               Back to home
-            </a>
+            </Link>
           </div>
         </section>
       </div>

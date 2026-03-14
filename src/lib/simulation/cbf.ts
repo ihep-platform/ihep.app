@@ -61,7 +61,7 @@ export function cbfAdjust(
   const b = -dh - alpha * h;
 
   // Check if nominal control satisfies constraint
-  let a = [...a_nom];
+  const a = [...a_nom];
   let active = false;
 
   const dot = nx * a[0] + ny * a[1];

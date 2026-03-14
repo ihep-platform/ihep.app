@@ -378,7 +378,7 @@ export default function DigitalTwinPage() {
                     <div>
                       <h4 className="font-medium text-blue-900">Weight Goal Progress</h4>
                       <p className="text-sm text-blue-700 mt-1">
-                        At current pace, you're likely to reach your target weight in 6 weeks
+                        At current pace, you&apos;re likely to reach your target weight in 6 weeks
                       </p>
                     </div>
                     <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">88% confidence</span>

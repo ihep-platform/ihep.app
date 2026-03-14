@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-stone-50">
@@ -45,12 +47,12 @@ export default function AboutPage() {
             <a className="px-5 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 text-white text-sm font-medium" href="mailto:support@ihep.app">
               support@ihep.app
             </a>
-            <a className="px-5 py-2 rounded-full border border-teal-600 text-teal-700 text-sm font-medium hover:bg-teal-50" href="/#contact">
+            <Link className="px-5 py-2 rounded-full border border-teal-600 text-teal-700 text-sm font-medium hover:bg-teal-50" href="/#contact">
               Contact form
-            </a>
-            <a className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50" href="/">
+            </Link>
+            <Link className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50" href="/">
               Back to home
-            </a>
+            </Link>
           </div>
         </section>
       </div>

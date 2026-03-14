@@ -31,7 +31,7 @@ const target = { x: 250, y: 100 };
 const safetyMargin = 20;
 
 // Initialize true state (what actually happens in the world)
-let trueState: RobotState = {
+const trueState: RobotState = {
   p: { x: 50, y: 50 },
   v: { x: 0, y: 0 },
 };

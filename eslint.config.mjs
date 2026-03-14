@@ -10,9 +10,7 @@ const eslintConfig = defineConfig([
     // These should be fixed incrementally over time.
     rules: {
       "@typescript-eslint/no-explicit-any": "warn",
-      "@typescript-eslint/no-require-imports": "warn",
       "@typescript-eslint/no-this-alias": "warn",
-      "react/no-unescaped-entities": "warn",
       "@next/next/no-html-link-for-pages": "warn",
       "@next/next/no-assign-module-variable": "warn",
       "@typescript-eslint/ban-ts-comment": "warn",
@@ -21,13 +19,28 @@ const eslintConfig = defineConfig([
       "prefer-const": "warn",
     },
   },
-  // Override default ignores of eslint-config-next.
+  {
+    // CommonJS scripts legitimately use require()
+    files: ["scripts/**/*.js", "mirth-connect/**/*.js", "tailwind.config.ts"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
+  {
+    // Legal pages contain prose with intentional quotes/apostrophes
+    files: ["src/app/legal/**/*.tsx"],
+    rules: {
+      "react/no-unescaped-entities": "off",
+    },
+  },
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored/generated files
+    "src/app/investor-dashboard/chart.js",
+    "public/wasm/**",
   ]),
 ]);
 

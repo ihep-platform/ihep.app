@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function ResourcesPage() {
   return (
     <main className="min-h-screen bg-stone-50">
@@ -54,12 +56,12 @@ export default function ResourcesPage() {
             >
               Create account
             </a>
-            <a
+            <Link
               className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50"
               href="/"
             >
               Back to home
-            </a>
+            </Link>
           </div>
         </section>
       </div>

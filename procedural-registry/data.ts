@@ -1,4 +1,6 @@
 import { query, queryOne } from './db';
+
+type SqlParam = string | number | boolean | null;
 import { calculatePackageProjection, calculateEffectiveTotalPrice } from './investment-calculations';
 import type {
   ApprovalRequest,
@@ -81,7 +83,7 @@ export async function getApprovalRequests(status?: string, department?: string, 
     FROM approval_requests
     WHERE 1=1
   `;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (status) {
     params.push(status);
@@ -198,7 +200,7 @@ export async function getAgent(id: string): Promise<Agent | null> {
 // Tasks
 export async function getTasks(status?: string, limit = 50): Promise<Task[]> {
   let sql = `SELECT * FROM task_queue WHERE 1=1`;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (status) {
     params.push(status);
@@ -214,7 +216,7 @@ export async function getTasks(status?: string, limit = 50): Promise<Task[]> {
 // Audit Log
 export async function getAuditLog(limit = 100, agentId?: string): Promise<AuditEntry[]> {
   let sql = `SELECT * FROM audit_log WHERE 1=1`;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (agentId) {
     params.push(agentId);
@@ -324,7 +326,7 @@ export async function getInvestmentItems(categoryId?: string, featured?: boolean
     JOIN investment_categories c ON i.category_id = c.id
     WHERE i.active = true
   `;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (categoryId) {
     params.push(categoryId);
@@ -358,7 +360,7 @@ export async function getInvestorContacts(
   limit = 100
 ): Promise<InvestorContact[]> {
   let sql = `SELECT * FROM investor_contacts WHERE 1=1`;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (status) {
     params.push(status);
@@ -407,7 +409,7 @@ export async function createInvestorContact(contact: Omit<InvestorContact, 'id' 
 
 export async function updateInvestorContact(id: string, updates: Partial<InvestorContact>): Promise<InvestorContact | null> {
   const fields: string[] = [];
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   const allowedFields = [
     'first_name', 'last_name', 'email', 'phone', 'company_name', 'company_type',
@@ -473,7 +475,7 @@ export async function getPartnerAccounts(
   limit = 100
 ): Promise<PartnerAccount[]> {
   let sql = `SELECT * FROM partner_accounts WHERE 1=1`;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (status) {
     params.push(status);
@@ -527,7 +529,7 @@ export async function updatePartnerAccount(
   updates: Partial<PartnerAccount>
 ): Promise<PartnerAccount | null> {
   const fields: string[] = [];
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   const allowedFields = [
     'name',
@@ -619,7 +621,7 @@ export async function getREProspects(market?: string, status?: REProspectStatus)
     JOIN investor_contacts c ON p.contact_id = c.id
     WHERE 1=1
   `;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (market) {
     params.push(market);
@@ -662,7 +664,7 @@ export async function createREProspect(prospect: Omit<REProspect, 'id' | 'create
 
 export async function updateREProspect(id: string, updates: Partial<REProspect>): Promise<REProspect | null> {
   const fields: string[] = [];
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   const allowedFields = [
     'property_type', 'market', 'address', 'square_footage', 'monthly_lease_rate',
@@ -692,7 +694,7 @@ export async function getInvestmentPackages(contactId?: string, status?: Package
     LEFT JOIN investor_contacts c ON p.contact_id = c.id
     WHERE 1=1
   `;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (contactId) {
     params.push(contactId);
@@ -740,7 +742,7 @@ export async function createInvestmentPackage(pkg: {
 
 export async function updateInvestmentPackage(id: string, updates: Partial<InvestmentPackage>): Promise<InvestmentPackage | null> {
   const fields: string[] = [];
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   const allowedFields = [
     'contact_id', 'name', 'status', 'total_investment', 'projected_total_return',
@@ -792,7 +794,7 @@ export async function addPackageLineItem(item: {
   phase_allocation?: PhaseAllocation;
 }): Promise<PackageLineItem | null> {
   // Fetch item details for price_type and specs
-  const investmentItem = await queryOne<{ price_type: string; specs: Record<string, any>; roi_multiplier: number | null }>(
+  const investmentItem = await queryOne<{ price_type: string; specs: Record<string, unknown>; roi_multiplier: number | null }>(
     `SELECT price_type, specs, roi_multiplier FROM investment_items WHERE id = $1`,
     [item.investment_item_id]
   );
@@ -830,7 +832,7 @@ export async function updatePackageLineItem(id: string, updates: {
   if (!current) return null;
 
   // Fetch item details for price_type and specs
-  const investmentItem = await queryOne<{ price_type: string; specs: Record<string, any>; roi_multiplier: number | null }>(
+  const investmentItem = await queryOne<{ price_type: string; specs: Record<string, unknown>; roi_multiplier: number | null }>(
     `SELECT price_type, specs, roi_multiplier FROM investment_items WHERE id = $1`,
     [current.investment_item_id]
   );
@@ -924,7 +926,7 @@ export async function getInvestmentContracts(packageId?: string, contactId?: str
     LEFT JOIN investment_packages p ON ct.package_id = p.id
     WHERE 1=1
   `;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (packageId) {
     params.push(packageId);
@@ -969,7 +971,7 @@ export async function createInvestmentContract(contract: {
 
 export async function updateInvestmentContract(id: string, updates: Partial<InvestmentContract>): Promise<InvestmentContract | null> {
   const fields: string[] = [];
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   const allowedFields = [
     'contract_type', 'content_markdown', 'content_html', 'pdf_url', 'status',
@@ -1231,7 +1233,7 @@ export async function getLedgerEntries(filters?: {
     LEFT JOIN investor_contacts c ON l.contact_id = c.id
     WHERE 1=1
   `;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (filters?.package_id) {
     params.push(filters.package_id);
@@ -1368,7 +1370,7 @@ export async function getDocuments(
   documentType?: DocumentType
 ): Promise<ProposalDocument[]> {
   let sql = `SELECT ${DOCUMENT_LIST_FIELDS} FROM proposal_documents WHERE 1=1`;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (entityType) {
     params.push(entityType);
@@ -1501,7 +1503,7 @@ export async function getThreatSummary(): Promise<ThreatSummary> {
 export async function getCampaigns(status?: CampaignStatus, limit = 50): Promise<CampaignRecord[]> {
   try {
     let sql = `SELECT * FROM campaigns WHERE 1=1`;
-    const params: any[] = [];
+    const params: SqlParam[] = [];
 
     if (status) {
       params.push(status);
@@ -1556,7 +1558,7 @@ export async function createCampaign(campaign: {
 export async function updateCampaign(id: string, updates: Partial<CampaignRecord>): Promise<CampaignRecord | null> {
   try {
     const fields: string[] = [];
-    const params: any[] = [];
+    const params: SqlParam[] = [];
 
     const allowedFields = ['name', 'description', 'audience', 'channels', 'budget', 'status'];
 
@@ -1619,7 +1621,7 @@ export async function getProjects(status?: ProjectStatus, limit = 50): Promise<P
       LEFT JOIN project_milestones pm ON pm.project_id = pt.id
       WHERE 1=1
     `;
-    const params: any[] = [];
+    const params: SqlParam[] = [];
 
     if (status) {
       params.push(status);
@@ -1670,7 +1672,7 @@ export async function updateMilestone(
 ): Promise<ProjectMilestoneRecord | null> {
   try {
     const fields: string[] = [];
-    const params: any[] = [];
+    const params: SqlParam[] = [];
 
     if (updates.status) {
       params.push(updates.status);
@@ -1856,7 +1858,7 @@ export async function getDiscoverySweeps(
 ): Promise<DiscoverySweep[]> {
   try {
     let sql = `SELECT * FROM discovery_sweeps WHERE 1=1`;
-    const params: any[] = [];
+    const params: SqlParam[] = [];
 
     if (category) {
       params.push(category);
@@ -1903,7 +1905,7 @@ export async function getInvestorCandidates(filters?: {
 }): Promise<InvestorCandidate[]> {
   try {
     let sql = `SELECT * FROM investor_candidates WHERE 1=1`;
-    const params: any[] = [];
+    const params: SqlParam[] = [];
 
     if (filters?.category) {
       params.push(filters.category);
@@ -2009,7 +2011,7 @@ export async function getProcedures(category?: ProcedureCategory, activeOnly = t
     LEFT JOIN procedure_assignments pa ON pa.procedure_id = p.id
     WHERE 1=1
   `;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (activeOnly) {
     sql += ` AND p.active = true`;
@@ -2055,7 +2057,7 @@ export async function createProcedure(data: CreateProcedure): Promise<Procedure 
 
 export async function updateProcedure(id: string, updates: Partial<Procedure>): Promise<Procedure | null> {
   const fields: string[] = [];
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   const allowedFields = ['name', 'description', 'category', 'enforcement_level', 'active'];
 
@@ -2208,7 +2210,7 @@ export async function getViolations(filters: ViolationFilters): Promise<Procedur
     LEFT JOIN procedure_rules r ON v.rule_id = r.id
     WHERE 1=1
   `;
-  const params: any[] = [];
+  const params: SqlParam[] = [];
 
   if (filters.procedure_id) {
     params.push(filters.procedure_id);

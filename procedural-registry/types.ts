@@ -5,7 +5,7 @@ export interface ApprovalRequest {
   requesting_agent: string;
   department: string;
   action_type: string;
-  action_payload: Record<string, any>;
+  action_payload: Record<string, unknown>;
   context: string;
   draft_content: string | null;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'EXPIRED' | 'CANCELLED';
@@ -31,7 +31,7 @@ export interface Agent {
   name: string;
   system_prompt: string;
   capabilities: string[];
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   active: boolean;
   last_heartbeat: string | null;
   created_at: string;
@@ -43,7 +43,7 @@ export interface AuditEntry {
   agent_id: string;
   department: string;
   action_type: string;
-  action_details: Record<string, any> | null;
+  action_details: Record<string, unknown> | null;
   approval_id: string | null;
   compliance_flags: string[];
   outcome: 'SUCCESS' | 'FAILURE' | 'BLOCKED' | 'PENDING';
@@ -54,12 +54,12 @@ export interface AuditEntry {
 export interface Task {
   id: string;
   task_type: string;
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
   assigned_agent: string | null;
   assigned_department: string | null;
   priority: number;
   status: 'QUEUED' | 'ASSIGNED' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'CANCELLED';
-  result: Record<string, any> | null;
+  result: Record<string, unknown> | null;
   error_message: string | null;
   retry_count: number;
   max_retries: number;
@@ -129,7 +129,7 @@ export interface InvestmentItem {
   roi_multiplier: number | null;
   roi_timeline_months: number | null;
   annual_return_rate: number | null;
-  specs: Record<string, any>;
+  specs: Record<string, unknown>;
   featured: boolean;
   active: boolean;
   created_at: string;
@@ -196,7 +196,7 @@ export interface ContactInteraction {
   direction: 'inbound' | 'outbound' | null;
   subject: string | null;
   content: string | null;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_by: string | null;
   created_at: string;
 }
@@ -493,7 +493,7 @@ export interface ThreatEvent {
   destination_ip: string | null;
   rule_id: string | null;
   action_taken: string | null;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   created_at: string;
 }
 
@@ -529,17 +529,17 @@ export interface CampaignStepRecord {
   campaign_id: string;
   name: string;
   step_type: string;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   status: string;
   executed_at: string | null;
-  result: Record<string, any>;
+  result: Record<string, unknown>;
   created_at: string;
 }
 
 export interface CampaignMetrics {
   id: string;
   campaign_id: string;
-  metrics: Record<string, any>;
+  metrics: Record<string, unknown>;
   created_at: string;
 }
 
@@ -615,7 +615,7 @@ export interface DiscoverySweep {
   sweep_type: string;
   category: DiscoveryCategory;
   source: SweepSource;
-  query_params: Record<string, any> | null;
+  query_params: Record<string, unknown> | null;
   results_count: number;
   new_candidates: number;
   duplicates_found: number;
@@ -636,7 +636,7 @@ export interface InvestorCandidate {
   website: string | null;
   category: DiscoveryCategory;
   source: SweepSource;
-  raw_data: Record<string, any> | null;
+  raw_data: Record<string, unknown> | null;
   total_score: number;
   thesis_alignment_score: number;
   check_size_score: number;
@@ -661,8 +661,8 @@ export interface EnrichmentLogEntry {
   enrichment_type: EnrichmentType;
   source: string | null;
   status: EnrichmentStatus;
-  input_data: Record<string, any> | null;
-  result_data: Record<string, any> | null;
+  input_data: Record<string, unknown> | null;
+  result_data: Record<string, unknown> | null;
   confidence: number | null;
   created_at: string;
   completed_at: string | null;
@@ -694,7 +694,7 @@ export interface ServiceHealth {
   status: 'healthy' | 'degraded' | 'down' | 'unknown';
   response_time_ms: number | null;
   last_checked: string;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
 }
 
 // ================== Procedural Registry Types ==================

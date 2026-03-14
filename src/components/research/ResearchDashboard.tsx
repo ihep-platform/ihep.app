@@ -157,7 +157,7 @@ export function ResearchDashboard() {
         <h3 className="font-semibold mb-2">Global Impact</h3>
         <p className="text-sm mb-4">
           Your participation helps accelerate cures for life-altering conditions. 
-          Together, we've potentially impacted {impactMetrics?.platform_impact.lives_potentially_impacted?.toLocaleString() || '50,000'}+ lives 
+          Together, we&apos;ve potentially impacted {impactMetrics?.platform_impact.lives_potentially_impacted?.toLocaleString() || '50,000'}+ lives 
           and enabled {impactMetrics?.platform_impact.research_papers_enabled || '15'}+ research papers.
         </p>
         <div className="flex space-x-4 text-xs">
