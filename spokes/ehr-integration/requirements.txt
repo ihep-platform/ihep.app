@@ -27,7 +27,7 @@ fhir.resources==7.1.0
 jsonschema==4.23.0
 
 # Security
-cryptography==44.0.0
+cryptography>=46.0.5
 PyJWT==2.10.1
 
 # Production server
