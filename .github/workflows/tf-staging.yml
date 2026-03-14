@@ -1,12 +1,20 @@
+# DISABLED: Terraform workflows require GCP project configuration.
+# To re-enable:
+#   1. Replace YOUR_GCP_PROJECT_ID with your actual GCP project ID
+#   2. Configure Workload Identity Federation for GitHub Actions
+#   3. Set real values for db_password and ops_email
+#   4. Uncomment the trigger below
 name: terraform-staging
 
 on:
-  push:
-    branches: [ "CI" ]
+  workflow_dispatch:
+  # push:
+  #   branches: [ "CI" ]
 
 jobs:
   apply-staging:
     runs-on: ubuntu-latest
+    if: false # Disabled until GCP project is configured
     permissions:
       id-token: write
       contents: read
@@ -57,4 +65,3 @@ jobs:
       - name: Terraform apply (staging)
         working-directory: terraform
         run: terraform apply tfplan
-
