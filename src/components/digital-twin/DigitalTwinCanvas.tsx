@@ -11,7 +11,7 @@ interface DigitalTwinCanvasProps {
   cd4Count?: number;
 }
 
-export function DigitalTwinCanvas({ healthScore, heartRate, viralLoad, cd4Count }: DigitalTwinCanvasProps) {
+export function DigitalTwinCanvas({ healthScore, heartRate, viralLoad, ..._rest }: DigitalTwinCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
