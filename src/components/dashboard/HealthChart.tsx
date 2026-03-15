@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface HealthChartProps {
   title: string
-  data?: any[]
+  data?: Record<string, unknown>[]
   height?: number
 }
 
-export function HealthChart({ title, data = [], height = 200 }: HealthChartProps) {
+export function HealthChart({ title, data: _data = [], height = 200 }: HealthChartProps) {
   // Placeholder for chart visualization
   // In production, use recharts or similar library
 

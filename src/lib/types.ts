@@ -1,4 +1,4 @@
-import { User, Resource, Event, Discussion, Message, CommunityGroup, Notification } from '@shared/schema';
+import { User, Message } from '@shared/schema';
 
 // Application state
 export interface AuthState {

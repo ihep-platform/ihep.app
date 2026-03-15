@@ -65,7 +65,7 @@ export function CalendarView() {
         setEvents(events);
       }
       
-    } catch (err) {
+    } catch (_err) {
       setError('Failed to load calendar data');
     } finally {
       setLoading(false);
@@ -177,7 +177,7 @@ export function CalendarView() {
             </button>
           </div>
         ) : (
-          todayEvents.map((event: any) => (
+          todayEvents.map((event: Appointment | CommunityEvent) => (
             <div 
               key={event.id} 
               className="border rounded-lg p-4 hover:shadow-md transition-shadow"

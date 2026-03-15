@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import type { TwinPillar, TwinSnapshot, TwinSummary, TwinStatus, TwinTrend } from '@/types/twins';
+import type { TwinPillar, TwinSnapshot, TwinSummary, TwinTrend } from '@/types/twins';
 
 const baseMetrics: Record<TwinPillar, { metrics: TwinSnapshot['metrics']; insights: TwinSnapshot['insights'] }> = {
   clinical: {

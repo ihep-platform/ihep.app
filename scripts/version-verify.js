@@ -14,8 +14,6 @@
  */
 
 const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
 
 // CVE-2025-55182 Vulnerable Version Matrix
 const CVE_VULNERABLE_VERSIONS = {
@@ -292,7 +290,7 @@ function generateReport(analysisResults) {
     const divider = '='.repeat(72);
     const subdiv = '-'.repeat(72);
     
-    let report = `
+    const report = `
 ${divider}
 CVE-2025-55182 SECURITY ASSESSMENT REPORT
 ${divider}

@@ -1,12 +1,22 @@
+# DISABLED: Terraform workflows require GCP project configuration.
+# To re-enable:
+#   1. Replace YOUR_GCP_PROJECT_ID with your actual GCP project ID
+#   2. Configure Workload Identity Federation for GitHub Actions
+#   3. Set real values for db_password and ops_email
+#   4. Configure TERRAFORM_APPROVERS secret
+#   5. Create a "production" environment in GitHub Settings
+#   6. Uncomment the trigger below
 name: terraform-production
 
 on:
-  push:
-    branches: [ "production" ]
+  workflow_dispatch:
+  # push:
+  #   branches: [ "production" ]
 
 jobs:
   plan:
     runs-on: ubuntu-latest
+    if: false # Disabled until GCP project is configured
     permissions:
       id-token: write
       contents: read
@@ -48,6 +58,7 @@ jobs:
   apply:
     needs: plan
     runs-on: ubuntu-latest
+    if: false # Disabled until GCP project is configured
     environment:
       name: production
       url: https://console.cloud.google.com/
@@ -120,4 +131,3 @@ jobs:
       - name: Terraform apply (manual approval required)
         working-directory: terraform
         run: terraform apply tfplan
-

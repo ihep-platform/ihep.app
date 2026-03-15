@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Activity } from 'lucide-react'
 
@@ -10,11 +11,13 @@ interface HealthDataPoint {
 }
 
 export function HealthDataStream() {
-  const mockData: HealthDataPoint[] = [
+  /* eslint-disable react-hooks/purity -- intentional: mock timestamps computed once via useMemo */
+  const mockData = useMemo<HealthDataPoint[]>(() => [
     { timestamp: new Date(), type: 'Heart Rate', value: '72 bpm' },
     { timestamp: new Date(Date.now() - 60000), type: 'Blood Pressure', value: '120/80 mmHg' },
     { timestamp: new Date(Date.now() - 120000), type: 'Steps', value: '8,432' },
-  ]
+  ], [])
+  /* eslint-enable react-hooks/purity */
 
   return (
     <Card className="apple-card">

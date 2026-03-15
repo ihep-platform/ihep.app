@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 // TODO: Add proper TypeScript types to this file
 /**
@@ -29,7 +30,7 @@ const loadThreeDependencies = async () => {
 };
 // USDZ loader temporarily disabled - causing initialization errors
 // import { USDZLoader } from 'three-usdz-loader';
-type USDZLoader = any;
+type _USDZLoader = unknown;
 
 // Type definitions
 export interface RendererOptions {
@@ -731,7 +732,7 @@ class IHEPDigitalTwinRenderer {
      */
     updatePatientTwinsForTime(time: number) {
         // Iterate over all patient twins
-        for (const [patientId, twinGroup] of this.patientTwins) {
+        for (const [_patientId, twinGroup] of this.patientTwins) {
             // Find biometric indicator sphere
             const sphere = twinGroup.children.find(
                 child => child.name === 'IndicatorSphere'
@@ -909,7 +910,7 @@ class IHEPDigitalTwinRenderer {
                       w_L * (L_hot ? 1 : 0) + 
                       w_S * (S_high ? 1 : 0);
         
-        const quorum_approved = quorum >= 0.67;
+        const _quorum_approved = quorum >= 0.67;
         
         // Step 8: Execute agent actions
         

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { User } from '@shared/schema';
@@ -30,8 +30,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     refetchOnWindowFocus: true,
   });
 
-  const isAuthenticated = (data as any)?.authenticated || false;
-  const user = (data as any)?.user || null;
+  const authData = data as { authenticated?: boolean; user?: User } | undefined;
+  const isAuthenticated = authData?.authenticated || false;
+  const user = authData?.user || null;
 
   // Login mutation
   const loginMutation = useMutation({

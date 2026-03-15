@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import dynamic from 'next/dynamic'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -49,6 +49,28 @@ export default function DigitalTwinPage() {
   ])
   const [chatInput, setChatInput] = useState('')
   const [chatLoading, setChatLoading] = useState(false)
+
+  /* eslint-disable react-hooks/purity -- intentional: random values computed once via useMemo */
+  const particleStyles = useMemo(
+    () =>
+      Array.from({ length: 30 }, () => ({
+        left: `${10 + Math.random() * 80}%`,
+        top: `${10 + Math.random() * 80}%`,
+        animationDelay: `${Math.random() * 2}s`,
+      })),
+    [],
+  )
+
+  const medAdherenceHeights = useMemo(
+    () => Array.from({ length: 30 }, () => `${70 + Math.random() * 30}%`),
+    [],
+  )
+
+  const activityHeights = useMemo(
+    () => Array.from({ length: 30 }, () => `${50 + Math.random() * 50}%`),
+    [],
+  )
+  /* eslint-enable react-hooks/purity */
   const [modelRotation, setModelRotation] = useState(0)
 
   const healthSystems = [
@@ -289,15 +311,11 @@ export default function DigitalTwinPage() {
 
               {/* Animated particles effect */}
               <div className="absolute inset-0 opacity-30 pointer-events-none">
-                {Array.from({ length: 30 }).map((_, i) => (
+                {particleStyles.map((style, i) => (
                   <div
                     key={i}
                     className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
-                    style={{
-                      left: `${10 + Math.random() * 80}%`,
-                      top: `${10 + Math.random() * 80}%`,
-                      animationDelay: `${Math.random() * 2}s`,
-                    }}
+                    style={style}
                   ></div>
                 ))}
               </div>
@@ -378,7 +396,7 @@ export default function DigitalTwinPage() {
                     <div>
                       <h4 className="font-medium text-blue-900">Weight Goal Progress</h4>
                       <p className="text-sm text-blue-700 mt-1">
-                        At current pace, you're likely to reach your target weight in 6 weeks
+                        At current pace, you&apos;re likely to reach your target weight in 6 weeks
                       </p>
                     </div>
                     <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded">88% confidence</span>
@@ -412,11 +430,11 @@ export default function DigitalTwinPage() {
                 <div>
                   <h4 className="font-medium mb-3">Medication Adherence</h4>
                   <div className="h-32 bg-gradient-to-r from-green-100 to-green-200 rounded-lg flex items-end justify-around p-4">
-                    {Array.from({ length: 30 }).map((_, i) => (
+                    {medAdherenceHeights.map((h, i) => (
                       <div
                         key={i}
                         className="w-1 bg-teal-600 rounded-t"
-                        style={{ height: `${70 + Math.random() * 30}%` }}
+                        style={{ height: h }}
                       ></div>
                     ))}
                   </div>
@@ -426,11 +444,11 @@ export default function DigitalTwinPage() {
                 <div>
                   <h4 className="font-medium mb-3">Activity Level</h4>
                   <div className="h-32 bg-gradient-to-r from-blue-100 to-blue-200 rounded-lg flex items-end justify-around p-4">
-                    {Array.from({ length: 30 }).map((_, i) => (
+                    {activityHeights.map((h, i) => (
                       <div
                         key={i}
                         className="w-1 bg-blue-600 rounded-t"
-                        style={{ height: `${50 + Math.random() * 50}%` }}
+                        style={{ height: h }}
                       ></div>
                     ))}
                   </div>

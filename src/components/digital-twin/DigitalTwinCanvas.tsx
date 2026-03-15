@@ -11,7 +11,7 @@ interface DigitalTwinCanvasProps {
   cd4Count?: number;
 }
 
-export function DigitalTwinCanvas({ healthScore, heartRate, viralLoad, cd4Count }: DigitalTwinCanvasProps) {
+export function DigitalTwinCanvas({ healthScore, heartRate, viralLoad, ..._rest }: DigitalTwinCanvasProps) {
   const canvasRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -177,20 +177,16 @@ export function DigitalTwinCanvas({ healthScore, heartRate, viralLoad, cd4Count 
     window.addEventListener('resize', handleResize);
 
     // Cleanup
+    const canvasNode = canvasRef.current;
     return () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationRef.current);
-      if (canvasRef.current && rendererRef.current?.domElement) {
-        canvasRef.current.removeChild(rendererRef.current.domElement);
+      if (canvasNode && rendererRef.current?.domElement) {
+        canvasNode.removeChild(rendererRef.current.domElement);
       }
       rendererRef.current?.dispose();
     };
-  }, []);
-
-  // Update properties when health metrics change
-  useEffect(() => {
-    // Properties are updated in the animation loop
-  }, [healthScore, heartRate, viralLoad, cd4Count]);
+  }, [healthScore, heartRate, viralLoad]);
 
   return (
     <div

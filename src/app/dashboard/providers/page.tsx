@@ -38,7 +38,7 @@ export default function ProvidersPage() {
         const res = await fetch('/api/providers/list', { cache: 'no-store' })
         if (!res.ok) throw new Error('Failed to load providers')
         const data = await res.json()
-        const mapped: ProviderCard[] = data.providers.map((p: any) => ({
+        const mapped: ProviderCard[] = data.providers.map((p: Record<string, unknown>) => ({
           id: p.id,
           name: `${p.firstName} ${p.lastName}`,
           title: p.title,
@@ -47,7 +47,7 @@ export default function ProvidersPage() {
           reviewCount: p.reviewCount ?? 0,
           acceptingNewPatients: p.acceptingNewPatients ?? false,
           languages: p.languages ?? [],
-          location: p.location?.facilityName ?? 'Unknown location',
+          location: (p.location as Record<string, unknown> | undefined)?.facilityName ?? 'Unknown location',
           distance: '—',
           nextAvailable: 'Request availability',
           bio: p.bio ?? ''

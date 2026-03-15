@@ -41,7 +41,7 @@ export async function generateAppleClientSecret(): Promise<string> {
 }
 
 // Local helper to import the PKCS8 key (kept inline to avoid another module).
-const importPKCS8 = async (pem: string, alg: 'ES256') => {
+const importPKCS8 = async (pem: string, _alg: 'ES256') => {
   const pemContents = pem
     .replace('-----BEGIN PRIVATE KEY-----', '')
     .replace('-----END PRIVATE KEY-----', '')

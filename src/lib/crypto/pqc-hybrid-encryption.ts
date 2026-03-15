@@ -11,7 +11,7 @@
 
 import { XChaCha20Poly1305 } from '@stablelib/xchacha20poly1305'
 import { randomBytes } from '@stablelib/random'
-import { KyberKEM, KyberSecurityLevel, type KyberKeyPair } from './pqc-kyber'
+import { KyberKEM, KyberSecurityLevel } from './pqc-kyber'
 import { SHA512 } from '@stablelib/sha512'
 
 /**
@@ -181,7 +181,7 @@ export class HybridEncryption {
         throw new Error('DEK unwrapping failed: Invalid wrapped key or authentication tag')
       }
       dek = unwrapped
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Decryption failed: Invalid ciphertext or authentication tag')
     }
 
@@ -195,7 +195,7 @@ export class HybridEncryption {
         throw new Error('Decryption failed: Invalid ciphertext or authentication tag')
       }
       plaintext = decrypted
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Decryption failed: Invalid ciphertext or authentication tag')
     }
 

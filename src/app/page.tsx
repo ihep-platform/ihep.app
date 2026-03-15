@@ -674,7 +674,7 @@ export default function LandingPage() {
                 <button type="submit">Subscribe</button>
               </form>
               <p style={{ fontSize: varString('--font-size-sm'), marginTop: varString('--spacing-16') }}>
-                We'll never share your email. Unsubscribe anytime.
+                We&apos;ll never share your email. Unsubscribe anytime.
               </p>
             </div>
           </div>

@@ -26,11 +26,26 @@ interface UserProject {
   compensation_earned: number;
 }
 
+interface ImpactMetrics {
+  metrics: {
+    total_projects: number;
+    total_participants: number;
+    total_compensation: number;
+    avg_data_quality: number;
+  };
+  platform_impact: {
+    cure_acceleration_years: number;
+    lives_potentially_impacted: number;
+    research_papers_enabled: number;
+    patent_applications: number;
+  };
+}
+
 export function ResearchDashboard() {
   const { user } = useAuth();
   const [projects, setProjects] = useState<ResearchProject[]>([]);
   const [userProjects, setUserProjects] = useState<UserProject[]>([]);
-  const [impactMetrics, setImpactMetrics] = useState<any>(null);
+  const [impactMetrics, setImpactMetrics] = useState<ImpactMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('available');
 
@@ -99,7 +114,7 @@ export function ResearchDashboard() {
         const error = await response.json();
         alert(`Failed to enroll: ${error.error}`);
       }
-    } catch (error) {
+    } catch (_error) {
       alert('Failed to enroll in project. Please try again.');
     }
   };
@@ -157,7 +172,7 @@ export function ResearchDashboard() {
         <h3 className="font-semibold mb-2">Global Impact</h3>
         <p className="text-sm mb-4">
           Your participation helps accelerate cures for life-altering conditions. 
-          Together, we've potentially impacted {impactMetrics?.platform_impact.lives_potentially_impacted?.toLocaleString() || '50,000'}+ lives 
+          Together, we&apos;ve potentially impacted {impactMetrics?.platform_impact.lives_potentially_impacted?.toLocaleString() || '50,000'}+ lives 
           and enabled {impactMetrics?.platform_impact.research_papers_enabled || '15'}+ research papers.
         </p>
         <div className="flex space-x-4 text-xs">

@@ -36,7 +36,7 @@ export default function LoginPage() {
         await getSession()
         router.push('/')
       }
-    } catch (error) {
+    } catch (_error) {
       setError('An error occurred during login')
     } finally {
       setIsLoading(false)
@@ -118,7 +118,7 @@ export default function LoginPage() {
           </form>
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/register" className="text-primary hover:underline">
                 Sign up here
               </Link>

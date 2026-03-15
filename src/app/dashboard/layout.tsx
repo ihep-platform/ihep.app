@@ -4,7 +4,6 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import {
   Sheet,
   SheetContent,
@@ -139,7 +138,7 @@ export default function DashboardLayout({
               >
                 <span className="text-sm text-gray-600 hidden sm:inline">
                   {(() => {
-                    const user: any = session.user
+                    const user = session.user
                     const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim()
                     return fullName || user?.username || user?.email
                   })()}

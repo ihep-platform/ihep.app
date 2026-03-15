@@ -15,7 +15,7 @@ describe('End-to-End PQC Integration', () => {
     it('should encrypt, sign, decrypt, and verify a message', async () => {
       // Setup: Generate keys for Alice and Bob
       const aliceEncryption = new KyberKEM(KyberSecurityLevel.LEVEL_3)
-      const aliceEncKeys = await aliceEncryption.generateKeyPair()
+      const _aliceEncKeys = await aliceEncryption.generateKeyPair()
 
       const aliceSigning = new PQCSignature(SignatureSecurityLevel.LEVEL_3)
       const aliceSignKeys = await aliceSigning.generateKeyPair(30)

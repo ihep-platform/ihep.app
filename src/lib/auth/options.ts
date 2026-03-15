@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
             profilePicture: user.profilePicture ?? undefined,
             phone: user.phone ?? undefined,
             preferredContactMethod: user.preferredContactMethod ?? undefined
-          } as any
+          }
         }
       })
     )
@@ -76,27 +76,27 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account }) {
       if (user) {
         const fromOAuth = account?.provider && account.provider !== 'credentials'
-        const name = (user as any).name as string | undefined
+        const name = user.name as string | undefined
         const [firstName, ...rest] = (name ?? '').split(' ').filter(Boolean)
-        token.role = (user as any).role ?? 'patient'
-        token.username = (user as any).username ?? (user as any).email ?? ''
-        token.firstName = (user as any).firstName ?? firstName ?? ''
-        token.lastName = (user as any).lastName ?? rest.join(' ') ?? ''
-        if (fromOAuth && (user as any).email) {
-          ;(token as any).email = (user as any).email
+        token.role = user.role ?? 'patient'
+        token.username = user.username ?? user.email ?? ''
+        token.firstName = user.firstName ?? firstName ?? ''
+        token.lastName = user.lastName ?? rest.join(' ') ?? ''
+        if (fromOAuth && user.email) {
+          token.email = user.email
         }
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
-        ;(session.user as any).id = token.sub!
-        ;(session.user as any).role = (token as any).role as string
-        ;(session.user as any).username = (token as any).username as string
-        ;(session.user as any).firstName = (token as any).firstName as string
-        ;(session.user as any).lastName = (token as any).lastName as string
-        if ((token as any).email) {
-          session.user.email = (token as any).email as string
+        session.user.id = token.sub!
+        session.user.role = token.role
+        session.user.username = token.username
+        session.user.firstName = token.firstName
+        session.user.lastName = token.lastName
+        if (token.email) {
+          session.user.email = token.email
         }
       }
       return session

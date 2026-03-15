@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { initEKF, ekfStep } from '../ekf'
-import { cbfAdjust, isSafe } from '../cbf'
+import { cbfAdjust } from '../cbf'
 import type { RobotState, Obstacle } from '../types'
 import { hypot } from '../math'
 
@@ -76,7 +76,7 @@ describe('Integration Tests', () => {
       const target = { x: 250, y: 100 }
       const eps = 20
 
-      let state: RobotState = {
+      const state: RobotState = {
         p: { x: 50, y: 100 },
         v: { x: 0, y: 0 },
       }
@@ -123,7 +123,7 @@ describe('Integration Tests', () => {
 
   describe('Full System Integration (EKF + CBF + Control)', () => {
     it('should control robot with state estimation and safety', () => {
-      let trueState: RobotState = {
+      const trueState: RobotState = {
         p: { x: 50, y: 50 },
         v: { x: 0, y: 0 },
       }
@@ -201,7 +201,7 @@ describe('Integration Tests', () => {
     it('should complete 1000-step simulation in under 1 second', () => {
       const startTime = Date.now()
 
-      let state: RobotState = {
+      const state: RobotState = {
         p: { x: 0, y: 0 },
         v: { x: 0, y: 0 },
       }

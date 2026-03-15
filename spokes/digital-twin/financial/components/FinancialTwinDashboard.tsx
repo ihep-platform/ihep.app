@@ -330,7 +330,7 @@ export const FinancialTwinDashboard: React.FC = () => {
   const [financialState, setFinancialState] = useState<FinancialTwinState | null>(null);
   const [opportunities, setOpportunities] = useState<OpportunityMatch[]>([]);
   const [eligibleBenefits, setEligibleBenefits] = useState<BenefitEligibility[]>([]);
-  const [healthPrediction, setHealthPrediction] = useState<HealthPrediction | null>(null);
+  const [_healthPrediction, _setHealthPrediction] = useState<HealthPrediction | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'income' | 'opportunities' | 'benefits'>('overview');

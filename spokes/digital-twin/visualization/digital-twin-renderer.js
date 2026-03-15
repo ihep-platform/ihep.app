@@ -524,7 +524,7 @@ class IHEPDigitalTwinRenderer {
      */
     updatePatientTwinsForTime(time) {
         // Iterate over all patient twins
-        for (const [patientId, twinGroup] of this.patientTwins) {
+        for (const [_patientId, twinGroup] of this.patientTwins) {
             // Find biometric indicator sphere
             const sphere = twinGroup.children.find(
                 child => child.name === 'IndicatorSphere'
@@ -702,7 +702,7 @@ class IHEPDigitalTwinRenderer {
                       w_L * (L_hot ? 1 : 0) + 
                       w_S * (S_high ? 1 : 0);
         
-        const quorum_approved = quorum >= 0.67;
+        const _quorum_approved = quorum >= 0.67;
         
         // Step 8: Execute agent actions
         

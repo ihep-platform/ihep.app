@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function EducationPage() {
   return (
     <main className="min-h-screen bg-stone-50">
@@ -42,15 +44,15 @@ export default function EducationPage() {
             Sign in to track progress, unlock recommendations, and sync with your provider notes.
           </p>
           <div className="flex flex-wrap gap-3">
-            <a className="px-5 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 text-white text-sm font-medium" href="/login">
+            <Link className="px-5 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 text-white text-sm font-medium" href="/login">
               Log in
-            </a>
-            <a className="px-5 py-2 rounded-full border border-teal-600 text-teal-700 text-sm font-medium hover:bg-teal-50" href="/register">
+            </Link>
+            <Link className="px-5 py-2 rounded-full border border-teal-600 text-teal-700 text-sm font-medium hover:bg-teal-50" href="/register">
               Create account
-            </a>
-            <a className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50" href="/">
+            </Link>
+            <Link className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50" href="/">
               Back to home
-            </a>
+            </Link>
           </div>
         </section>
       </div>

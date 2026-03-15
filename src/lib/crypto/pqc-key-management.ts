@@ -9,15 +9,12 @@
  * @author Claude by Anthropic <noreply@anthropic.com>
  */
 
-import { KyberKEM, KyberSecurityLevel, type KyberKeyPair, serializeKeyPair as serializeKyberKeyPair, deserializeKeyPair as deserializeKyberKeyPair } from './pqc-kyber'
+import { KyberKEM, KyberSecurityLevel, serializeKeyPair as serializeKyberKeyPair } from './pqc-kyber'
 import {
   PQCSignature,
   SignatureSecurityLevel,
-  type SignatureKeyPair,
   serializeSignatureKeyPair,
-  deserializeSignatureKeyPair,
 } from './pqc-signatures'
-import { randomBytes } from '@stablelib/random'
 import { SHA512 } from '@stablelib/sha512'
 
 /**

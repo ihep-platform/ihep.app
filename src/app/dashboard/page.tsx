@@ -9,7 +9,7 @@ import Link from 'next/link'
 export default function DashboardPage() {
   const { data: session } = useSession()
   const displayName = (() => {
-    const user: any = session?.user
+    const user = session?.user
     const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim()
     return fullName || user?.username || user?.email || 'User'
   })()
@@ -22,7 +22,7 @@ export default function DashboardPage() {
           Welcome back, {displayName}
         </h1>
         <p className="text-gray-600 mt-2">
-          Here's an overview of your health and wellness
+          Here&apos;s an overview of your health and wellness
         </p>
       </div>
 

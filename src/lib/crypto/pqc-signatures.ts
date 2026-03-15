@@ -171,7 +171,7 @@ export class PQCSignature {
       }
 
       return isValid
-    } catch (error) {
+    } catch (_error) {
       // Signature verification failures throw exceptions in noble
       return false
     }
@@ -305,7 +305,7 @@ export class PQCJWTSigner {
       }
 
       return payload
-    } catch (error) {
+    } catch (_error) {
       return null
     }
   }
@@ -413,7 +413,7 @@ export class PQCAPISigner {
 
       // Verify
       return await this.signer.verify(canonicalRequest, signature, publicKey)
-    } catch (error) {
+    } catch (_error) {
       return false
     }
   }

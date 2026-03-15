@@ -43,7 +43,7 @@ export default function LoginPage() {
         await getSession()
         router.push('/dashboard')
       }
-    } catch (error) {
+    } catch (_error) {
       setError('An error occurred during login')
       toast({
         title: "Error",
@@ -135,7 +135,7 @@ export default function LoginPage() {
           </div>
           <div className="mt-3 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <Link href="/auth/signup" className="text-primary hover:underline">
                 Sign up here
               </Link>
