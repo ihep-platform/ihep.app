@@ -186,7 +186,6 @@ export function DigitalTwinCanvas({ healthScore, heartRate, viralLoad, cd4Count 
       }
       rendererRef.current?.dispose();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- initialization effect, health metrics update via animation loop refs
   }, [healthScore, heartRate, viralLoad]);
 
   return (
