@@ -85,7 +85,7 @@ export default function SignupPage() {
           })
         }
       }
-    } catch (error) {
+    } catch (_error) {
       setError('An error occurred during registration')
       toast({
         title: "Error",

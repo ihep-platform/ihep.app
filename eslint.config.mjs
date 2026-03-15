@@ -17,6 +17,12 @@ const eslintConfig = defineConfig([
       "react-hooks/purity": "warn",
       "react-hooks/immutability": "warn",
       "prefer-const": "warn",
+      "@typescript-eslint/no-unused-vars": ["warn", {
+        argsIgnorePattern: "^_",
+        varsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
+        caughtErrorsIgnorePattern: "^_",
+      }],
     },
   },
   {

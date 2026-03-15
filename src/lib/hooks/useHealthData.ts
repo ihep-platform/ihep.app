@@ -1,7 +1,7 @@
 // lib/hooks/useHealthData.ts
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 
 interface WellnessMetrics {
@@ -21,23 +21,23 @@ export function useHealthData() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const refreshMetrics = async () => {
+  const refreshMetrics = useCallback(async () => {
     if (!user) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/health/metrics', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
         },
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch health metrics');
       }
-      
+
       const data = await response.json();
       setMetrics(data);
     } catch (err) {
@@ -45,13 +45,13 @@ export function useHealthData() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     if (user) {
       refreshMetrics();
     }
-  }, [user]);
+  }, [user, refreshMetrics]);
 
   return { metrics, loading, error, refreshMetrics };
 }

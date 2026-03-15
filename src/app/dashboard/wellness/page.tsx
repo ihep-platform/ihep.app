@@ -18,7 +18,7 @@ import { Activity, Heart, TrendingUp, Plus, X } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 
 export default function WellnessPage() {
-  const [selectedPeriod, setSelectedPeriod] = useState('week')
+  const [_selectedPeriod, _setSelectedPeriod] = useState('week')
   const [showAddModal, setShowAddModal] = useState(false)
   const [metricType, setMetricType] = useState('')
   const [metricValue, setMetricValue] = useState('')

@@ -14,8 +14,6 @@
  */
 
 const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
 
 // CVE-2025-55182 Vulnerable Version Matrix
 const CVE_VULNERABLE_VERSIONS = {

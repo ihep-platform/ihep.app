@@ -177,20 +177,17 @@ export function DigitalTwinCanvas({ healthScore, heartRate, viralLoad, cd4Count 
     window.addEventListener('resize', handleResize);
 
     // Cleanup
+    const canvasNode = canvasRef.current;
     return () => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationRef.current);
-      if (canvasRef.current && rendererRef.current?.domElement) {
-        canvasRef.current.removeChild(rendererRef.current.domElement);
+      if (canvasNode && rendererRef.current?.domElement) {
+        canvasNode.removeChild(rendererRef.current.domElement);
       }
       rendererRef.current?.dispose();
     };
-  }, []);
-
-  // Update properties when health metrics change
-  useEffect(() => {
-    // Properties are updated in the animation loop
-  }, [healthScore, heartRate, viralLoad, cd4Count]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- initialization effect, health metrics update via animation loop refs
+  }, [healthScore, heartRate, viralLoad]);
 
   return (
     <div

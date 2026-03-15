@@ -27,8 +27,6 @@ ChartJS.register(
   Filler,
 );
 
-type FinancialData = typeof financialData;
-
 const financialData = {
   peer_navigator_income: [360000, 1320000, 2820000, 5080000, 7220000, 8900000, 10660000, 12830000, 15300000, 18070000],
   training_stipends: [95000, 162000, 241000, 333000, 432000, 520000, 610000, 708000, 815000, 668000],
@@ -107,16 +105,12 @@ export default function InvestorDashboardPage() {
   );
 
   const incomeTable = useMemo(() => {
-    let totalParticipants = 0;
-    const rows = incomeStreams.map((stream) => {
-      const participants = stream.participants[yearIndex];
-      totalParticipants += participants;
-      return {
-        name: stream.name,
-        participants,
-        amount: stream.data[yearIndex],
-      };
-    });
+    const rows = incomeStreams.map((stream) => ({
+      name: stream.name,
+      participants: stream.participants[yearIndex],
+      amount: stream.data[yearIndex],
+    }));
+    const totalParticipants = rows.reduce((sum, row) => sum + row.participants, 0);
     const totalAmount = financialData.direct_income_totals[yearIndex];
     return { rows, totalParticipants, totalAmount };
   }, [yearIndex]);

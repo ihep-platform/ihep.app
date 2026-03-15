@@ -44,18 +44,18 @@ export default function ResourcesPage() {
             Sign in to save favorites, receive recommendations, and sync with your care plan.
           </p>
           <div className="flex flex-wrap gap-3">
-            <a
+            <Link
               className="px-5 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 text-white text-sm font-medium"
               href="/login"
             >
               Log in
-            </a>
-            <a
+            </Link>
+            <Link
               className="px-5 py-2 rounded-full border border-teal-600 text-teal-700 text-sm font-medium hover:bg-teal-50"
               href="/register"
             >
               Create account
-            </a>
+            </Link>
             <Link
               className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50"
               href="/"

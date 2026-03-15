@@ -110,7 +110,7 @@ export default function DigitalTwinViewer({ usdScenePath, onPatientSelect }: Dig
     };
 
     // Handle patient selection
-    const handlePatientClick = (patientId: string) => {
+    const _handlePatientClick = (patientId: string) => {
         if (!rendererRef.current) return;
         
         const patientData = rendererRef.current.getPatientDataAtCurrentTime(patientId);

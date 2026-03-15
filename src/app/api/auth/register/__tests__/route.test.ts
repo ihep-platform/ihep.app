@@ -158,7 +158,7 @@ describe('POST /api/auth/register', () => {
     })
 
     it('should default to patient role when not specified', async () => {
-      const { role, ...payloadWithoutRole } = validPayload
+      const { role: _role, ...payloadWithoutRole } = validPayload
       const request = makeRequest(payloadWithoutRole)
 
       const response = await POST(request)
@@ -246,7 +246,7 @@ describe('POST /api/auth/register', () => {
 
   describe('Input validation', () => {
     it('should reject missing username', async () => {
-      const { username, ...payload } = validPayload
+      const { username: _username, ...payload } = validPayload
       const request = makeRequest(payload)
 
       const response = await POST(request)
@@ -266,7 +266,7 @@ describe('POST /api/auth/register', () => {
     })
 
     it('should reject missing firstName', async () => {
-      const { firstName, ...payload } = validPayload
+      const { firstName: _firstName, ...payload } = validPayload
       const request = makeRequest(payload)
 
       const response = await POST(request)

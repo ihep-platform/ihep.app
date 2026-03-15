@@ -36,7 +36,7 @@ export default function LoginPage() {
         await getSession()
         router.push('/')
       }
-    } catch (error) {
+    } catch (_error) {
       setError('An error occurred during login')
     } finally {
       setIsLoading(false)

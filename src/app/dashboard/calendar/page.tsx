@@ -88,7 +88,7 @@ export default function CalendarPage() {
         title: "Appointment Scheduled",
         description: `"${appointmentData.title}" has been added to your calendar.`,
       })
-    } catch (err) {
+    } catch (_err) {
       toast({
         title: "Scheduling Failed",
         description: "Could not schedule the appointment. Please try again.",

@@ -28,7 +28,6 @@ import type {
   ContactCompanyType,
   REProspectStatus,
   PackageStatus,
-  ContractStatus,
   PhaseAllocation,
   LedgerEntry,
   PaymentReceipt,

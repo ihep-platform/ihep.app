@@ -7,8 +7,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, User, X, Pill, Activity, Settings, Shield, FileText, Award } from 'lucide-react';
-import { NAV_ITEMS, APP_NAME, ADMIN_NAV_ITEMS } from '@/lib/constants';
+import { Menu, User, X, Pill, Activity, Settings, Shield, Award } from 'lucide-react';
+import { NAV_ITEMS } from '@/lib/constants';
 import SwitchRole from '@/components/ui/switch-role';
 import useAuth from '@/hooks/useAuth';
 

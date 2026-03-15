@@ -10,7 +10,7 @@ import Link from 'next/link'
 export function Dashboard() {
   const { data: session, status } = useSession()
 
-  const { data: upcomingEvents } = useQuery({
+  const { data: _upcomingEvents } = useQuery({
     queryKey: ['/api/events'],
     enabled: !!session
   })

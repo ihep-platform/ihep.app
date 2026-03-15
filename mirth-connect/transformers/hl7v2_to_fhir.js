@@ -11,6 +11,7 @@
 /**
  * Convert HL7 v2.x XML (Mirth parsed) to a simplified JSON structure.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function convertHL7XmlToJson(hl7Xml) {
     // Mirth provides HL7 as E4X XML; convert to workable JSON
     var result = {};
@@ -46,7 +47,7 @@ function convertHL7XmlToJson(hl7Xml) {
 /**
  * Parse a single HL7 segment XML element to JSON.
  */
-function parseSegmentToJson(segXml, segName) {
+function parseSegmentToJson(segXml, _segName) {
     var result = {};
     var children = segXml.children();
     for (var i = 0; i < children.length(); i++) {
@@ -73,6 +74,7 @@ function parseSegmentToJson(segXml, segName) {
  * @param {string} messageType - Message type (e.g., 'ADT^A01', 'ORU^R01', 'SIU^S12')
  * @returns {Object} FHIR R4 Bundle
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function convertHL7v2ToFhir(hl7Json, messageType) {
     var bundle = {
         resourceType: 'Bundle',
@@ -252,10 +254,10 @@ function convertPIDToPatient(pid) {
  * Convert PV1 segment to FHIR Encounter resource.
  */
 function convertPV1ToEncounter(pv1, pid, triggerEvent) {
-    var patientId = '';
+    var _patientId = '';
     if (pid) {
         var pid3 = getField(pid, 'PID.3');
-        patientId = typeof pid3 === 'object' ? (pid3['PID.3.1'] || '') : (pid3 || '');
+        _patientId = typeof pid3 === 'object' ? (pid3['PID.3.1'] || '') : (pid3 || '');
     }
 
     var encounter = {
@@ -360,7 +362,7 @@ function convertORU(hl7Json, triggerEvent, bundle) {
 /**
  * Convert OBX segment to FHIR Observation.
  */
-function convertOBXToObservation(obx, pid, obr) {
+function convertOBXToObservation(obx, pid, _obr) {
     var observation = {
         resourceType: 'Observation',
         id: generateResourceId('Observation', getField(obx, 'OBX.3') + '-' + (getField(obx, 'OBX.1') || Date.now())),

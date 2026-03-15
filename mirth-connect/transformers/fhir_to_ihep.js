@@ -15,6 +15,7 @@
  * @param {string} vendor - Source vendor identifier (epic, cerner, allscripts, athenahealth)
  * @returns {Object} IHEP canonical format envelope
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function transformFhirToIhep(fhirData, vendor) {
     var result = {
         ihep_version: '1.0',
@@ -601,7 +602,6 @@ function extractVendorExtensions(resource, vendor) {
  * Calculate a data quality score (0-100) for an observation.
  */
 function calculateDataQualityScore(ihepObs) {
-    var score = 0;
     var maxScore = 100;
     var checks = 0;
     var passed = 0;

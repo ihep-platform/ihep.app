@@ -44,12 +44,12 @@ export default function ForumPage() {
             Sign in to post, follow threads, and receive responses while keeping your data protected.
           </p>
           <div className="flex flex-wrap gap-3">
-            <a className="px-5 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 text-white text-sm font-medium" href="/login">
+            <Link className="px-5 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-500 text-white text-sm font-medium" href="/login">
               Log in
-            </a>
-            <a className="px-5 py-2 rounded-full border border-teal-600 text-teal-700 text-sm font-medium hover:bg-teal-50" href="/register">
+            </Link>
+            <Link className="px-5 py-2 rounded-full border border-teal-600 text-teal-700 text-sm font-medium hover:bg-teal-50" href="/register">
               Create account
-            </a>
+            </Link>
             <Link className="px-5 py-2 rounded-full border border-teal-200 text-teal-600 text-sm font-medium hover:bg-teal-50" href="/">
               Back to home
             </Link>

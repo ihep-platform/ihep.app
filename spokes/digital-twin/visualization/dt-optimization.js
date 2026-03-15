@@ -146,7 +146,7 @@ const twinRenderer = new OptimizedDigitalTwinRenderer();
 // Create instanced cell visualizations (instead of individual meshes)
 const cellGeometry = new THREE.SphereGeometry(0.1, 8, 8);  // Low poly for instancing
 const cellMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const cells = twinRenderer.createInstancedMesh(cellGeometry, cellMaterial, 10000);
+const _cells = twinRenderer.createInstancedMesh(cellGeometry, cellMaterial, 10000);
 
 // Performance monitoring
 setInterval(() => {

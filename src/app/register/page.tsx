@@ -53,7 +53,7 @@ export default function RegisterPage() {
       } else {
         setError(data.message || 'Registration failed')
       }
-    } catch (error) {
+    } catch (_error) {
       setError('An error occurred during registration')
     } finally {
       setIsLoading(false)

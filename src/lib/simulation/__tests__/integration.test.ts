@@ -5,7 +5,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { initEKF, ekfStep } from '../ekf'
-import { cbfAdjust, isSafe } from '../cbf'
+import { cbfAdjust } from '../cbf'
 import type { RobotState, Obstacle } from '../types'
 import { hypot } from '../math'
 

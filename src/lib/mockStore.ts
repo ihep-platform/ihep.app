@@ -37,7 +37,7 @@ class FileUserStore {
         createdAt: new Date(u.createdAt),
       }))
       this.nextId = this.users.reduce((max, u) => Math.max(max, u.id), 0) + 1
-    } catch (error) {
+    } catch (_error) {
       await this.bootstrap()
     }
 

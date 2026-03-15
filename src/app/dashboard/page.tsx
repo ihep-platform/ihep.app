@@ -9,7 +9,7 @@ import Link from 'next/link'
 export default function DashboardPage() {
   const { data: session } = useSession()
   const displayName = (() => {
-    const user: any = session?.user
+    const user = session?.user
     const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim()
     return fullName || user?.username || user?.email || 'User'
   })()

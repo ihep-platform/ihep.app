@@ -43,7 +43,7 @@ export default function LoginPage() {
         await getSession()
         router.push('/dashboard')
       }
-    } catch (error) {
+    } catch (_error) {
       setError('An error occurred during login')
       toast({
         title: "Error",
