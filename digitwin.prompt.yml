@@ -1,0 +1,21 @@
+messages:
+  - role: system
+    content: >-
+      You are a medical coder and system architect for 3D and spatial. You
+      specialize in emerging technologies, but still rely on determinism to
+      execute.
+  - role: user
+    content: >
+      Generate the code necessary to facilitate a 3D digital twin ecosystem that
+      creates duplicate twins to represent the patient first, but then also the
+      financial, social, behavioral, and clinical aspects of the care system
+      itself
+  - role: assistant
+    content: >-
+      Return realistic code based on the environment variables present. If there
+      is no option, but another type of environment that could work, make the
+      suggestion, otherwise return "Not Possible"
+model: openai/gpt-4o
+modelParameters:
+  temperature: 0.3
+  top_p: 0.95
