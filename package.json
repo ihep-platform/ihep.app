@@ -128,7 +128,7 @@
     "@vitest/ui": "^4.1.0",
     "babel-plugin-react-compiler": "1.0.0",
     "drizzle-kit": "^0.31.9",
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.27.3",
     "eslint": "^9.22.0",
     "eslint-config-next": "16.1.5",
     "jsdom": "^27.4.0",
