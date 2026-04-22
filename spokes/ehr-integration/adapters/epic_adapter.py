@@ -389,7 +389,7 @@ class EpicAdapter(BaseEHRAdapter):
         extensions: Dict[str, Any] = {}
         for ext in resource.get('extension', []):
             url: str = ext.get('url', '')
-            parsed = urlparse(url)
+            parsed = urlparse(url if '//' in url else f'//{url}')
             hostname = (parsed.hostname or '').lower()
             if hostname.endswith('.epic.com') or hostname == 'epic.com':
                 short_name = url.rsplit('/', 1)[-1]

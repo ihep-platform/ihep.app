@@ -241,7 +241,7 @@ class ConnectionManager:
                     self._store_secret(secret_id, cred_value)
                     stored_count += 1
             except Exception as e:
-                logger.error("Failed to store credential: %s", type(e).__name__)
+                logger.error("Failed to store credential %s: %s", cred_key, type(e).__name__)
 
         state.add_event(OnboardingEvent(
             provider_id=provider_id,

@@ -257,7 +257,7 @@ class CernerAdapter(BaseEHRAdapter):
         extensions: Dict[str, Any] = {}
         for ext in resource.get('extension', []):
             url: str = ext.get('url', '')
-            parsed = urlparse(url)
+            parsed = urlparse(url if '//' in url else f'//{url}')
             hostname = (parsed.hostname or '').lower()
             if (hostname.endswith('.cerner.com') or hostname == 'cerner.com'
                     or hostname.endswith('.oracle.com') or hostname == 'oracle.com'):
