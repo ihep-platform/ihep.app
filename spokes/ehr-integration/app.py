@@ -233,10 +233,10 @@ def receive_inbound_data(current_user: Dict[str, Any] = None):
         }), 200
 
     except ValueError as e:
-        logger.warning(f"Validation error on inbound data: {str(e)}")
-        return jsonify({'error': str(e)}), 400
+        logger.warning(f"Validation error on inbound data: {e}", exc_info=True)
+        return jsonify({'error': 'Request validation failed'}), 400
     except Exception as e:
-        logger.error(f"Error processing inbound data: {type(e).__name__}: {str(e)}")
+        logger.error(f"Error processing inbound data: {e}", exc_info=True)
         audit_logger.log(
             user_id=current_user.get('user_id', 'system') if current_user else 'system',
             action='EHR_INBOUND_RECEIVE',
@@ -493,10 +493,10 @@ def receive_webhook():
         }), 200
 
     except ValueError as e:
-        logger.warning(f"Webhook validation error: {str(e)}")
-        return jsonify({'error': str(e)}), 400
+        logger.warning(f"Webhook validation error: {e}", exc_info=True)
+        return jsonify({'error': 'Request validation failed'}), 400
     except Exception as e:
-        logger.error(f"Webhook processing error: {type(e).__name__}: {str(e)}")
+        logger.error(f"Webhook processing error: {e}", exc_info=True)
         return jsonify({'error': 'Failed to process webhook'}), 500
 
 
@@ -809,9 +809,10 @@ def advance_onboarding_phase(provider_id: str, current_user: Dict[str, Any] = No
         }), 200
 
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        logger.warning(f"Phase advance validation error: {e}", exc_info=True)
+        return jsonify({'error': 'Request validation failed'}), 400
     except Exception as e:
-        logger.error(f"Phase advance error: {type(e).__name__}: {e}")
+        logger.error(f"Phase advance error: {e}", exc_info=True)
         return jsonify({'error': 'Failed to advance phase'}), 500
 
 
@@ -855,9 +856,10 @@ def update_checklist(provider_id: str, current_user: Dict[str, Any] = None):
         }), 200
 
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        logger.warning(f"Checklist update validation error: {e}", exc_info=True)
+        return jsonify({'error': 'Request validation failed'}), 400
     except Exception as e:
-        logger.error(f"Checklist update error: {type(e).__name__}: {e}")
+        logger.error(f"Checklist update error: {e}", exc_info=True)
         return jsonify({'error': 'Failed to update checklist'}), 500
 
 
@@ -909,9 +911,10 @@ def setup_connection(provider_id: str, current_user: Dict[str, Any] = None):
         return jsonify({'success': True, 'data': result}), 200
 
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        logger.warning(f"Connection setup validation error: {e}", exc_info=True)
+        return jsonify({'error': 'Request validation failed'}), 400
     except Exception as e:
-        logger.error(f"Connection setup error: {type(e).__name__}: {e}")
+        logger.error(f"Connection setup error: {e}", exc_info=True)
         return jsonify({'error': 'Failed to set up connection'}), 500
 
 
@@ -996,9 +999,10 @@ def send_communication(provider_id: str, current_user: Dict[str, Any] = None):
         }), 200
 
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        logger.warning(f"Communication validation error: {e}", exc_info=True)
+        return jsonify({'error': 'Request validation failed'}), 400
     except Exception as e:
-        logger.error(f"Communication error: {type(e).__name__}: {e}")
+        logger.error(f"Communication error: {e}", exc_info=True)
         return jsonify({'error': 'Failed to send communication'}), 500
 
 

@@ -287,7 +287,8 @@ def create_app(config: AppConfig = None) -> Flask:
         try:
             connection_valid = adapter.validate_connection()
         except Exception as e:
-            connection_error = type(e).__name__
+            logger.error("Connection validation failed for partner %s: %s", _hash_id(partner_id), e, exc_info=True)
+            connection_error = "Connection validation failed"
 
         sync_status = sync_engine.get_sync_status(partner_id)
 
@@ -316,55 +317,60 @@ def create_app(config: AppConfig = None) -> Flask:
     @limiter.limit("200/minute")
     def receive_webhook():
         """Receive incoming EHR webhook events with HMAC verification."""
-        signature = request.headers.get("X-Webhook-Signature", "")
-        source = request.headers.get("X-Webhook-Source", "")
-        event_type = request.headers.get("X-Webhook-Event", "")
+        try:
+            signature = request.headers.get("X-Webhook-Signature", "")
+            source = request.headers.get("X-Webhook-Source", "")
+            event_type = request.headers.get("X-Webhook-Event", "")
 
-        if not source:
-            return jsonify({"error": "X-Webhook-Source header required"}), 400
+            if not source:
+                return jsonify({"error": "X-Webhook-Source header required"}), 400
 
-        raw_body = request.get_data(as_text=True)
-        if not raw_body:
-            return jsonify({"error": "Request body required"}), 400
+            raw_body = request.get_data(as_text=True)
+            if not raw_body:
+                return jsonify({"error": "Request body required"}), 400
 
-        # Look up partner by webhook source
-        partner = None
-        for pcfg in config.partners.values():
-            if pcfg.webhook_secret_key and pcfg.partner_id == source:
-                partner = pcfg
-                break
+            # Look up partner by webhook source
+            partner = None
+            for pcfg in config.partners.values():
+                if pcfg.webhook_secret_key and pcfg.partner_id == source:
+                    partner = pcfg
+                    break
 
-        if not partner:
-            logger.warning("Webhook from unknown source: %s", _hash_id(source))
-            return jsonify({"error": "Unknown webhook source"}), 403
+            if not partner:
+                logger.warning("Webhook from unknown source: %s", _hash_id(source))
+                return jsonify({"error": "Unknown webhook source"}), 403
 
-        # Verify signature
-        if partner.webhook_secret_key and not webhook_handler.verify_signature(
-            raw_body, signature, partner.webhook_secret_key
-        ):
-            logger.warning("Invalid webhook signature from: %s", _hash_id(source))
-            return jsonify({"error": "Invalid signature"}), 403
+            # Verify signature
+            if partner.webhook_secret_key and not webhook_handler.verify_signature(
+                raw_body, signature, partner.webhook_secret_key
+            ):
+                logger.warning("Invalid webhook signature from: %s", _hash_id(source))
+                return jsonify({"error": "Invalid signature"}), 403
 
-        payload = request.json
-        result = webhook_handler.process_event(
-            source=source,
-            event_type=event_type,
-            payload=payload,
-            raw_body=raw_body,
-        )
+            payload = request.json
+            result = webhook_handler.process_event(
+                source=source,
+                event_type=event_type,
+                payload=payload,
+                raw_body=raw_body,
+            )
 
-        logger.info(
-            "Webhook processed: source=%s event=%s id=%s",
-            _hash_id(source), event_type, result.get("event_id"),
-        )
+            logger.info(
+                "Webhook processed: source=%s event=%s id=%s",
+                _hash_id(source), event_type, result.get("event_id"),
+            )
 
-        return jsonify({
-            "success": True,
-            "data": {
-                "event_id": result.get("event_id"),
-                "status": result.get("status", "accepted"),
-            },
-        }), 200
+            return jsonify({
+                "success": True,
+                "data": {
+                    "event_id": result.get("event_id"),
+                    "status": result.get("status", "accepted"),
+                },
+            }), 200
+
+        except Exception as e:
+            logger.error("Webhook processing error: %s", e, exc_info=True)
+            return jsonify({"error": "Failed to process webhook"}), 500
 
     # ------------------------------------------------------------------
     # Error handlers

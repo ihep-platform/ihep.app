@@ -235,13 +235,13 @@ class ConnectionManager:
             secret_id = f"ehr-{provider_id}-{cred_key}"
             try:
                 if environment == "dev":
-                    logger.info("[DEV] Would store secret for credential key: %s", cred_key)
+                    logger.info("[DEV] Would store credential (%d of %d)", stored_count + 1, len(credentials))
                     stored_count += 1
                 else:
                     self._store_secret(secret_id, cred_value)
                     stored_count += 1
             except Exception as e:
-                logger.error("Failed to store credential for key '%s': %s", cred_key, type(e).__name__)
+                logger.error("Failed to store credential: %s", type(e).__name__)
 
         state.add_event(OnboardingEvent(
             provider_id=provider_id,
