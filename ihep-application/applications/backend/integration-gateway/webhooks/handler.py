@@ -125,10 +125,10 @@ class WebhookHandler:
                 event.status = "processing"
                 handler_result = self._execute_with_retry(handler, event)
                 event.status = "completed"
-            except Exception as e:
+            except Exception:
                 event.status = "failed"
-                event.error = f"{type(e).__name__}: {e}"
-                logger.error("Webhook handler failed for %s: %s", event.event_id, event.error)
+                event.error = "Handler execution failed"
+                logger.exception("Webhook handler failed for %s", event.event_id)
         else:
             event.status = "unhandled"
 

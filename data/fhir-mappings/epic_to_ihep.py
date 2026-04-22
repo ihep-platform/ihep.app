@@ -442,7 +442,7 @@ class EpicToIHEPMapper:
         }
         normalized = gender_map.get(gender.lower().strip(), "unknown")
         if normalized != gender.lower().strip():
-            logger.debug("Normalized gender '%s' -> '%s'", gender, normalized)
+            logger.debug("Gender value was normalized during mapping")
         return normalized
 
     @staticmethod

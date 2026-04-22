@@ -14,6 +14,7 @@ import logging
 import uuid
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlparse
 
 import requests
 
@@ -256,7 +257,10 @@ class CernerAdapter(BaseEHRAdapter):
         extensions: Dict[str, Any] = {}
         for ext in resource.get('extension', []):
             url: str = ext.get('url', '')
-            if 'cerner.com' in url.lower() or 'oracle.com' in url.lower():
+            parsed = urlparse(url if '//' in url else f'//{url}')
+            hostname = (parsed.hostname or '').lower()
+            if (hostname.endswith('.cerner.com') or hostname == 'cerner.com'
+                    or hostname.endswith('.oracle.com') or hostname == 'oracle.com'):
                 short_name = url.rsplit('/', 1)[-1]
                 for key in ('valueString', 'valueCode', 'valueBoolean',
                             'valueInteger', 'valueDateTime', 'valueReference',

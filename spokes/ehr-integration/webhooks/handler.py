@@ -272,10 +272,10 @@ class WebhookHandler:
                 event.status = 'completed'
             except Exception as e:
                 event.status = 'failed'
-                event.error = f"{type(e).__name__}: {str(e)}"
-                logger.error(
-                    "Webhook handler failed for event %s: %s",
-                    event.event_id, event.error,
+                event.error = f"Handler execution failed: {type(e).__name__}"
+                logger.exception(
+                    "Webhook handler failed for event %s",
+                    event.event_id,
                 )
         else:
             logger.warning(
@@ -486,10 +486,7 @@ class WebhookHandler:
         elif payload.get('resourceType') == 'Appointment':
             appointment_count = 1
 
-        logger.info(
-            "Processing SIU event: id=%s appointments=%d",
-            event.event_id, appointment_count,
-        )
+        logger.info("Processing SIU event")
 
         return {
             'action': 'siu_processed',

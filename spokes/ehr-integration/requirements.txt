@@ -28,7 +28,11 @@ jsonschema==4.23.0
 
 # Security
 cryptography==46.0.7
+<<<<<<< claude/mirth-ehr-integration-Di6jv
+PyJWT==2.12.1
+=======
 PyJWT==2.10.1
+>>>>>>> master
 
 # Production server
 gunicorn==23.0.0

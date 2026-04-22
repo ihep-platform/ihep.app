@@ -4,6 +4,6 @@ flask-cors==6.0.2
 google-cloud-healthcare==4.3.0
 google-cloud-bigquery==3.31.0
 google-cloud-logging==3.11.3
-PyJWT==2.10.1
+PyJWT==2.12.1
 psycopg2-binary==2.9.10
 redis==5.2.1

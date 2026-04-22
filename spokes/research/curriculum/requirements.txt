@@ -21,7 +21,7 @@ celery==5.3.6
 kombu==5.3.5
 
 # Authentication & Security
-PyJWT[crypto]>=2.8.0
+PyJWT[crypto]>=2.12.1
 passlib[argon2]==1.7.4
 python-multipart>=0.0.18
 pyotp==2.9.0

@@ -212,7 +212,7 @@ class AllscriptsToIHEPMapper:
             except ValueError:
                 continue
 
-        logger.warning("Failed to parse Allscripts date: %s", date_str)
+        logger.warning("Failed to parse Allscripts date value (format unrecognized)")
         return date_str
 
     # -------------------------------------------------------------------------
@@ -1064,9 +1064,7 @@ class AllscriptsToIHEPMapper:
         )
 
         logger.debug(
-            "Mapping Allscripts Appointment %s -> IHEP Appointment %s",
-            allscripts_id,
-            ihep_id,
+            "Mapping Allscripts Appointment to IHEP Appointment format"
         )
 
         ihep_appt: Dict[str, Any] = {
@@ -1340,9 +1338,7 @@ class AllscriptsToIHEPMapper:
             )
 
         logger.info(
-            "Successfully mapped Allscripts Appointment %s -> IHEP Appointment %s",
-            allscripts_id,
-            ihep_id,
+            "Successfully mapped Allscripts Appointment to IHEP Appointment format"
         )
         return ihep_appt
 
