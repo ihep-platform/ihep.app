@@ -486,10 +486,7 @@ class WebhookHandler:
         elif payload.get('resourceType') == 'Appointment':
             appointment_count = 1
 
-        logger.info(
-            "Processing SIU event: appointments=%d",
-            appointment_count,
-        )
+        logger.info("Processing SIU event")
 
         return {
             'action': 'siu_processed',
