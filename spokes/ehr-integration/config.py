@@ -189,6 +189,7 @@ class SecretManagerClient:
         Results are cached in-process for the lifetime of this object to
         avoid redundant RPCs during a single service startup cycle.
         """
+        key_name = str(secret_id)
         cache_key = f"{secret_id}/{version}"
         if cache_key in self._cache:
             return self._cache[cache_key]
@@ -197,7 +198,7 @@ class SecretManagerClient:
             logger.warning(
                 "GCP_PROJECT not set; cannot fetch secret '%s'. "
                 "Falling back to environment variable.",
-                secret_id,
+                key_name,
             )
             env_value = os.getenv(secret_id.upper().replace('-', '_'), '')
             return env_value
@@ -209,7 +210,7 @@ class SecretManagerClient:
             self._cache[cache_key] = value
             return value
         except Exception as e:
-            logger.error("Failed to retrieve secret '%s': %s", secret_id, type(e).__name__)
+            logger.error("Failed to retrieve secret '%s': %s", key_name, type(e).__name__)
             raise
 
 
