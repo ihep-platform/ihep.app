@@ -20,7 +20,7 @@ import time
 import uuid
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 
 import jwt as pyjwt
 import requests
@@ -389,7 +389,9 @@ class EpicAdapter(BaseEHRAdapter):
         extensions: Dict[str, Any] = {}
         for ext in resource.get('extension', []):
             url: str = ext.get('url', '')
-            if 'epic.com' in url.lower():
+            parsed = urlparse(url)
+            hostname = (parsed.hostname or '').lower()
+            if hostname.endswith('.epic.com') or hostname == 'epic.com':
                 short_name = url.rsplit('/', 1)[-1]
                 # Extensions can carry different value types
                 for key in ('valueString', 'valueCode', 'valueBoolean',

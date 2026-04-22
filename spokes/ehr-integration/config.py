@@ -195,7 +195,7 @@ class SecretManagerClient:
 
         if not self.project_id:
             logger.warning(
-                f"GCP_PROJECT not set; cannot fetch secret '{secret_id}'. "
+                "GCP_PROJECT not set; cannot fetch secret. "
                 "Falling back to environment variable."
             )
             env_value = os.getenv(secret_id.upper().replace('-', '_'), '')
@@ -208,7 +208,7 @@ class SecretManagerClient:
             self._cache[cache_key] = value
             return value
         except Exception as e:
-            logger.error(f"Failed to retrieve secret '{secret_id}': {type(e).__name__}")
+            logger.error("Failed to retrieve secret: %s", type(e).__name__)
             raise
 
 

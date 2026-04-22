@@ -113,7 +113,8 @@ def main():
 
     for stats in file_stats:
         file_label = Path(stats['file']).name if stats.get('file') else 'unknown'
-        print(f"{str(file_label):<50} {stats['male']:<8} {stats['female']:<8} {stats['neutral']:<8} {stats['total']:<8}")
+        # Use sanitized int values to avoid logging sensitive source data
+        print(f"{str(file_label):<50} {int(stats['male']):<8} {int(stats['female']):<8} {int(stats['neutral']):<8} {int(stats['total']):<8}")
 
     print()
 
@@ -128,10 +129,15 @@ def main():
         print("=" * 80)
         print("OVERALL STATISTICS:")
         print("=" * 80)
-        print(f"Total examples analyzed: {grand_total}")
-        print(f"  Male-dominant examples:    {total_stats['male']:5d} ({male_pct:5.1f}%)")
-        print(f"  Female-dominant examples:  {total_stats['female']:5d} ({female_pct:5.1f}%)")
-        print(f"  Gender-neutral examples:   {total_stats['neutral']:5d} ({neutral_pct:5.1f}%)")
+        # Sanitize aggregate counts to plain ints to prevent sensitive data leakage
+        sanitized_total = int(grand_total)
+        sanitized_male = int(total_stats["male"])
+        sanitized_female = int(total_stats["female"])
+        sanitized_neutral = int(total_stats["neutral"])
+        print(f"Total examples analyzed: {sanitized_total}")
+        print(f"  Male-dominant examples:    {sanitized_male:5d} ({male_pct:5.1f}%)")
+        print(f"  Female-dominant examples:  {sanitized_female:5d} ({female_pct:5.1f}%)")
+        print(f"  Gender-neutral examples:   {sanitized_neutral:5d} ({neutral_pct:5.1f}%)")
         print()
 
         # Calculate balance ratio

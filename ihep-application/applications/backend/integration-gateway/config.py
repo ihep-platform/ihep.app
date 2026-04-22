@@ -51,11 +51,11 @@ class SecretManagerClient:
                 response = client.access_secret_version(request={"name": name})
                 return response.payload.data.decode("utf-8")
             except Exception as exc:
-                logger.error("Secret Manager lookup failed for '%s': %s", secret_id, exc)
+                logger.error("Secret Manager lookup failed for secret: %s", type(exc).__name__)
         env_key = secret_id.upper().replace("-", "_")
         value = os.getenv(env_key)
         if value:
-            logger.debug("Resolved secret '%s' from env var '%s'", secret_id, env_key)
+            logger.debug("Resolved secret from environment variable fallback")
         return value
 
 
