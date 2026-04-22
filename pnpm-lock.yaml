@@ -201,7 +201,7 @@ importers:
         specifier: ^3.8.0
         version: 3.8.0(@types/react@19.2.14)(react-dom@19.2.3(react@19.2.5))(react-is@17.0.2)(react@19.2.5)(redux@5.0.1)
       tailwind-merge:
-        specifier: ^3.4.0
+        specifier: ^3.5.0
         version: 3.5.0
       tailwindcss-animate:
         specifier: ^1.0.7
