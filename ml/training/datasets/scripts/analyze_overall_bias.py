@@ -6,6 +6,7 @@ PHI Safety: No sensitive data in log output, no exception details exposed
 """
 import json
 import sys
+import hashlib
 from pathlib import Path
 from typing import Tuple
 
@@ -113,8 +114,9 @@ def main():
 
     for stats in file_stats:
         file_label = Path(stats['file']).name if stats.get('file') else 'unknown'
-        # Use sanitized int values to avoid logging sensitive source data
-        print(f"{str(file_label):<50} {int(stats['male']):<8} {int(stats['female']):<8} {int(stats['neutral']):<8} {int(stats['total']):<8}")
+        safe_file_id = f"file_{hashlib.sha256(str(file_label).encode('utf-8')).hexdigest()[:12]}"
+        # Use pseudonymized file identifier and sanitized int values to avoid logging sensitive source data
+        print(f"{safe_file_id:<50} {int(stats['male']):<8} {int(stats['female']):<8} {int(stats['neutral']):<8} {int(stats['total']):<8}")
 
     print()
 
