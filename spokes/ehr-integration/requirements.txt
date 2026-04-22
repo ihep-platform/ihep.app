@@ -7,11 +7,11 @@ flask-cors==6.0.0
 flask-limiter==3.12
 
 # HTTP client
-requests==2.32.4
+requests==2.33.0
 
 # Configuration
 pyyaml==6.0.2
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 
 # GCP services
 google-cloud-secret-manager==2.21.1
@@ -27,8 +27,8 @@ fhir.resources==7.1.0
 jsonschema==4.23.0
 
 # Security
-cryptography==46.0.5
-PyJWT==2.10.1
+cryptography==46.0.7
+PyJWT==2.12.1
 
 # Production server
 gunicorn==23.0.0
