@@ -20,7 +20,7 @@ import time
 import uuid
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
-from urllib.parse import urlencode, urlparse
+from urllib.parse import urlparse
 
 import jwt as pyjwt
 import requests
